@@ -2,7 +2,9 @@ package org.firstinspires.ftc.teamcode.opmodes;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
+import com.arcrobotics.ftclib.gamepad.ButtonReader;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
+import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -12,32 +14,38 @@ import org.firstinspires.ftc.teamcode.subsystems.MecanumDrivetrain;
 
 import java.util.List;
 
-@TeleOp(group = "21836 TeleOp")
+@TeleOp(group = "24064 TeleOp")
 public class MainTeleOp extends LinearOpMode {
 
     MultipleTelemetry myTelemetry;
     List<LynxModule> hubs;
+    GamepadEx Gamepad1, Gamepad2;
 
     @Override
     public void runOpMode() throws InterruptedException {
 
         myTelemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
-        MecanumDrivetrain drivetrain = new MecanumDrivetrain(hardwareMap, 537.7, 312);
-        GamepadEx Gamepad1 = new GamepadEx(gamepad1);
         hubs = hardwareMap.getAll(LynxModule.class);
+        Gamepad1 = new GamepadEx(gamepad1);
+        Gamepad2 = new GamepadEx(gamepad2);
+        ButtonReader
+                control1A = new ButtonReader(Gamepad1, GamepadKeys.Button.A);
+        ButtonReader[] buttonReaders = {control1A};
         for (LynxModule hub : hubs) hub.setBulkCachingMode(LynxModule.BulkCachingMode.MANUAL);
 
         waitForStart();
 
         while (opModeIsActive()) {
             for (LynxModule hub : hubs) hub.clearBulkCache();
-            drivetrain.run(
-                    Gamepad1.getLeftX(),
-                    Gamepad1.getLeftY(),
-                    Gamepad1.getRightX()
-            );
+            for (ButtonReader buttonReader : buttonReaders) buttonReader.readValue();
+
+            if (control1A.isDown()) {
+                myTelemetry.addData("Pressed:", "True");
+            } else {
+                myTelemetry.addData("Pressed:", "False");
+            }
+
             myTelemetry.update();
         }
     }
 }
-//hello kashif

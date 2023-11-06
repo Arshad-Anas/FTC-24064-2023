@@ -42,16 +42,16 @@ public class MecanumDrivetrain {
 
         // Assign motors using their hardware map names, each drive-type can have different names if needed
         motors = new MotorEx[]{
-        //        getMotor("left front"),
-        //        getMotor("right front"),
+                getMotor("left front"),
+                getMotor("right front"),
                 getMotor("left back"),
                 getMotor("right back")
         };
 
         motors[0].setInverted(true);
         motors[1].setInverted(false);
-       // motors[2].setInverted(true);
-        //motors[3].setInverted(false);
+        motors[2].setInverted(true);
+        motors[3].setInverted(false);
 
         for (MotorEx motor : motors) motor.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
 
