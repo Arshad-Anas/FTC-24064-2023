@@ -94,25 +94,13 @@ public class MecanumDrivetrain {
         return normalizeAngle(latestIMUReading - headingOffset);
     }
 
-    public int getMotorPos(int motorIndex) {
-        return motors[motorIndex].encoder.getPosition();
-    }
-
-    public double getY() {
-        return (getMotorPos(0) + getMotorPos(1) + getMotorPos(2) + getMotorPos(3)) * 0.25;
-    }
-
-    public double getX() {
-        return (getMotorPos(0) - getMotorPos(1) - getMotorPos(2) + getMotorPos(3)) * 0.25;
-    }
-
     public void resetPosition() {
         for (MotorEx motor : motors) motor.encoder.reset();
     }
 
     public void run(double xCommand, double yCommand, double turnCommand) {
         // normalize inputs
-        double max = Collections.max(Arrays.asList(xCommand, yCommand, turnCommand, 1.0));
+        double max = Collections.max(Arrays.asList(Math.abs(xCommand), Math.abs(yCommand), Math.abs(turnCommand), 1.0));
         xCommand /= max;
         yCommand /= max;
         turnCommand /= max;
