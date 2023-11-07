@@ -39,11 +39,8 @@ public class MainTeleOp extends LinearOpMode {
             for (LynxModule hub : hubs) hub.clearBulkCache();
             for (ButtonReader buttonReader : buttonReaders) buttonReader.readValue();
 
-            if (control1A.isDown()) {
-                myTelemetry.addData("Pressed:", "True");
-            } else {
-                myTelemetry.addData("Pressed:", "False");
-            }
+            // Prints the boolean if button A on gamepad 1 is held
+            myTelemetry.addData("Pressed:", control1A.isDown());
 
             myTelemetry.update();
         }
