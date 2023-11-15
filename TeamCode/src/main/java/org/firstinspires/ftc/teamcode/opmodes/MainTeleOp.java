@@ -32,17 +32,13 @@ public class MainTeleOp extends LinearOpMode {
         Gamepad1 = new GamepadEx(gamepad1);
         Gamepad2 = new GamepadEx(gamepad2);
 
-        ButtonReader
-                control1A = new ButtonReader(Gamepad1, GamepadKeys.Button.A);
-        ButtonReader[] buttonReaders = {control1A};
-
         drivetrain = new MecanumDrivetrain(hardwareMap, 537.7, 312);
 
         waitForStart();
 
         while (opModeIsActive()) {
             for (LynxModule hub : hubs) hub.clearBulkCache();
-            for (ButtonReader buttonReader : buttonReaders) buttonReader.readValue();
+            Gamepad1.readButtons();
             drivetrain.readIMU();
 
             drivetrain.run(
@@ -53,7 +49,7 @@ public class MainTeleOp extends LinearOpMode {
 
             // Telemetry below
             // Prints the boolean if button A on gamepad 1 is held
-            myTelemetry.addData("Pressed:", control1A.isDown());
+            myTelemetry.addData("Pressed:", Gamepad1.isDown(GamepadKeys.Button.A));
             myTelemetry.update();
         }
     }
