@@ -5,11 +5,9 @@ import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.qualcomm.hardware.lynx.LynxModule;
-import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-import org.firstinspires.ftc.teamcode.subsystems.drivetrains.HeadingIMU;
 import org.firstinspires.ftc.teamcode.subsystems.drivetrains.MecanumDrivetrain;
 
 import java.util.List;
@@ -36,6 +34,7 @@ public class MainTeleOp extends LinearOpMode {
         drivetrain = new MecanumDrivetrain(hardwareMap);
 
         waitForStart();
+        drivetrain.imu.start();
 
         while (opModeIsActive()) {
             for (LynxModule hub : hubs) hub.clearBulkCache();
@@ -53,5 +52,6 @@ public class MainTeleOp extends LinearOpMode {
             myTelemetry.addData("Pressed:", Gamepad1.isDown(GamepadKeys.Button.A));
             myTelemetry.update();
         }
+        drivetrain.imu.interrupt();
     }
 }

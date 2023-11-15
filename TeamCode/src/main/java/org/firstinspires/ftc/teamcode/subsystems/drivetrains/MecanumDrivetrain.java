@@ -16,7 +16,7 @@ import java.util.Collections;
 
 public class MecanumDrivetrain {
 
-    private final HeadingLocalizer headingLocalizer;
+    public final ThreadedIMU imu;
 
     private final MecanumDrive mecanumDrivetrain;
 
@@ -57,7 +57,7 @@ public class MecanumDrivetrain {
         // Initialize the FTCLib drive-base
         mecanumDrivetrain = new MecanumDrive(false, motors[0], motors[1], motors[2], motors[3]);
 
-        this.headingLocalizer = new HeadingIMU(hardwareMap, "imu", new RevHubOrientationOnRobot(
+        this.imu = new ThreadedIMU(hardwareMap, "imu", new RevHubOrientationOnRobot(
                 RevHubOrientationOnRobot.LogoFacingDirection.UP,
                 RevHubOrientationOnRobot.UsbFacingDirection.FORWARD
         ));
@@ -66,7 +66,7 @@ public class MecanumDrivetrain {
     }
 
     public void readIMU() {
-        latestIMUReading = headingLocalizer.getHeading();
+        latestIMUReading = imu.getHeading();
     }
 
     /**
