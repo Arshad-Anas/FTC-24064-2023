@@ -33,15 +33,7 @@ public class MainTeleOp extends LinearOpMode {
         Gamepad1 = new GamepadEx(gamepad1);
         Gamepad2 = new GamepadEx(gamepad2);
 
-        drivetrain = new MecanumDrivetrain(
-                hardwareMap,
-                537.7,
-                312,
-                new HeadingIMU(hardwareMap, "imu", new RevHubOrientationOnRobot(
-                        RevHubOrientationOnRobot.LogoFacingDirection.UP,
-                        RevHubOrientationOnRobot.UsbFacingDirection.FORWARD
-                ))
-        );
+        drivetrain = new MecanumDrivetrain(hardwareMap);
 
         waitForStart();
 

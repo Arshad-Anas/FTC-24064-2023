@@ -4,6 +4,7 @@ import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.arcrobotics.ftclib.drivebase.MecanumDrive;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.arcrobotics.ftclib.hardware.motors.MotorEx;
+import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 
@@ -30,11 +31,11 @@ public class MecanumDrivetrain {
         return new MotorEx(hw, name, motorCPR, motorRPM);
     }
 
-    public MecanumDrivetrain(HardwareMap hw, double motorCPR, double motorRPM, HeadingLocalizer headingLocalizer) {
-        this.hw = hw;
-        this.motorCPR = motorCPR;
-        this.motorRPM = motorRPM;
-        this.batteryVoltageSensor = hw.voltageSensor.iterator().next();
+    public MecanumDrivetrain(HardwareMap hardwareMap) {
+        this.hw = hardwareMap;
+        this.motorCPR = 537.7;
+        this.motorRPM = 312;
+        this.batteryVoltageSensor = hardwareMap.voltageSensor.iterator().next();
 
         // Assign motors using their hardware map names, each drive-type can have different names if needed
         motors = new MotorEx[]{
@@ -54,7 +55,10 @@ public class MecanumDrivetrain {
         // Initialize the FTCLib drive-base
         mecanumDrivetrain = new MecanumDrive(false, motors[0], motors[1], motors[2], motors[3]);
 
-        this.headingLocalizer = headingLocalizer;
+        this.headingLocalizer = new HeadingIMU(hardwareMap, "imu", new RevHubOrientationOnRobot(
+                RevHubOrientationOnRobot.LogoFacingDirection.UP,
+                RevHubOrientationOnRobot.UsbFacingDirection.FORWARD
+        ));
 
         resetPosition();
     }
