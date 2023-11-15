@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.subsystems;
+package org.firstinspires.ftc.teamcode.subsystems.drivetrains;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
@@ -11,7 +11,7 @@ import org.firstinspires.ftc.teamcode.control.gainmatrices.LowPassGains;
 import org.firstinspires.ftc.teamcode.control.gainmatrices.PIDGains;
 
 @Config
-public class HeadingLockingMecanum extends MecanumDrivetrain {
+public class AutoTurnMecanum extends MecanumDrivetrain {
 
     public static double
             kStatic = 0.0,
@@ -39,8 +39,8 @@ public class HeadingLockingMecanum extends MecanumDrivetrain {
 
     private final PIDController headingController = new PIDController();
 
-    public HeadingLockingMecanum(HardwareMap hw, double motorCPR, double motorRPM) {
-        super(hw, motorCPR, motorRPM);
+    public AutoTurnMecanum(HardwareMap hw, double motorCPR, double motorRPM, HeadingLocalizer headingLocalizer) {
+        super(hw, motorCPR, motorRPM, headingLocalizer);
     }
 
     @Override

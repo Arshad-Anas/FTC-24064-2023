@@ -2,14 +2,15 @@ package org.firstinspires.ftc.teamcode.opmodes;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
-import com.arcrobotics.ftclib.gamepad.ButtonReader;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.qualcomm.hardware.lynx.LynxModule;
+import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-import org.firstinspires.ftc.teamcode.subsystems.MecanumDrivetrain;
+import org.firstinspires.ftc.teamcode.subsystems.drivetrains.HeadingIMU;
+import org.firstinspires.ftc.teamcode.subsystems.drivetrains.MecanumDrivetrain;
 
 import java.util.List;
 
@@ -32,7 +33,15 @@ public class MainTeleOp extends LinearOpMode {
         Gamepad1 = new GamepadEx(gamepad1);
         Gamepad2 = new GamepadEx(gamepad2);
 
-        drivetrain = new MecanumDrivetrain(hardwareMap, 537.7, 312);
+        drivetrain = new MecanumDrivetrain(
+                hardwareMap,
+                537.7,
+                312,
+                new HeadingIMU(hardwareMap, "imu", new RevHubOrientationOnRobot(
+                        RevHubOrientationOnRobot.LogoFacingDirection.UP,
+                        RevHubOrientationOnRobot.UsbFacingDirection.FORWARD
+                ))
+        );
 
         waitForStart();
 

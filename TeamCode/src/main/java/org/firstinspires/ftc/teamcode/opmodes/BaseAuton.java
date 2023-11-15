@@ -1,14 +1,15 @@
 package org.firstinspires.ftc.teamcode.opmodes;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 import java.util.List;
 
-@Autonomous(group = "21836 Autonomous", preselectTeleOp = "MainTeleOp")
-public class MainAuton extends LinearOpMode {
+@Config
+//@Autonomous(group = "24064 Autonomous", preselectTeleOp = "MainTeleOp")
+public abstract class BaseAuton extends LinearOpMode {
 
     MultipleTelemetry myTelemetry;
     List<LynxModule> hubs;

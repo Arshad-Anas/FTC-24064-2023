@@ -1,15 +1,11 @@
-package org.firstinspires.ftc.teamcode.subsystems;
+package org.firstinspires.ftc.teamcode.subsystems.drivetrains;
 
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.arcrobotics.ftclib.drivebase.MecanumDrive;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.arcrobotics.ftclib.hardware.motors.MotorEx;
-import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
-
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -17,7 +13,7 @@ import java.util.Collections;
 
 public class MecanumDrivetrain {
 
-    private final IMU imu;
+    private final HeadingLocalizer headingLocalizer;
 
     private final MecanumDrive mecanumDrivetrain;
 
@@ -34,7 +30,7 @@ public class MecanumDrivetrain {
         return new MotorEx(hw, name, motorCPR, motorRPM);
     }
 
-    public MecanumDrivetrain(HardwareMap hw, double motorCPR, double motorRPM) {
+    public MecanumDrivetrain(HardwareMap hw, double motorCPR, double motorRPM, HeadingLocalizer headingLocalizer) {
         this.hw = hw;
         this.motorCPR = motorCPR;
         this.motorRPM = motorRPM;
@@ -58,13 +54,7 @@ public class MecanumDrivetrain {
         // Initialize the FTCLib drive-base
         mecanumDrivetrain = new MecanumDrive(false, motors[0], motors[1], motors[2], motors[3]);
 
-        imu = hw.get(IMU.class, "imu");
-        imu.resetDeviceConfigurationForOpMode();
-        imu.resetYaw();
-        imu.initialize(new IMU.Parameters(new RevHubOrientationOnRobot(
-                RevHubOrientationOnRobot.LogoFacingDirection.RIGHT,
-                RevHubOrientationOnRobot.UsbFacingDirection.UP
-        )));
+        this.headingLocalizer = headingLocalizer;
 
         resetPosition();
     }
@@ -78,7 +68,7 @@ public class MecanumDrivetrain {
     }
 
     public void readIMU() {
-        latestIMUReading = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
+        latestIMUReading = headingLocalizer.getHeading();
     }
 
     /**
