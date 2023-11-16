@@ -22,7 +22,7 @@ public class MecanumDrivetrain {
 
     protected final MotorEx[] motors;
 
-    private double headingOffset, latestIMUReading;
+    private double headingOffset, heading;
 
     private final HardwareMap hw;
     private final double motorCPR, motorRPM;
@@ -66,7 +66,7 @@ public class MecanumDrivetrain {
     }
 
     public void readIMU() {
-        latestIMUReading = imu.getHeading();
+        heading = Math.toDegrees(imu.getHeading());
     }
 
     /**
@@ -75,11 +75,11 @@ public class MecanumDrivetrain {
      * @param angle Angle of the robot in degrees, 0 facing forward and increases counter-clockwise
      */
     public void setCurrentHeading(double angle) {
-        headingOffset = latestIMUReading - AngleUnit.normalizeDegrees(angle);
+        headingOffset = heading - AngleUnit.normalizeDegrees(angle);
     }
 
     public double getHeading() {
-        return AngleUnit.normalizeDegrees(latestIMUReading - headingOffset);
+        return AngleUnit.normalizeDegrees(heading - headingOffset);
     }
 
     public void resetPosition() {
