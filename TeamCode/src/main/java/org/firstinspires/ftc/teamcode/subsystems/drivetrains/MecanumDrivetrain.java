@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.subsystems.drivetrains;
 
+import static com.qualcomm.hardware.rev.RevHubOrientationOnRobot.LogoFacingDirection.UP;
+import static com.qualcomm.hardware.rev.RevHubOrientationOnRobot.UsbFacingDirection.FORWARD;
 import static org.firstinspires.ftc.robotcore.external.navigation.AngleUnit.normalizeRadians;
 import static java.lang.Math.abs;
 import static java.lang.Math.toDegrees;
@@ -59,10 +61,7 @@ public class MecanumDrivetrain {
         // Initialize the FTCLib drive-base
         mecanumDrivetrain = new MecanumDrive(false, motors[0], motors[1], motors[2], motors[3]);
 
-        this.imu = new ThreadedIMU(hardwareMap, "imu", new RevHubOrientationOnRobot(
-                RevHubOrientationOnRobot.LogoFacingDirection.UP,
-                RevHubOrientationOnRobot.UsbFacingDirection.FORWARD
-        ));
+        this.imu = new ThreadedIMU(hardwareMap, "imu", new RevHubOrientationOnRobot(UP, FORWARD));
     }
 
     /**
