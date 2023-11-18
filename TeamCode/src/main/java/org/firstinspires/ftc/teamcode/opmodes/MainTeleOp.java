@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.opmodes;
 
+import static com.arcrobotics.ftclib.gamepad.GamepadKeys.Button.A;
+
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
@@ -23,8 +25,11 @@ public class MainTeleOp extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
 
+        // Initialize multiple telemetry outputs:
         myTelemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
 
+        // Initialize internal hub representations:
+        // Switch hubs to manually reset sensor inputs when we tell it to:
         hubs = hardwareMap.getAll(LynxModule.class);
         for (LynxModule hub : hubs) hub.setBulkCachingMode(LynxModule.BulkCachingMode.MANUAL);
 
@@ -36,20 +41,23 @@ public class MainTeleOp extends LinearOpMode {
         waitForStart();
         drivetrain.imu.start();
 
+        // Control loop:
         while (opModeIsActive()) {
+            // Manually clear old sensor data from the last loop:
             for (LynxModule hub : hubs) hub.clearBulkCache();
+            // Read sensors + gamepads:
             Gamepad1.readButtons();
-            drivetrain.readIMU();
+            Gamepad2.readButtons();
 
+            // Field-centric drive dt with control stick inputs:
             drivetrain.run(
                     Gamepad1.getLeftX(),
                     Gamepad1.getLeftY(),
                     Gamepad1.getRightX()
             );
 
-            // Telemetry below
-            // Prints the boolean if button A on gamepad 1 is held
-            myTelemetry.addData("Pressed:", Gamepad1.isDown(GamepadKeys.Button.A));
+            // Push telemetry data to multiple outputs (set earlier):
+            myTelemetry.addData("Pressed:", Gamepad1.isDown(A));
             myTelemetry.update();
         }
         drivetrain.imu.interrupt();

@@ -1,5 +1,9 @@
 package org.firstinspires.ftc.teamcode.subsystems.drivetrains;
 
+import static org.firstinspires.ftc.robotcore.external.navigation.AngleUnit.normalizeRadians;
+
+import static java.lang.Math.toDegrees;
+
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -46,11 +50,9 @@ public class AutoTurnMecanum extends MecanumDrivetrain {
         super(hardwareMap);
     }
 
-    @Override
-    public void readIMU() {
+    public void updateGains() {
         headingController.setGains(pidGains);
         kDFilter.setGains(derivFilterGains);
-        super.readIMU();
     }
 
     @Override
@@ -71,7 +73,7 @@ public class AutoTurnMecanum extends MecanumDrivetrain {
             if (useManualInput || turnSettlingTimer.seconds() <= TURN_SETTLING_TIME) {
                 setTargetHeading(getHeading());
             } else if (translationSettlingTimer.seconds() > TRANSLATION_SETTLING_TIME) {
-                headingController.setError(-AngleUnit.normalizeDegrees(targetHeading - getHeading()));
+                headingController.setError(-normalizeRadians(targetHeading - getHeading()));
                 double pidOutput = headingController.calculate(new State(getHeading()));
                 turnCommand = pidOutput + (Math.signum(pidOutput) * kStatic * scalar);
             }
@@ -83,7 +85,7 @@ public class AutoTurnMecanum extends MecanumDrivetrain {
     }
 
     public void setTargetHeading(double angle) {
-        targetHeading = AngleUnit.normalizeDegrees(angle);
+        targetHeading = normalizeRadians(angle);
     }
 
     @Override
@@ -104,8 +106,9 @@ public class AutoTurnMecanum extends MecanumDrivetrain {
     public void printNumericalTelemetry(MultipleTelemetry telemetry) {
         super.printNumericalTelemetry(telemetry);
         telemetry.addLine();
-        telemetry.addData("Drivetrain target heading", targetHeading);
+        telemetry.addData("Target heading (radians)", targetHeading);
+        telemetry.addData("Target heading (degrees)", toDegrees(targetHeading));
         telemetry.addLine();
-        telemetry.addData("Drivetrain heading error derivative (ticks/s)", headingController.getErrorDerivative());
+        telemetry.addData("Heading error derivative (ticks/s)", headingController.getErrorDerivative());
     }
 }

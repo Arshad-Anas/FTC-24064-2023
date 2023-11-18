@@ -1,5 +1,11 @@
 package org.firstinspires.ftc.teamcode.subsystems.drivetrains;
 
+import static org.firstinspires.ftc.robotcore.external.navigation.AngleUnit.normalizeDegrees;
+import static org.firstinspires.ftc.robotcore.external.navigation.AngleUnit.normalizeRadians;
+
+import static java.lang.Math.abs;
+import static java.lang.Math.toDegrees;
+
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.arcrobotics.ftclib.drivebase.MecanumDrive;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
@@ -65,21 +71,17 @@ public class MecanumDrivetrain {
         resetPosition();
     }
 
-    public void readIMU() {
-        heading = Math.toDegrees(imu.getHeading());
-    }
-
     /**
      * Set internal heading of the robot to correct field-centric direction
      *
-     * @param angle Angle of the robot in degrees, 0 facing forward and increases counter-clockwise
+     * @param angle Angle of the robot in radians, 0 facing forward and increases counter-clockwise
      */
     public void setCurrentHeading(double angle) {
-        headingOffset = heading - AngleUnit.normalizeDegrees(angle);
+        headingOffset = normalizeRadians(imu.getHeading() - angle);
     }
 
     public double getHeading() {
-        return AngleUnit.normalizeDegrees(heading - headingOffset);
+        return normalizeRadians(imu.getHeading() - headingOffset);
     }
 
     public void resetPosition() {
@@ -88,16 +90,17 @@ public class MecanumDrivetrain {
 
     public void run(double xCommand, double yCommand, double turnCommand) {
         // normalize inputs
-        double max = Collections.max(Arrays.asList(Math.abs(xCommand), Math.abs(yCommand), Math.abs(turnCommand), 1.0));
+        double max = Collections.max(Arrays.asList(abs(xCommand), abs(yCommand), abs(turnCommand), 1.0));
         xCommand /= max;
         yCommand /= max;
         turnCommand /= max;
 
-        mecanumDrivetrain.driveFieldCentric(xCommand, yCommand, turnCommand, getHeading());
+        mecanumDrivetrain.driveFieldCentric(xCommand, yCommand, turnCommand, toDegrees(getHeading()));
     }
 
     public void printNumericalTelemetry(MultipleTelemetry telemetry) {
-        telemetry.addData("Drivetrain current heading", getHeading());
+        telemetry.addData("Current heading (radians)", getHeading());
+        telemetry.addData("Current heading (degrees)", toDegrees(getHeading()));
     }
 }
 
