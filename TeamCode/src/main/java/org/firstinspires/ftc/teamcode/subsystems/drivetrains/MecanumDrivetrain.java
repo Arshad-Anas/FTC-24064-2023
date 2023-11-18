@@ -1,8 +1,6 @@
 package org.firstinspires.ftc.teamcode.subsystems.drivetrains;
 
-import static org.firstinspires.ftc.robotcore.external.navigation.AngleUnit.normalizeDegrees;
 import static org.firstinspires.ftc.robotcore.external.navigation.AngleUnit.normalizeRadians;
-
 import static java.lang.Math.abs;
 import static java.lang.Math.toDegrees;
 
@@ -13,8 +11,6 @@ import com.arcrobotics.ftclib.hardware.motors.MotorEx;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
-
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -28,7 +24,7 @@ public class MecanumDrivetrain {
 
     protected final MotorEx[] motors;
 
-    private double headingOffset, heading;
+    private double headingOffset;
 
     private final HardwareMap hw;
     private final double motorCPR, motorRPM;
@@ -67,8 +63,6 @@ public class MecanumDrivetrain {
                 RevHubOrientationOnRobot.LogoFacingDirection.UP,
                 RevHubOrientationOnRobot.UsbFacingDirection.FORWARD
         ));
-
-        resetPosition();
     }
 
     /**
