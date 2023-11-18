@@ -9,7 +9,6 @@ import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.control.State;
 import org.firstinspires.ftc.teamcode.control.controllers.PIDController;
 import org.firstinspires.ftc.teamcode.control.filters.FIRLowPassFilter;
@@ -94,7 +93,7 @@ public class AutoTurnMecanum extends MecanumDrivetrain {
         setTargetHeading(angle);
     }
 
-    public void toggleHeadingCorrection() {
+    public void toggleAutoTurn() {
         useAutoTurn = !useAutoTurn;
     }
 
