@@ -12,12 +12,13 @@ public class PIDController implements FeedbackController {
     private PIDGains gains = new PIDGains();
     private State target = new State();
 
-    public final Filter derivFilter;
+    private final Filter derivFilter;
     private final Differentiator differentiator = new Differentiator();
     private final Integrator integrator = new Integrator();
 
-    private double error, lastError, errorIntegral, errorDerivative;
-    private boolean calculateError = true;
+    private State error;
+    private double errorIntegral;
+    private double errorDerivative;
 
     public PIDController() {
         this(new NoFilter());
@@ -35,18 +36,16 @@ public class PIDController implements FeedbackController {
      * @param measurement Only the X attribute of the {@link State} parameter is used as feedback
      */
     public double calculate(State measurement) {
-        if (calculateError) {
-            lastError = error;
-            error = target.x - measurement.x;
-        } else calculateError = true;
+        State lastError = error;
+        error = target.minus(measurement);
 
-        if (Math.signum(error) != Math.signum(lastError)) reset();
-        errorIntegral = integrator.getIntegral(error);
-        errorDerivative = derivFilter.calculate(differentiator.getDerivative(error));
+        if (Math.signum(error.x) != Math.signum(lastError.x)) reset();
+        errorIntegral = integrator.getIntegral(error.x);
+        errorDerivative = derivFilter.calculate(differentiator.getDerivative(error.x));
 
-        double output = (gains.kP * error) + (gains.kI * errorIntegral) + (gains.kD * errorDerivative);
+        double output = (gains.kP * error.x) + (gains.kI * errorIntegral) + (gains.kD * errorDerivative);
 
-        stopIntegration(Math.abs(output) >= gains.maxOutputWithIntegral && Math.signum(output) == Math.signum(error));
+        stopIntegration(Math.abs(output) >= gains.maxOutputWithIntegral && Math.signum(output) == Math.signum(error.x));
 
         return output;
     }
@@ -61,12 +60,6 @@ public class PIDController implements FeedbackController {
 
     public double getErrorIntegral() {
         return errorIntegral;
-    }
-
-    public void setError(double error) {
-        lastError = this.error;
-        this.error = error;
-        calculateError = false;
     }
 
     public void stopIntegration(boolean stopIntegration) {
