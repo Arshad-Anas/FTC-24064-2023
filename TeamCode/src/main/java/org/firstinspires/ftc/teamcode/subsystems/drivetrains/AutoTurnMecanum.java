@@ -80,7 +80,7 @@ public class AutoTurnMecanum extends MecanumDrivetrain {
 
         lastXCommand = xCommand;
         lastYCommand = yCommand;
-        super.run(xCommand * scalar, yCommand * scalar, turnCommand);
+        super.run(xCommand, yCommand, turnCommand / scalar);
     }
 
     public void setTargetHeading(double angle) {
