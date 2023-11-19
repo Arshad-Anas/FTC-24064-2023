@@ -18,7 +18,6 @@ public class MainAuton extends LinearOpMode {
     MultipleTelemetry myTelemetry;
     List<LynxModule> hubs;
     GamepadEx Gamepad1;
-    public static boolean red = true;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -28,16 +27,23 @@ public class MainAuton extends LinearOpMode {
         hubs = hardwareMap.getAll(LynxModule.class);
         for (LynxModule hub : hubs) hub.setBulkCachingMode(LynxModule.BulkCachingMode.MANUAL);
 
-        boolean right = true;
-        while (!(Gamepad1.isDown(RIGHT_BUMPER) && Gamepad1.isDown(LEFT_BUMPER))) {
+        // Initialize gamepad (ONLY FOR INIT, DON'T CALL DURING WHILE LOOP)
+        Gamepad1 = new GamepadEx(gamepad1);
+
+        // Get gamepad 1 button input and save "right" and "red" booleans for autonomous configuration:
+        boolean right = true, red = true;
+        while (opModeInInit() && !(Gamepad1.isDown(RIGHT_BUMPER) && Gamepad1.isDown(LEFT_BUMPER))) {
+            Gamepad1.readButtons();
             if (Gamepad1.wasJustPressed(DPAD_RIGHT)) right = true;
             if (Gamepad1.wasJustPressed(DPAD_LEFT)) right = false;
             if (Gamepad1.wasJustPressed(B)) red = true;
             if (Gamepad1.wasJustPressed(X)) red = false;
-            myTelemetry.addLine((red ? "Red" : "Blue") + "alliance");
-            myTelemetry.addLine(right ? "Right" : "Left");
+            myTelemetry.addLine("Selected " + (red ? "RED" : "BLUE") + " " + (right ? "RIGHT" : "LEFT"));
+            myTelemetry.addLine("Press both shoulder buttons to confirm!");
             myTelemetry.update();
         }
+        myTelemetry.addLine("Confirmed " + (red ? "RED" : "BLUE") + " " + (right ? "RIGHT" : "LEFT"));
+        myTelemetry.update();
 
         waitForStart();
 
