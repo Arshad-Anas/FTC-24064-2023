@@ -50,9 +50,9 @@ public class MainTeleOp extends LinearOpMode {
 
             // Field-centric drive dt with control stick inputs:
             drivetrain.run(
-                    Gamepad1.getLeftX(),
-                    Gamepad1.getLeftY(),
-                    Gamepad1.getRightX()
+                    -Gamepad1.getLeftX(),
+                    -Gamepad1.getLeftY(),
+                    -Gamepad1.getRightX()
             );
 
             // Push telemetry data to multiple outputs (set earlier):
