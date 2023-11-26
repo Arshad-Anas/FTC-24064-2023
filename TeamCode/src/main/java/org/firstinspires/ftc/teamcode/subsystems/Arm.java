@@ -9,35 +9,20 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 public class Arm {
 
-    private final HardwareMap hw;
+    private Servo carriageServo;
 
-    private final Gamepad gamepad;
+    private DcMotor masterMotor, slaveMotor;
 
-    public static Servo cServo;
+    private GamepadEx gamepad2;
 
-    public static DcMotor masterMotor;
-
-    public static DcMotor slaveMotor;
-
-    public static GamepadEx Gamepad2;
-
-    public Arm (HardwareMap hw, Gamepad gamepad) {
-        this.hw = hw;
-        this.gamepad = gamepad;
-        cServo = hw.get(Servo.class, "cServo");
-        masterMotor = hw.get(DcMotor.class, "maMotor");
-        slaveMotor = hw.get(DcMotor.class, "slaMotor");
-
-        Gamepad2 = new GamepadEx(gamepad);
+    public Arm (HardwareMap hardwareMap) {
+        carriageServo = hardwareMap.get(Servo.class, "cServo");
+        masterMotor = hardwareMap.get(DcMotor.class, "maMotor");
+        slaveMotor = hardwareMap.get(DcMotor.class, "slaMotor");
     }
 
-    public static void armDeposit() {
-
-        Gamepad2.readButtons();
-
-        if (Gamepad2.getButton(GamepadKeys.Button.RIGHT_BUMPER)) {
-            cServo.setPosition(0.6);
-        }
+    public void deposit() {
+        carriageServo.setPosition(0.6);
     }
 }
 

@@ -12,6 +12,8 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 
+import org.firstinspires.ftc.teamcode.subsystems.Arm;
+import org.firstinspires.ftc.teamcode.subsystems.Intake;
 import org.firstinspires.ftc.teamcode.subsystems.drivetrains.MecanumDrivetrain;
 
 import java.util.List;
@@ -42,9 +44,9 @@ public class MainTeleOp extends LinearOpMode {
 
         waitForStart();
         drivetrain.imu.start();
-        DcMotorEx intake = hardwareMap.get(DcMotorEx.class, "intake");
-        intake.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        intake.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+        Intake intake = new Intake(hardwareMap);
+        Arm arm = new Arm(hardwareMap);
 
         // Control loop:
         while (opModeIsActive()) {
@@ -61,7 +63,11 @@ public class MainTeleOp extends LinearOpMode {
                     -Gamepad1.getRightX()
             );
 
-            intake.setPower(Gamepad1.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER));
+            if (Gamepad2.getButton(GamepadKeys.Button.RIGHT_BUMPER)) {
+                arm.deposit();
+            }
+
+            intake.run(Gamepad1.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER));
 
             // Push telemetry data to multiple outputs (set earlier):
             myTelemetry.addData("Pressed:", Gamepad1.isDown(A));
