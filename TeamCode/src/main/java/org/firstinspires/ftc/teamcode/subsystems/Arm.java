@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
+import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -31,8 +32,12 @@ public class Arm {
     }
 
     public static void armDeposit() {
-        if (Gamepad2.right_trigger <= 0.5) {
+
+        Gamepad2.readButtons();
+
+        if (Gamepad2.getButton(GamepadKeys.Button.RIGHT_BUMPER)) {
             cServo.setPosition(0.6);
         }
     }
 }
+
