@@ -1,6 +1,8 @@
 package org.firstinspires.ftc.teamcode.opmodes;
 
-import static com.arcrobotics.ftclib.gamepad.GamepadKeys.Button.*;
+import static com.arcrobotics.ftclib.gamepad.GamepadKeys.Button.LEFT_BUMPER;
+import static com.arcrobotics.ftclib.gamepad.GamepadKeys.Button.RIGHT_BUMPER;
+import static com.arcrobotics.ftclib.gamepad.GamepadKeys.Trigger.RIGHT_TRIGGER;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
@@ -9,8 +11,6 @@ import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorEx;
 
 import org.firstinspires.ftc.teamcode.subsystems.Arm;
 import org.firstinspires.ftc.teamcode.subsystems.Intake;
@@ -63,15 +63,22 @@ public class MainTeleOp extends LinearOpMode {
                     -Gamepad1.getRightX()
             );
 
-            if (Gamepad2.getButton(GamepadKeys.Button.RIGHT_BUMPER)) {
-                arm.deposit();
+            if (Gamepad1.getButton(RIGHT_BUMPER)) {
+                arm.extend();
             }
+            if (Gamepad1.getButton(LEFT_BUMPER)) {
+                arm.retract();
+            }
+            arm.run();
 
-            intake.run(Gamepad1.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER));
+            intake.run(Gamepad1.getTrigger(RIGHT_TRIGGER));
 
             // Push telemetry data to multiple outputs (set earlier):
-            myTelemetry.addData("Pressed:", Gamepad1.isDown(A));
-            myTelemetry.addData("Intake power: ", Gamepad1.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER));
+            myTelemetry.addData("Pressed:", Gamepad1.isDown(GamepadKeys.Button.A));
+
+            arm.printTelemetry(myTelemetry);
+            arm.printNumericalTelemetry(myTelemetry);
+            intake.printNumericalTelemetry(myTelemetry);
             myTelemetry.update();
         }
         drivetrain.imu.interrupt();
