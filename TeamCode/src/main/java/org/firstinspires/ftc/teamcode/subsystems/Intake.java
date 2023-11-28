@@ -18,6 +18,6 @@ public class Intake {
     }
 
     public void printNumericalTelemetry(MultipleTelemetry telemetry) {
-        telemetry.addData("Roller velocity (ticks/s)", motor.encoder.getRawVelocity());
+        telemetry.addData("Roller velocity (ticks/s)", motor.encoder.getCorrectedVelocity());
     }
 }

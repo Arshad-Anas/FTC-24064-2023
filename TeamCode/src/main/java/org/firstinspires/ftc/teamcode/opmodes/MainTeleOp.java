@@ -7,28 +7,27 @@ import static com.arcrobotics.ftclib.gamepad.GamepadKeys.Trigger.RIGHT_TRIGGER;
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
-import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-import org.firstinspires.ftc.teamcode.subsystems.Arm;
-import org.firstinspires.ftc.teamcode.subsystems.Intake;
-import org.firstinspires.ftc.teamcode.subsystems.drivetrains.MecanumDrivetrain;
+import org.firstinspires.ftc.teamcode.subsystems.Robot;
 
 import java.util.List;
 
 @TeleOp(group = "24064 TeleOp")
 public class MainTeleOp extends LinearOpMode {
 
+    Robot robot;
+
     MultipleTelemetry myTelemetry;
+
     List<LynxModule> hubs;
-    GamepadEx Gamepad1, Gamepad2;
-    MecanumDrivetrain drivetrain;
+
+    GamepadEx gamepad1, gamepad2;
 
     @Override
     public void runOpMode() throws InterruptedException {
-
         // Initialize multiple telemetry outputs:
         myTelemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
 
@@ -37,50 +36,38 @@ public class MainTeleOp extends LinearOpMode {
         hubs = hardwareMap.getAll(LynxModule.class);
         for (LynxModule hub : hubs) hub.setBulkCachingMode(LynxModule.BulkCachingMode.MANUAL);
 
-        Gamepad1 = new GamepadEx(gamepad1);
-        Gamepad2 = new GamepadEx(gamepad2);
+        gamepad1 = new GamepadEx(super.gamepad1);
+        gamepad2 = new GamepadEx(super.gamepad2);
 
-        drivetrain = new MecanumDrivetrain(hardwareMap);
+        robot = new Robot(hardwareMap);
 
         waitForStart();
-        drivetrain.imu.start();
 
-        Intake intake = new Intake(hardwareMap);
-        Arm arm = new Arm(hardwareMap);
+        robot.start();
 
         // Control loop:
         while (opModeIsActive()) {
             // Manually clear old sensor data from the last loop:
             for (LynxModule hub : hubs) hub.clearBulkCache();
             // Read sensors + gamepads:
-            Gamepad1.readButtons();
-            Gamepad2.readButtons();
+            gamepad1.readButtons();
+            gamepad2.readButtons();
 
+            if (gamepad1.getButton(RIGHT_BUMPER)) robot.arm.extend();
+            if (gamepad1.getButton(LEFT_BUMPER)) robot.arm.retract();
+
+            robot.arm.run();
+            robot.intake.run(gamepad1.getTrigger(RIGHT_TRIGGER));
             // Field-centric drive dt with control stick inputs:
-            drivetrain.run(
-                    -Gamepad1.getLeftX(),
-                    -Gamepad1.getLeftY(),
-                    -Gamepad1.getRightX()
+            robot.drivetrain.run(
+                    -gamepad1.getLeftX(),
+                    -gamepad1.getLeftY(),
+                    -gamepad1.getRightX()
             );
 
-            if (Gamepad1.getButton(RIGHT_BUMPER)) {
-                arm.extend();
-            }
-            if (Gamepad1.getButton(LEFT_BUMPER)) {
-                arm.retract();
-            }
-            arm.run();
-
-            intake.run(Gamepad1.getTrigger(RIGHT_TRIGGER));
-
-            // Push telemetry data to multiple outputs (set earlier):
-            myTelemetry.addData("Pressed:", Gamepad1.isDown(GamepadKeys.Button.A));
-
-            arm.printTelemetry(myTelemetry);
-            arm.printNumericalTelemetry(myTelemetry);
-            intake.printNumericalTelemetry(myTelemetry);
+            robot.printTelemetry(myTelemetry);
             myTelemetry.update();
         }
-        drivetrain.imu.interrupt();
+        robot.interrupt();
     }
 }

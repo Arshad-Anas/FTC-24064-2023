@@ -1,9 +1,6 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
-import static com.arcrobotics.ftclib.hardware.motors.Motor.GoBILDA.RPM_117;
-
-import static java.lang.Math.cos;
-import static java.lang.Math.toRadians;
+import static com.arcrobotics.ftclib.hardware.motors.Motor.GoBILDA.RPM_435;
 
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.arcrobotics.ftclib.hardware.motors.MotorEx;
@@ -16,7 +13,7 @@ import org.firstinspires.ftc.teamcode.control.filters.FIRLowPassFilter;
 import org.firstinspires.ftc.teamcode.control.gainmatrices.LowPassGains;
 import org.firstinspires.ftc.teamcode.control.gainmatrices.PIDGains;
 
-public class Arm {
+public class Lift {
 
     public static PIDGains pidGains = new PIDGains(
             0,
@@ -27,14 +24,13 @@ public class Arm {
 
     public static LowPassGains filterGains = new LowPassGains(0, 2);
 
-    // TODO Measure
+    // TODO Measure (ticks)
     public static double
-            DEPOSIT_POSITION = 0,
-            COLLECT_POSITION = 0,
-            TICKS_TO_DEGREES = 0,
+            BOTTOM_ROW_HEIGHT = 100,
+            PIXEL_HEIGHT = 10,
             kG = 0;
 
-    private final MotorEx motor;
+    private final MotorEx[] motors;
 
     private final FIRLowPassFilter derivFilter = new FIRLowPassFilter(filterGains);
     private final PIDController controller = new PIDController(derivFilter);
@@ -43,41 +39,39 @@ public class Arm {
 
     private State currentState = new State();
 
-    private boolean isExtended = false;
+    private String targetNamedPosition = "Retracted";
 
-    public Arm (HardwareMap hardwareMap) {
-        motor = new MotorEx(hardwareMap, "arm", RPM_117);
+    public Lift(HardwareMap hardwareMap) {
+        MotorEx leader = new MotorEx(hardwareMap, "leader", RPM_435);
+        MotorEx follower = new MotorEx(hardwareMap, "follower", RPM_435);
+
+        motors = new MotorEx[]{leader, follower};
         batteryVoltageSensor = hardwareMap.voltageSensor.iterator().next();
     }
 
-    public void extend() {
-        isExtended = true;
-    }
-
-    public void retract() {
-        isExtended = false;
+    // TODO Implement this!
+    public void setTargetPosition(int pixelY) {
+        pixelY = Math.min(pixelY, 10);
+        boolean retracted = pixelY < 0;
+        State targetState = new State(retracted ? 0 : pixelY * PIXEL_HEIGHT + BOTTOM_ROW_HEIGHT);
+        targetNamedPosition = retracted ? "Retracted" : "Row " + pixelY;
+        controller.setTarget(targetState);
     }
 
     public void run() {
-        currentState = new State(motor.encoder.getPosition());
+        currentState = new State(motors[0].encoder.getPosition());
         controller.setGains(pidGains);
         derivFilter.setGains(filterGains);
 
-        controller.setTarget(new State(isExtended ? DEPOSIT_POSITION : COLLECT_POSITION));
-        motor.set(
-                controller.calculate(currentState) +
-                        cos(toRadians(currentState.x * TICKS_TO_DEGREES)) * kG * (12 / batteryVoltageSensor.getVoltage())
-        );
+        for (MotorEx motor : motors) motor.set(controller.calculate(currentState) + kG * (12 / batteryVoltageSensor.getVoltage()));
     }
 
     public void printTelemetry(MultipleTelemetry telemetry) {
-        telemetry.addData("Arm is", (isExtended ? "" : "not") + " extended");
+        telemetry.addData("Target position (pixels)", targetNamedPosition);
     }
 
     public void printNumericalTelemetry(MultipleTelemetry telemetry) {
         telemetry.addData("Current position (ticks)", currentState.x);
         telemetry.addData("Error derivative (ticks/s)", controller.getErrorDerivative());
-        telemetry.addData("Current angle (degrees)", currentState.x * TICKS_TO_DEGREES);
     }
 }
-
