@@ -39,7 +39,7 @@ public class Lift {
 
     private State currentState = new State();
 
-    private String targetNamedPosition = "Retracted";
+    private int targetRow = -1;
 
     public Lift(HardwareMap hardwareMap) {
         MotorEx leader = new MotorEx(hardwareMap, "leader", RPM_435);
@@ -50,12 +50,18 @@ public class Lift {
     }
 
     // TODO Implement this!
-    public void setTargetPosition(int pixelY) {
-        pixelY = Math.min(pixelY, 10);
-        boolean retracted = pixelY < 0;
-        State targetState = new State(retracted ? 0 : pixelY * PIXEL_HEIGHT + BOTTOM_ROW_HEIGHT);
-        targetNamedPosition = retracted ? "Retracted" : "Row " + pixelY;
+    public void setTargetRow(int targetRow) {
+        this.targetRow = Math.min(targetRow, 10);
+        State targetState = new State(this.targetRow < 0 ? 0 : this.targetRow * PIXEL_HEIGHT + BOTTOM_ROW_HEIGHT);
         controller.setTarget(targetState);
+    }
+
+    public void increment() {
+        setTargetRow(targetRow + 1);
+    }
+
+    public void decrement() {
+        setTargetRow(targetRow - 1);
     }
 
     public void run() {
@@ -63,11 +69,23 @@ public class Lift {
         controller.setGains(pidGains);
         derivFilter.setGains(filterGains);
 
-        for (MotorEx motor : motors) motor.set(controller.calculate(currentState) + kG * (12 / batteryVoltageSensor.getVoltage()));
+        run(controller.calculate(currentState), false);
+    }
+
+    public void run(double motorPower) {
+        run(motorPower, true);
+    }
+
+    private void run(double motorPower, boolean voltageCompensate) {
+        double scalar = 12 / batteryVoltageSensor.getVoltage();
+
+        if (voltageCompensate) motorPower *= scalar;
+
+        for (MotorEx motor : motors) motor.set(motorPower + kG * scalar);
     }
 
     public void printTelemetry(MultipleTelemetry telemetry) {
-        telemetry.addData("Target position (pixels)", targetNamedPosition);
+        telemetry.addData("Target position (pixels)", targetRow < 0 ? "Retracted" : "Row " + targetRow);
     }
 
     public void printNumericalTelemetry(MultipleTelemetry telemetry) {
