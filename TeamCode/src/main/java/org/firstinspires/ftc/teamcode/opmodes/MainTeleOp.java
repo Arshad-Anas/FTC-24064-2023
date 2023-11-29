@@ -1,7 +1,10 @@
 package org.firstinspires.ftc.teamcode.opmodes;
 
+import static com.arcrobotics.ftclib.gamepad.GamepadKeys.Button.DPAD_DOWN;
+import static com.arcrobotics.ftclib.gamepad.GamepadKeys.Button.DPAD_UP;
 import static com.arcrobotics.ftclib.gamepad.GamepadKeys.Button.LEFT_BUMPER;
 import static com.arcrobotics.ftclib.gamepad.GamepadKeys.Button.RIGHT_BUMPER;
+import static com.arcrobotics.ftclib.gamepad.GamepadKeys.Trigger.LEFT_TRIGGER;
 import static com.arcrobotics.ftclib.gamepad.GamepadKeys.Trigger.RIGHT_TRIGGER;
 
 import com.acmerobotics.dashboard.FtcDashboard;
@@ -53,11 +56,13 @@ public class MainTeleOp extends LinearOpMode {
             gamepad1.readButtons();
             gamepad2.readButtons();
 
-            if (gamepad1.getButton(RIGHT_BUMPER)) robot.arm.extend();
-            if (gamepad1.getButton(LEFT_BUMPER)) robot.arm.retract();
+            if (gamepad1.wasJustPressed(DPAD_UP)) robot.lift.increment();
+            if (gamepad1.wasJustPressed(DPAD_DOWN)) robot.lift.decrement();
 
-            robot.arm.run();
-            robot.intake.run(gamepad1.getTrigger(RIGHT_TRIGGER));
+            robot.intake.setMotorPower(gamepad1.getTrigger(RIGHT_TRIGGER) - gamepad1.getTrigger(LEFT_TRIGGER));
+
+            robot.run();
+
             // Field-centric drive dt with control stick inputs:
             robot.drivetrain.run(
                     -gamepad1.getLeftX(),

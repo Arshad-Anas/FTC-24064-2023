@@ -6,10 +6,10 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.teamcode.subsystems.drivetrains.MecanumDrivetrain;
 
 public class Robot {
-    public MecanumDrivetrain drivetrain;
-    public Arm arm;
-    public Intake intake;
-    public Lift lift;
+    public final MecanumDrivetrain drivetrain;
+    public final Arm arm;
+    public final Intake intake;
+    public final Lift lift;
 
     public Robot(HardwareMap hardwareMap) {
         drivetrain = new MecanumDrivetrain(hardwareMap);
@@ -24,6 +24,15 @@ public class Robot {
 
     public void interrupt() {
         drivetrain.interrupt();
+    }
+
+    public void run() {
+        if (lift.getTargetRow() >= 0) arm.extend();
+        else arm.retract();
+
+        lift.run();
+        arm.run();
+        intake.run();
     }
 
     public void printTelemetry(MultipleTelemetry telemetry) {

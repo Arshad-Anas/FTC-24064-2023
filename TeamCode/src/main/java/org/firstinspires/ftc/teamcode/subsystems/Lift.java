@@ -2,6 +2,9 @@ package org.firstinspires.ftc.teamcode.subsystems;
 
 import static com.arcrobotics.ftclib.hardware.motors.Motor.GoBILDA.RPM_435;
 
+import static java.lang.Math.max;
+import static java.lang.Math.min;
+
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.arcrobotics.ftclib.hardware.motors.MotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -51,9 +54,13 @@ public class Lift {
 
     // TODO Implement this!
     public void setTargetRow(int targetRow) {
-        this.targetRow = Math.min(targetRow, 10);
+        this.targetRow = max(min(targetRow, 10), -1);
         State targetState = new State(this.targetRow < 0 ? 0 : this.targetRow * PIXEL_HEIGHT + BOTTOM_ROW_HEIGHT);
         controller.setTarget(targetState);
+    }
+
+    public int getTargetRow() {
+        return this.targetRow;
     }
 
     public void increment() {

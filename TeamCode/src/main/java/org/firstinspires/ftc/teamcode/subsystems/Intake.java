@@ -7,14 +7,20 @@ import com.arcrobotics.ftclib.hardware.motors.MotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 public class Intake {
-    MotorEx motor;
+    private final MotorEx motor;
+
+    private double motorPower = 0;
 
     public Intake(HardwareMap hardwareMap) {
         motor = new MotorEx(hardwareMap, "intake", RPM_1150);
     }
 
-    public void run(double power) {
-        motor.set(power);
+    public void setMotorPower(double motorPower) {
+        this.motorPower = motorPower;
+    }
+
+    public void run() {
+        motor.set(motorPower);
     }
 
     public void printNumericalTelemetry(MultipleTelemetry telemetry) {
