@@ -17,8 +17,8 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.subsystems.centerstage.Robot;
 
-@TeleOp(group = "24064 TeleOp")
-public class MainTeleOp extends LinearOpMode {
+@TeleOp(group = "24064 Main")
+public final class MainTeleOp extends LinearOpMode {
 
     /**
      * OpMode that is shown in driver hub; Calls all the classes and objs

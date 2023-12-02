@@ -16,7 +16,7 @@ import org.firstinspires.ftc.teamcode.control.filters.FIRLowPassFilter;
 import org.firstinspires.ftc.teamcode.control.gainmatrices.LowPassGains;
 import org.firstinspires.ftc.teamcode.control.gainmatrices.PIDGains;
 
-public class Arm {
+public final class Arm {
 
     /**
      * A PIDGains object being set to certain values (tweak these numbers!!)

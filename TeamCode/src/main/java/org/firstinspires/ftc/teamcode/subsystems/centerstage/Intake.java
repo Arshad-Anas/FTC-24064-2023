@@ -9,7 +9,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 /**
  * Class that runs the intake mechanism for in taking pixels
  */
-public class Intake {
+public final class Intake {
     private final MotorEx motor;
 
     private double motorPower = 0;
