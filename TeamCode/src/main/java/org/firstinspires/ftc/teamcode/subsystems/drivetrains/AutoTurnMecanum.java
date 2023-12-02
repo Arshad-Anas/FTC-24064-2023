@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.subsystems.drivetrains;
 
 import static org.firstinspires.ftc.robotcore.external.navigation.AngleUnit.normalizeRadians;
+import static org.firstinspires.ftc.teamcode.subsystems.centerstage.Robot.maxVoltage;
 
 import static java.lang.Math.toDegrees;
 
@@ -37,7 +38,7 @@ public class AutoTurnMecanum extends MecanumDrivetrain {
 
     private boolean useAutoTurn = true;
 
-    private double lastXCommand = 0.0, lastYCommand = 0.0, targetHeading;
+    private double lastXCommand, lastYCommand, targetHeading;
 
     private final ElapsedTime turnSettlingTimer = new ElapsedTime();
     private final ElapsedTime translationSettlingTimer = new ElapsedTime();
@@ -49,18 +50,16 @@ public class AutoTurnMecanum extends MecanumDrivetrain {
         super(hardwareMap);
     }
 
-    public void updateGains() {
-        headingController.setGains(pidGains);
-        kDFilter.setGains(derivFilterGains);
-    }
-
     @Override
     public void run(double xCommand, double yCommand, double turnCommand) {
-        double scalar = 12.0 / batteryVoltageSensor.getVoltage();
+        headingController.setGains(pidGains);
+        kDFilter.setGains(derivFilterGains);
+
+        double voltageScalar = maxVoltage / batteryVoltageSensor.getVoltage();
         boolean useManualInput = turnCommand != 0.0;
 
         if (useManualInput || !useAutoTurn) {
-            turnCommand *= scalar;
+            turnCommand *= voltageScalar;
             turnSettlingTimer.reset();
         }
 
@@ -74,15 +73,21 @@ public class AutoTurnMecanum extends MecanumDrivetrain {
             } else if (translationSettlingTimer.seconds() > TRANSLATION_SETTLING_TIME) {
                 headingController.setTarget(new State(normalizeRadians(targetHeading - getHeading()) + getHeading()));
                 double pidOutput = -headingController.calculate(new State(getHeading()));
-                turnCommand = pidOutput + (Math.signum(pidOutput) * kStatic * scalar);
+                turnCommand = pidOutput + (Math.signum(pidOutput) * kStatic * voltageScalar);
             }
         }
 
         lastXCommand = xCommand;
         lastYCommand = yCommand;
-        super.run(xCommand, yCommand, turnCommand / scalar);
+        super.run(xCommand, yCommand, turnCommand / voltageScalar);
     }
 
+
+    /**
+     * Set target heading of the robot to turn to automatically (and lock to)
+     *
+     * @param angle Angle of the robot in radians, 0 facing forward and increases counter-clockwise
+     */
     public void setTargetHeading(double angle) {
         targetHeading = normalizeRadians(angle);
     }
