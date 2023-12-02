@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.subsystems;
+package org.firstinspires.ftc.teamcode.subsystems.centerstage;
 
 import static com.arcrobotics.ftclib.hardware.motors.Motor.GoBILDA.RPM_117;
 
@@ -10,7 +10,7 @@ import com.arcrobotics.ftclib.hardware.motors.MotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 
-import org.firstinspires.ftc.teamcode.control.State;
+import org.firstinspires.ftc.teamcode.control.motion.State;
 import org.firstinspires.ftc.teamcode.control.controllers.PIDController;
 import org.firstinspires.ftc.teamcode.control.filters.FIRLowPassFilter;
 import org.firstinspires.ftc.teamcode.control.gainmatrices.LowPassGains;

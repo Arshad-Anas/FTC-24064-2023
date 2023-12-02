@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.control
+package org.firstinspires.ftc.teamcode.control.motion
 
 data class State @JvmOverloads constructor(
     @JvmField val x: Double = 0.0,
@@ -7,7 +7,7 @@ data class State @JvmOverloads constructor(
     @JvmField val j: Double = 0.0,
 ) {
 
-    operator fun plus(other:State): State {
+    operator fun plus(other: State): State {
         return State(
             x + other.x,
             v + other.v,
@@ -25,7 +25,7 @@ data class State @JvmOverloads constructor(
         )
     }
 
-    operator fun minus(other:State): State {
+    operator fun minus(other: State): State {
         return this + -other
     }
 }

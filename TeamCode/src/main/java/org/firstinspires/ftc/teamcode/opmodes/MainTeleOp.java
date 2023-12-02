@@ -2,8 +2,6 @@ package org.firstinspires.ftc.teamcode.opmodes;
 
 import static com.arcrobotics.ftclib.gamepad.GamepadKeys.Button.DPAD_DOWN;
 import static com.arcrobotics.ftclib.gamepad.GamepadKeys.Button.DPAD_UP;
-import static com.arcrobotics.ftclib.gamepad.GamepadKeys.Button.LEFT_BUMPER;
-import static com.arcrobotics.ftclib.gamepad.GamepadKeys.Button.RIGHT_BUMPER;
 import static com.arcrobotics.ftclib.gamepad.GamepadKeys.Trigger.LEFT_TRIGGER;
 import static com.arcrobotics.ftclib.gamepad.GamepadKeys.Trigger.RIGHT_TRIGGER;
 
@@ -14,7 +12,7 @@ import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-import org.firstinspires.ftc.teamcode.subsystems.Robot;
+import org.firstinspires.ftc.teamcode.subsystems.centerstage.Robot;
 
 import java.util.List;
 
