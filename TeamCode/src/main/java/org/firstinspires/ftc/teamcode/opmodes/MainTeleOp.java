@@ -29,6 +29,10 @@ public class MainTeleOp extends LinearOpMode {
 
     GamepadEx gamepad1, gamepad2;
 
+    /**
+     * OpMode that is shown in driver hub; Calls all the classes and objs
+     * @throws InterruptedException
+     */
     @Override
     public void runOpMode() throws InterruptedException {
         // Initialize multiple telemetry outputs:
@@ -39,9 +43,11 @@ public class MainTeleOp extends LinearOpMode {
         hubs = hardwareMap.getAll(LynxModule.class);
         for (LynxModule hub : hubs) hub.setBulkCachingMode(LynxModule.BulkCachingMode.MANUAL);
 
+        // The gamepads are set to GamepadEx objects
         gamepad1 = new GamepadEx(super.gamepad1);
         gamepad2 = new GamepadEx(super.gamepad2);
 
+        // Instantiated the robot class
         robot = new Robot(hardwareMap);
 
         waitForStart();
@@ -56,9 +62,11 @@ public class MainTeleOp extends LinearOpMode {
             gamepad1.readButtons();
             gamepad2.readButtons();
 
+            // Sets the boolean (or state) of the lift, which is changed by the gamepad
             if (gamepad1.wasJustPressed(DPAD_UP)) robot.lift.increment();
             if (gamepad1.wasJustPressed(DPAD_DOWN)) robot.lift.decrement();
 
+            // The intake's motor power is set by the tuning of the triggers on the gamepad
             robot.intake.setMotorPower(gamepad1.getTrigger(RIGHT_TRIGGER) - gamepad1.getTrigger(LEFT_TRIGGER));
 
             robot.run();
