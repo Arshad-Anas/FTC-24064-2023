@@ -12,6 +12,8 @@ import static java.lang.Math.abs;
 import static java.lang.Math.cos;
 import static java.lang.Math.sin;
 import static java.lang.Math.toDegrees;
+import static java.util.Arrays.asList;
+import static java.util.Collections.max;
 
 import androidx.annotation.NonNull;
 
@@ -49,7 +51,6 @@ import org.firstinspires.ftc.teamcode.roadrunner.util.LynxModuleUtil;
 import org.firstinspires.ftc.teamcode.subsystems.utilities.ThreadedIMU;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 /*
@@ -101,7 +102,7 @@ public class MecanumDrivetrain extends MecanumDrive {
         rightBack = hardwareMap.get(DcMotorEx.class, "right back");
         rightFront = hardwareMap.get(DcMotorEx.class, "right front");
 
-        motors = Arrays.asList(leftFront, leftBack, rightBack, rightFront);
+        motors = asList(leftFront, leftBack, rightBack, rightFront);
 
         for (DcMotorEx motor : motors) {
             MotorConfigurationType motorConfigurationType = motor.getMotorType().clone();
@@ -223,7 +224,7 @@ public class MecanumDrivetrain extends MecanumDrive {
     public void setPIDFCoefficients(DcMotor.RunMode runMode, PIDFCoefficients coefficients) {
         PIDFCoefficients compensatedCoefficients = new PIDFCoefficients(
                 coefficients.p, coefficients.i, coefficients.d,
-                coefficients.f * 12 / batteryVoltageSensor.getVoltage()
+                coefficients.f * maxVoltage / batteryVoltageSensor.getVoltage()
         );
 
         for (DcMotorEx motor : motors) {
@@ -280,23 +281,17 @@ public class MecanumDrivetrain extends MecanumDrive {
 
     @Override
     public void setMotorPowers(double v, double v1, double v2, double v3) {
-        if (!USE_VELO_PID) {
-            double scalar = maxVoltage / batteryVoltageSensor.getVoltage();
 
-            v *= scalar;
-            v1 *= scalar;
-            v2 *= scalar;
-            v3 *= scalar;
-        }
+        double max = max(asList(abs(v), abs(v1), abs(v2), abs(v3), 1.0));
 
-        leftFront.setPower(v);
-        leftBack.setPower(v1);
-        rightBack.setPower(v2);
-        rightFront.setPower(v3);
+        leftFront.setPower(v / max);
+        leftBack.setPower(v1 / max);
+        rightBack.setPower(v2 / max);
+        rightFront.setPower(v3 / max);
     }
 
     public static TrajectoryVelocityConstraint getVelocityConstraint(double maxVel, double maxAngularVel, double trackWidth) {
-        return new MinVelocityConstraint(Arrays.asList(
+        return new MinVelocityConstraint(asList(
                 new AngularVelocityConstraint(maxAngularVel),
                 new MecanumVelocityConstraint(maxVel, trackWidth)
         ));

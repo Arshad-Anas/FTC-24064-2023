@@ -2,9 +2,11 @@ package org.firstinspires.ftc.teamcode.subsystems.centerstage;
 
 import static com.arcrobotics.ftclib.hardware.motors.Motor.GoBILDA.RPM_117;
 
+import static org.firstinspires.ftc.teamcode.subsystems.centerstage.Robot.maxVoltage;
 import static java.lang.Math.cos;
 import static java.lang.Math.toRadians;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.arcrobotics.ftclib.hardware.motors.MotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -16,6 +18,7 @@ import org.firstinspires.ftc.teamcode.control.filters.FIRLowPassFilter;
 import org.firstinspires.ftc.teamcode.control.gainmatrices.LowPassGains;
 import org.firstinspires.ftc.teamcode.control.gainmatrices.PIDGains;
 
+@Config
 public final class Arm {
 
     /**
@@ -86,7 +89,7 @@ public final class Arm {
         controller.setTarget(new State(isExtended ? DEPOSIT_POSITION : COLLECT_POSITION));
         motor.set(
                 controller.calculate(currentState) +
-                        cos(toRadians(currentState.x * TICKS_TO_DEGREES)) * kG * (12 / batteryVoltageSensor.getVoltage())
+                        cos(toRadians(currentState.x * TICKS_TO_DEGREES)) * kG * (maxVoltage / batteryVoltageSensor.getVoltage())
         );
     }
 

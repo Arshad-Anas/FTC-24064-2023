@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence;
 
+import static org.firstinspires.ftc.teamcode.subsystems.centerstage.Robot.maxVoltage;
+
 import androidx.annotation.Nullable;
 
 import com.acmerobotics.dashboard.FtcDashboard;
@@ -201,7 +203,7 @@ public class TrajectorySequenceRunner {
             poseHistory.removeFirst();
         }
 
-        final double NOMINAL_VOLTAGE = 12.0;
+        final double NOMINAL_VOLTAGE = maxVoltage;
         double voltage = voltageSensor.getVoltage();
         if (driveSignal != null && !DriveConstants.USE_VELO_PID) {
             driveSignal = new DriveSignal(
