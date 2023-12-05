@@ -2,50 +2,35 @@ package org.firstinspires.ftc.teamcode.opmodes;
 
 import static com.arcrobotics.ftclib.gamepad.GamepadKeys.Button.DPAD_DOWN;
 import static com.arcrobotics.ftclib.gamepad.GamepadKeys.Button.DPAD_UP;
-import static com.arcrobotics.ftclib.gamepad.GamepadKeys.Button.LEFT_BUMPER;
-import static com.arcrobotics.ftclib.gamepad.GamepadKeys.Button.RIGHT_BUMPER;
 import static com.arcrobotics.ftclib.gamepad.GamepadKeys.Trigger.LEFT_TRIGGER;
 import static com.arcrobotics.ftclib.gamepad.GamepadKeys.Trigger.RIGHT_TRIGGER;
+import static org.firstinspires.ftc.teamcode.opmodes.MainAuton.gamepadEx1;
+import static org.firstinspires.ftc.teamcode.opmodes.MainAuton.gamepadEx2;
+import static org.firstinspires.ftc.teamcode.opmodes.MainAuton.mTelemetry;
+import static org.firstinspires.ftc.teamcode.opmodes.MainAuton.robot;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
-import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-import org.firstinspires.ftc.teamcode.subsystems.Robot;
+import org.firstinspires.ftc.teamcode.subsystems.centerstage.Robot;
 
-import java.util.List;
-
-@TeleOp(group = "24064 TeleOp")
-public class MainTeleOp extends LinearOpMode {
-
-    Robot robot;
-
-    MultipleTelemetry myTelemetry;
-
-    List<LynxModule> hubs;
-
-    GamepadEx gamepad1, gamepad2;
+@TeleOp(group = "24064 Main")
+public final class MainTeleOp extends LinearOpMode {
 
     /**
      * OpMode that is shown in driver hub; Calls all the classes and objs
-     * @throws InterruptedException
      */
     @Override
     public void runOpMode() throws InterruptedException {
         // Initialize multiple telemetry outputs:
-        myTelemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
-
-        // Initialize internal hub representations:
-        // Switch hubs to manually reset sensor inputs when we tell it to:
-        hubs = hardwareMap.getAll(LynxModule.class);
-        for (LynxModule hub : hubs) hub.setBulkCachingMode(LynxModule.BulkCachingMode.MANUAL);
+        mTelemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
 
         // The gamepads are set to GamepadEx objects
-        gamepad1 = new GamepadEx(super.gamepad1);
-        gamepad2 = new GamepadEx(super.gamepad2);
+        gamepadEx1 = new GamepadEx(super.gamepad1);
+        gamepadEx2 = new GamepadEx(super.gamepad2);
 
         // Instantiated the robot class
         robot = new Robot(hardwareMap);
@@ -56,30 +41,29 @@ public class MainTeleOp extends LinearOpMode {
 
         // Control loop:
         while (opModeIsActive()) {
-            // Manually clear old sensor data from the last loop:
-            for (LynxModule hub : hubs) hub.clearBulkCache();
+            robot.readSensors();
             // Read sensors + gamepads:
-            gamepad1.readButtons();
-            gamepad2.readButtons();
+            gamepadEx1.readButtons();
+            gamepadEx2.readButtons();
 
             // Sets the boolean (or state) of the lift, which is changed by the gamepad
-            if (gamepad1.wasJustPressed(DPAD_UP)) robot.lift.increment();
-            if (gamepad1.wasJustPressed(DPAD_DOWN)) robot.lift.decrement();
+            if (gamepadEx1.wasJustPressed(DPAD_UP)) robot.lift.increment();
+            if (gamepadEx1.wasJustPressed(DPAD_DOWN)) robot.lift.decrement();
 
             // The intake's motor power is set by the tuning of the triggers on the gamepad
-            robot.intake.setMotorPower(gamepad1.getTrigger(RIGHT_TRIGGER) - gamepad1.getTrigger(LEFT_TRIGGER));
+            robot.intake.setMotorPower(gamepadEx1.getTrigger(RIGHT_TRIGGER) - gamepadEx1.getTrigger(LEFT_TRIGGER));
 
             robot.run();
 
             // Field-centric drive dt with control stick inputs:
             robot.drivetrain.run(
-                    -gamepad1.getLeftX(),
-                    -gamepad1.getLeftY(),
-                    -gamepad1.getRightX()
+                    -gamepadEx1.getLeftX(),
+                    -gamepadEx1.getLeftY(),
+                    -gamepadEx1.getRightX()
             );
 
-            robot.printTelemetry(myTelemetry);
-            myTelemetry.update();
+            robot.printTelemetry(mTelemetry);
+            mTelemetry.update();
         }
         robot.interrupt();
     }

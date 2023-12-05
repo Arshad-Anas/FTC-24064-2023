@@ -1,18 +1,28 @@
-package org.firstinspires.ftc.teamcode.subsystems;
+package org.firstinspires.ftc.teamcode.subsystems.centerstage;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
+import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.subsystems.drivetrains.MecanumDrivetrain;
 
+import java.util.List;
+
+
+
 /**
  * Gets all the classes for the robot and calls them with their right parameters
  */
-public class Robot {
+@Config
+public final class Robot {
+
+    public static double maxVoltage = 13;
     public final MecanumDrivetrain drivetrain;
     public final Arm arm;
     public final Intake intake;
     public final Lift lift;
+    private final List<LynxModule> revHubs;
 
     /**
      * Constructor of Robot; Instantiates the classes with the hw (hardwareMap)
@@ -23,6 +33,9 @@ public class Robot {
         arm = new Arm(hardwareMap);
         intake = new Intake(hardwareMap);
         lift = new Lift(hardwareMap);
+
+        revHubs = hardwareMap.getAll(LynxModule.class);
+        for (LynxModule hub : revHubs) hub.setBulkCachingMode(LynxModule.BulkCachingMode.MANUAL);
     }
 
     public void start() {
@@ -31,6 +44,10 @@ public class Robot {
 
     public void interrupt() {
         drivetrain.interrupt();
+    }
+
+    public void readSensors() {
+        for (LynxModule hub : revHubs) hub.clearBulkCache();
     }
 
     public void run() {

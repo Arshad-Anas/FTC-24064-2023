@@ -1,12 +1,12 @@
-package org.firstinspires.ftc.teamcode.subsystems.drivetrains;
+package org.firstinspires.ftc.teamcode.subsystems.utilities;
+
+import static org.firstinspires.ftc.robotcore.external.navigation.AngleUnit.RADIANS;
 
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.IMU;
 
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-
-public class ThreadedIMU extends Thread {
+public final class ThreadedIMU extends Thread {
 
     private final IMU imu;
 
@@ -19,14 +19,15 @@ public class ThreadedIMU extends Thread {
         imu.resetDeviceConfigurationForOpMode();
         imu.resetYaw();
         imu.initialize(new IMU.Parameters(imuOrientation));
+
         start();
     }
 
     @Override
     public void run() {
         while (run) {
-            heading = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
-            angularVelo = imu.getRobotAngularVelocity(AngleUnit.RADIANS).zRotationRate;
+            heading = imu.getRobotYawPitchRollAngles().getYaw(RADIANS);
+            angularVelo = imu.getRobotAngularVelocity(RADIANS).zRotationRate;
         }
     }
 

@@ -1,22 +1,25 @@
-package org.firstinspires.ftc.teamcode.subsystems;
+package org.firstinspires.ftc.teamcode.subsystems.centerstage;
 
 import static com.arcrobotics.ftclib.hardware.motors.Motor.GoBILDA.RPM_435;
 
+import static org.firstinspires.ftc.teamcode.subsystems.centerstage.Robot.maxVoltage;
 import static java.lang.Math.max;
 import static java.lang.Math.min;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.arcrobotics.ftclib.hardware.motors.MotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 
-import org.firstinspires.ftc.teamcode.control.State;
+import org.firstinspires.ftc.teamcode.control.motion.State;
 import org.firstinspires.ftc.teamcode.control.controllers.PIDController;
 import org.firstinspires.ftc.teamcode.control.filters.FIRLowPassFilter;
 import org.firstinspires.ftc.teamcode.control.gainmatrices.LowPassGains;
 import org.firstinspires.ftc.teamcode.control.gainmatrices.PIDGains;
 
-public class Lift {
+@Config
+public final class Lift {
 
     /**
      * A PIDGains object being set to certain values (tweak these numbers!!)
@@ -109,7 +112,7 @@ public class Lift {
      * @param voltageCompensate; Boolean that is used if battery is low, and if it needs to compensate (save)
      */
     private void run(double motorPower, boolean voltageCompensate) {
-        double scalar = 12 / batteryVoltageSensor.getVoltage();
+        double scalar = maxVoltage / batteryVoltageSensor.getVoltage();
 
         if (voltageCompensate) motorPower *= scalar;
 

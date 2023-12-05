@@ -1,12 +1,19 @@
 package org.firstinspires.ftc.teamcode.subsystems.drivetrains;
 
+import static com.qualcomm.robotcore.hardware.DcMotor.RunMode.RUN_USING_ENCODER;
+import static com.qualcomm.robotcore.hardware.DcMotor.RunMode.RUN_WITHOUT_ENCODER;
 import static org.firstinspires.ftc.robotcore.external.navigation.AngleUnit.normalizeRadians;
 import static org.firstinspires.ftc.teamcode.roadrunner.DriveConstants.LOGO_FACING_DIR;
+import static org.firstinspires.ftc.teamcode.roadrunner.DriveConstants.MOTOR_VELO_PID;
 import static org.firstinspires.ftc.teamcode.roadrunner.DriveConstants.USB_FACING_DIR;
+import static org.firstinspires.ftc.teamcode.roadrunner.DriveConstants.USE_VELO_PID;
+import static org.firstinspires.ftc.teamcode.subsystems.centerstage.Robot.maxVoltage;
 import static java.lang.Math.abs;
 import static java.lang.Math.cos;
 import static java.lang.Math.sin;
 import static java.lang.Math.toDegrees;
+import static java.util.Arrays.asList;
+import static java.util.Collections.max;
 
 import androidx.annotation.NonNull;
 
@@ -41,9 +48,9 @@ import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySe
 import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySequenceBuilder;
 import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySequenceRunner;
 import org.firstinspires.ftc.teamcode.roadrunner.util.LynxModuleUtil;
+import org.firstinspires.ftc.teamcode.subsystems.utilities.ThreadedIMU;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 /*
@@ -75,7 +82,6 @@ public class MecanumDrivetrain extends MecanumDrive {
 
     public MecanumDrivetrain(HardwareMap hardwareMap) {
         super(DriveConstants.kV, DriveConstants.kA, DriveConstants.kStatic, DriveConstants.TRACK_WIDTH, DriveConstants.TRACK_WIDTH, LATERAL_MULTIPLIER);
-
         this.hardwareMap = hardwareMap;
 
         TrajectoryFollower follower = new HolonomicPIDVAFollower(TRANSLATIONAL_PID, TRANSLATIONAL_PID, HEADING_PID,
@@ -89,12 +95,14 @@ public class MecanumDrivetrain extends MecanumDrive {
             module.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
         }
 
+        // TODO: adjust the names of the following hardware devices to match your configuration
+
         leftFront = hardwareMap.get(DcMotorEx.class, "left front");
         leftBack = hardwareMap.get(DcMotorEx.class, "left back");
         rightBack = hardwareMap.get(DcMotorEx.class, "right back");
         rightFront = hardwareMap.get(DcMotorEx.class, "right front");
 
-        motors = Arrays.asList(leftFront, leftBack, rightBack, rightFront);
+        motors = asList(leftFront, leftBack, rightBack, rightFront);
 
         for (DcMotorEx motor : motors) {
             MotorConfigurationType motorConfigurationType = motor.getMotorType().clone();
@@ -102,14 +110,12 @@ public class MecanumDrivetrain extends MecanumDrive {
             motor.setMotorType(motorConfigurationType);
         }
 
-        if (DriveConstants.RUN_USING_ENCODER) {
-            setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        }
+        setMode(USE_VELO_PID ? RUN_USING_ENCODER : RUN_WITHOUT_ENCODER);
 
         setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        if (DriveConstants.RUN_USING_ENCODER && DriveConstants.MOTOR_VELO_PID != null) {
-            setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, DriveConstants.MOTOR_VELO_PID);
+        if (USE_VELO_PID && MOTOR_VELO_PID != null) {
+            setPIDFCoefficients(RUN_USING_ENCODER, MOTOR_VELO_PID);
         }
 
         // TODO: reverse any motors using DcMotor.setDirection()
@@ -191,6 +197,7 @@ public class MecanumDrivetrain extends MecanumDrive {
         updatePoseEstimate();
         DriveSignal signal = trajectorySequenceRunner.update(getPoseEstimate(), getPoseVelocity());
         if (signal != null) setDriveSignal(signal);
+        setCurrentHeading(getPoseEstimate().getHeading());
     }
 
     public void waitForIdle() {
@@ -217,7 +224,7 @@ public class MecanumDrivetrain extends MecanumDrive {
     public void setPIDFCoefficients(DcMotor.RunMode runMode, PIDFCoefficients coefficients) {
         PIDFCoefficients compensatedCoefficients = new PIDFCoefficients(
                 coefficients.p, coefficients.i, coefficients.d,
-                coefficients.f * 12 / batteryVoltageSensor.getVoltage()
+                coefficients.f * maxVoltage / batteryVoltageSensor.getVoltage()
         );
 
         for (DcMotorEx motor : motors) {
@@ -274,14 +281,17 @@ public class MecanumDrivetrain extends MecanumDrive {
 
     @Override
     public void setMotorPowers(double v, double v1, double v2, double v3) {
-        leftFront.setPower(v);
-        leftBack.setPower(v1);
-        rightBack.setPower(v2);
-        rightFront.setPower(v3);
+
+        double max = max(asList(abs(v), abs(v1), abs(v2), abs(v3), 1.0));
+
+        leftFront.setPower(v / max);
+        leftBack.setPower(v1 / max);
+        rightBack.setPower(v2 / max);
+        rightFront.setPower(v3 / max);
     }
 
     public static TrajectoryVelocityConstraint getVelocityConstraint(double maxVel, double maxAngularVel, double trackWidth) {
-        return new MinVelocityConstraint(Arrays.asList(
+        return new MinVelocityConstraint(asList(
                 new AngularVelocityConstraint(maxAngularVel),
                 new MecanumVelocityConstraint(maxVel, trackWidth)
         ));
@@ -289,6 +299,10 @@ public class MecanumDrivetrain extends MecanumDrive {
 
     public static TrajectoryAccelerationConstraint getAccelerationConstraint(double maxAccel) {
         return new ProfileAccelerationConstraint(maxAccel);
+    }
+
+    public void breakFollowing() {
+        trajectorySequenceRunner.breakFollowing();
     }
 
     @Override
@@ -301,11 +315,12 @@ public class MecanumDrivetrain extends MecanumDrive {
         return imu.getAngularVelo();
     }
 
+    private final HardwareMap hardwareMap;
     private ThreadedIMU imu;
 
     private double headingOffset;
 
-    private final HardwareMap hardwareMap;
+    private boolean slowModeLocked = false;
 
     public void start() {
         imu = new ThreadedIMU(hardwareMap, "imu", new RevHubOrientationOnRobot(LOGO_FACING_DIR, USB_FACING_DIR));
@@ -345,7 +360,7 @@ public class MecanumDrivetrain extends MecanumDrive {
         yCommand = x * sin(theta) + y * cos(theta);
 
         // run motors
-        double voltageScalar = 12.0 / batteryVoltageSensor.getVoltage();
+        double voltageScalar = maxVoltage / batteryVoltageSensor.getVoltage();
         setWeightedDrivePower(new Pose2d(
                 yCommand * voltageScalar,
                 -xCommand * voltageScalar,

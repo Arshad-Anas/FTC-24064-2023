@@ -1,8 +1,8 @@
-package org.firstinspires.ftc.teamcode.control;
+package org.firstinspires.ftc.teamcode.control.motion;
 
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-public class Differentiator {
+public final class Differentiator {
 
     private double lastValue = Double.NaN, derivative = 0.0;
 
