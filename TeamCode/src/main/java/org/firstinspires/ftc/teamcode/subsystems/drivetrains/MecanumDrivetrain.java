@@ -320,8 +320,6 @@ public class MecanumDrivetrain extends MecanumDrive {
 
     private double headingOffset;
 
-    private boolean slowModeLocked = false;
-
     public void start() {
         imu = new ThreadedIMU(hardwareMap, "imu", new RevHubOrientationOnRobot(LOGO_FACING_DIR, USB_FACING_DIR));
     }
