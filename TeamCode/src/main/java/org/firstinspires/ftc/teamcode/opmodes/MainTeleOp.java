@@ -6,6 +6,7 @@ import static com.arcrobotics.ftclib.gamepad.GamepadKeys.Trigger.LEFT_TRIGGER;
 import static com.arcrobotics.ftclib.gamepad.GamepadKeys.Trigger.RIGHT_TRIGGER;
 import static org.firstinspires.ftc.teamcode.opmodes.MainAuton.gamepadEx1;
 import static org.firstinspires.ftc.teamcode.opmodes.MainAuton.gamepadEx2;
+import static org.firstinspires.ftc.teamcode.opmodes.MainAuton.keyPressed;
 import static org.firstinspires.ftc.teamcode.opmodes.MainAuton.mTelemetry;
 import static org.firstinspires.ftc.teamcode.opmodes.MainAuton.robot;
 
@@ -29,15 +30,13 @@ public final class MainTeleOp extends LinearOpMode {
         mTelemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
 
         // The gamepads are set to GamepadEx objects
-        gamepadEx1 = new GamepadEx(super.gamepad1);
-        gamepadEx2 = new GamepadEx(super.gamepad2);
+        gamepadEx1 = new GamepadEx(gamepad1);
+        gamepadEx2 = new GamepadEx(gamepad2);
 
         // Instantiated the robot class
         robot = new Robot(hardwareMap);
 
         waitForStart();
-
-        robot.start();
 
         // Control loop:
         while (opModeIsActive()) {
@@ -47,8 +46,8 @@ public final class MainTeleOp extends LinearOpMode {
             gamepadEx2.readButtons();
 
             // Sets the boolean (or state) of the lift, which is changed by the gamepad
-            if (gamepadEx1.wasJustPressed(DPAD_UP)) robot.lift.increment();
-            if (gamepadEx1.wasJustPressed(DPAD_DOWN)) robot.lift.decrement();
+            if (keyPressed(1, DPAD_UP)) robot.lift.increment();
+            if (keyPressed(1, DPAD_DOWN)) robot.lift.decrement();
 
             // The intake's motor power is set by the tuning of the triggers on the gamepad
             robot.intake.setMotorPower(gamepadEx1.getTrigger(RIGHT_TRIGGER) - gamepadEx1.getTrigger(LEFT_TRIGGER));

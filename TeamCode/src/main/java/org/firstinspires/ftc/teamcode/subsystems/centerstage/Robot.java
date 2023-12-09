@@ -38,10 +38,6 @@ public final class Robot {
         for (LynxModule hub : revHubs) hub.setBulkCachingMode(LynxModule.BulkCachingMode.MANUAL);
     }
 
-    public void start() {
-        drivetrain.start();
-    }
-
     public void interrupt() {
         drivetrain.interrupt();
     }
