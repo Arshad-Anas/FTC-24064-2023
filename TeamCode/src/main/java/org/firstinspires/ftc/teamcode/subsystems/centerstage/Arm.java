@@ -54,6 +54,7 @@ public final class Arm {
     private final VoltageSensor batteryVoltageSensor;
 
     private State currentState = new State();
+    private double currentAngle = 0;
 
     private boolean isExtended = false;
 
@@ -83,13 +84,14 @@ public final class Arm {
      */
     public void run() {
         currentState = new State(motor.encoder.getPosition());
+        currentAngle = currentState.x * TICKS_TO_DEGREES;
         controller.setGains(pidGains);
         derivFilter.setGains(filterGains);
 
         controller.setTarget(new State(isExtended ? DEPOSIT_POSITION : COLLECT_POSITION));
         motor.set(
                 controller.calculate(currentState) +
-                        cos(toRadians(currentState.x * TICKS_TO_DEGREES)) * kG * (maxVoltage / batteryVoltageSensor.getVoltage())
+                        cos(toRadians(currentAngle)) * kG * (maxVoltage / batteryVoltageSensor.getVoltage())
         );
     }
 
@@ -100,7 +102,11 @@ public final class Arm {
     public void printNumericalTelemetry(MultipleTelemetry telemetry) {
         telemetry.addData("Current position (ticks)", currentState.x);
         telemetry.addData("Error derivative (ticks/s)", controller.getErrorDerivative());
-        telemetry.addData("Current angle (degrees)", currentState.x * TICKS_TO_DEGREES);
+        telemetry.addData("Current angle (degrees)", currentAngle);
+    }
+
+    public double getCurrentAngle() {
+        return currentAngle;
     }
 }
 

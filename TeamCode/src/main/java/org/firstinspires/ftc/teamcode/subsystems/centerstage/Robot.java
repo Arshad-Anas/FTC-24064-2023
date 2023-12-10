@@ -22,6 +22,7 @@ public final class Robot {
     public final Arm arm;
     public final Intake intake;
     public final Lift lift;
+    public final Carriage carriage;
     private final List<LynxModule> revHubs;
 
     /**
@@ -33,6 +34,7 @@ public final class Robot {
         arm = new Arm(hardwareMap);
         intake = new Intake(hardwareMap);
         lift = new Lift(hardwareMap);
+        carriage = new Carriage(hardwareMap);
 
         revHubs = hardwareMap.getAll(LynxModule.class);
         for (LynxModule hub : revHubs) hub.setBulkCachingMode(LynxModule.BulkCachingMode.MANUAL);
@@ -50,9 +52,12 @@ public final class Robot {
         if (lift.getTargetRow() >= 0) arm.extend();
         else arm.retract();
 
+        carriage.set(arm.getCurrentAngle());
+
         lift.run();
         arm.run();
         intake.run();
+        carriage.run();
     }
 
     /**
@@ -61,6 +66,8 @@ public final class Robot {
      */
     public void printTelemetry(MultipleTelemetry telemetry) {
         arm.printTelemetry(telemetry);
+        telemetry.addLine();
+        carriage.printTelemetry(telemetry);
         telemetry.addLine();
         lift.printTelemetry(telemetry);
         telemetry.addLine();
