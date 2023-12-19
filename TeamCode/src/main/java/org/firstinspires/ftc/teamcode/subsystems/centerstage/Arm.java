@@ -32,7 +32,7 @@ public class Arm {
         );
     }
 
-    public void setExtended(boolean isDepositing) {
+    void setExtended(boolean isDepositing) {
         armPivot.setActivated(isDepositing);
     }
 
