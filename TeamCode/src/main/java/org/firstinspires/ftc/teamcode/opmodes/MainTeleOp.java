@@ -1,7 +1,9 @@
 package org.firstinspires.ftc.teamcode.opmodes;
 
+import static com.arcrobotics.ftclib.gamepad.GamepadKeys.Button.B;
 import static com.arcrobotics.ftclib.gamepad.GamepadKeys.Button.DPAD_DOWN;
 import static com.arcrobotics.ftclib.gamepad.GamepadKeys.Button.DPAD_UP;
+import static com.arcrobotics.ftclib.gamepad.GamepadKeys.Button.X;
 import static com.arcrobotics.ftclib.gamepad.GamepadKeys.Trigger.LEFT_TRIGGER;
 import static com.arcrobotics.ftclib.gamepad.GamepadKeys.Trigger.RIGHT_TRIGGER;
 import static org.firstinspires.ftc.teamcode.opmodes.MainAuton.gamepadEx1;
@@ -13,6 +15,7 @@ import static org.firstinspires.ftc.teamcode.opmodes.MainAuton.robot;
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
+import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -45,12 +48,16 @@ public final class MainTeleOp extends LinearOpMode {
             gamepadEx1.readButtons();
             gamepadEx2.readButtons();
 
-            // Sets the boolean (or state) of the lift, which is changed by the gamepad
-            if (keyPressed(1, DPAD_UP)) robot.lift.increment();
-            if (keyPressed(1, DPAD_DOWN)) robot.lift.decrement();
+            // Changes the level of the lift, which is changed by the d-pad
+            if (keyPressed(2, DPAD_UP)) robot.lift.increment();
+            if (keyPressed(2, DPAD_DOWN)) robot.lift.decrement();
+
+            // Sets the carriage flap to open or closed
+            if (keyPressed(2, X)) robot.arm.setFlapOpen(true);
+            if (keyPressed(2, B)) robot.arm.setFlapOpen(false);
 
             // The intake's motor power is set by the tuning of the triggers on the gamepad
-            robot.intake.setMotorPower(gamepadEx1.getTrigger(RIGHT_TRIGGER) - gamepadEx1.getTrigger(LEFT_TRIGGER));
+            robot.intake.setMotorPower(gamepadEx2.getTrigger(RIGHT_TRIGGER) - gamepadEx2.getTrigger(LEFT_TRIGGER));
 
             robot.run();
 

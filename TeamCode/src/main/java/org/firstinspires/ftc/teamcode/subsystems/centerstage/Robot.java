@@ -9,8 +9,6 @@ import org.firstinspires.ftc.teamcode.subsystems.drivetrains.MecanumDrivetrain;
 
 import java.util.List;
 
-
-
 /**
  * Gets all the classes for the robot and calls them with their right parameters
  */
@@ -22,7 +20,6 @@ public final class Robot {
     public final Arm arm;
     public final Intake intake;
     public final Lift lift;
-    public final Carriage carriage;
     private final List<LynxModule> revHubs;
 
     /**
@@ -34,7 +31,6 @@ public final class Robot {
         arm = new Arm(hardwareMap);
         intake = new Intake(hardwareMap);
         lift = new Lift(hardwareMap);
-        carriage = new Carriage(hardwareMap);
 
         revHubs = hardwareMap.getAll(LynxModule.class);
         for (LynxModule hub : revHubs) hub.setBulkCachingMode(LynxModule.BulkCachingMode.MANUAL);
@@ -49,15 +45,11 @@ public final class Robot {
     }
 
     public void run() {
-        if (lift.getTargetRow() >= 0) arm.extend();
-        else arm.retract();
-
-        carriage.set(arm.getCurrentAngle());
+        arm.setExtended(lift.getTargetRow() >= 0);
 
         lift.run();
         arm.run();
         intake.run();
-        carriage.run();
     }
 
     /**
@@ -67,16 +59,13 @@ public final class Robot {
     public void printTelemetry(MultipleTelemetry telemetry) {
         arm.printTelemetry(telemetry);
         telemetry.addLine();
-        carriage.printTelemetry(telemetry);
-        telemetry.addLine();
         lift.printTelemetry(telemetry);
+        telemetry.addLine();
         telemetry.addLine();
         telemetry.addLine();
         drivetrain.printNumericalTelemetry(telemetry);
         telemetry.addLine();
         intake.printNumericalTelemetry(telemetry);
-        telemetry.addLine();
-        arm.printNumericalTelemetry(telemetry);
         telemetry.addLine();
         lift.printNumericalTelemetry(telemetry);
     }
