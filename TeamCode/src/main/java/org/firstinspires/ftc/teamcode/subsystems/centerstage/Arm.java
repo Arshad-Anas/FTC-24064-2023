@@ -10,9 +10,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.teamcode.subsystems.utilities.SimpleServoPivot;
 
 @Config
-public class Arm {
-    private final SimpleServoPivot armPivot;
-    private final SimpleServoPivot flap;
+public final class Arm {
 
     // TODO MEASURE
     public static final double
@@ -20,6 +18,8 @@ public class Arm {
             ANGLE_UP_ARM = 0,
             ANGLE_OPEN_FLAP = 0,
             ANGLE_CLOSED_FLAP = 0;
+
+    private final SimpleServoPivot armPivot, flap;
 
     public Arm(HardwareMap hardwareMap) {
         flap = new SimpleServoPivot(ANGLE_OPEN_FLAP, ANGLE_CLOSED_FLAP, getGoBildaServo(hardwareMap, "flap"));
@@ -48,7 +48,7 @@ public class Arm {
     }
 
     public void printTelemetry(MultipleTelemetry telemetry) {
-        telemetry.addData("flap is", (flap.getActivated() ? "open" : "close"));
-        telemetry.addData("Arm is", "running to " + (armPivot.getActivated() ? "deposit" : "collect"));
+        telemetry.addData("Flap is", flap.getActivated() ? "open" : "close");
+        telemetry.addData("Arm is running to", armPivot.getActivated() ? "deposit" : "collect");
     }
 }
