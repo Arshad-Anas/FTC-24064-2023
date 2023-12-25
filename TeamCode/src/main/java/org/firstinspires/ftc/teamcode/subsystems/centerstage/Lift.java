@@ -9,6 +9,7 @@ import static java.lang.Math.min;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.arcrobotics.ftclib.hardware.motors.MotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 
@@ -40,7 +41,7 @@ public final class Lift {
      * Remember to set these constants correctly! (in ticks)
      */
     public static double
-            BOTTOM_ROW_HEIGHT = 100,
+            BOTTOM_ROW_HEIGHT = 0,
             PIXEL_HEIGHT = 10,
             kG = 0;
 
@@ -54,6 +55,8 @@ public final class Lift {
     private State currentState = new State();
 
     private int targetRow = -1;
+
+    private boolean leaderNull, followerNull;
 
     /**
      * Constructor of Lift class; Sets variables with hw (hardwareMap)
@@ -95,11 +98,11 @@ public final class Lift {
      * Calls another run() method that calculates the motor output proportionally and doesn't compensate for power
      */
     public void run() {
-        currentState = new State(motors[0].encoder.getPosition());
+        currentState = new State(this.motors[0].encoder.getPosition());
         controller.setGains(pidGains);
         derivFilter.setGains(filterGains);
 
-        run(controller.calculate(currentState), false);
+        run(controller.calculate(new State(this.motors[0].encoder.getPosition())), false);
     }
 
     public void run(double motorPower) {
@@ -121,6 +124,8 @@ public final class Lift {
 
     public void printTelemetry(MultipleTelemetry telemetry) {
         telemetry.addData("Target position (pixels)", targetRow < 0 ? "Retracted" : "Row " + targetRow);
+        telemetry.addData("Is currentState null", this.currentState == null);
+        telemetry.addData("Motor position", this.motors[0].encoder.getPosition());
     }
 
     public void printNumericalTelemetry(MultipleTelemetry telemetry) {
