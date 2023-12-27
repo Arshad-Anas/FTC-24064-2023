@@ -11,6 +11,7 @@ import com.arcrobotics.ftclib.hardware.motors.MotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 
+import org.firstinspires.ftc.teamcode.control.controllers.FeedforwardController;
 import org.firstinspires.ftc.teamcode.control.controllers.PIDController;
 import org.firstinspires.ftc.teamcode.control.filters.FIRLowPassFilter;
 import org.firstinspires.ftc.teamcode.control.gainmatrices.FeedforwardGains;
@@ -25,9 +26,9 @@ public final class Lift {
      * A PIDGains object being set to certain values (tweak these numbers!!)
      */
     public static PIDGains pidGains = new PIDGains(
-            0,
-            0,
-            0,
+            0.004,
+            0.001,
+            0.00005,
             Double.POSITIVE_INFINITY
     );
 
@@ -83,8 +84,6 @@ public final class Lift {
     // TODO Implement this!
     public void setTargetRow(int targetRow) {
         this.targetRow = max(min(targetRow, 10), -1);
-        State targetState = new State(this.targetRow < 0 ? 0 : this.targetRow * PIXEL_HEIGHT + BOTTOM_ROW_HEIGHT);
-        controller.setTarget(targetState);
     }
 
     public int getTargetRow() {
@@ -97,6 +96,11 @@ public final class Lift {
 
     public void decrement() {
         setTargetRow(targetRow - 1);
+    }
+
+    public void updateTarget() {
+        State targetState = new State(targetRow < 0 ? 0 : targetRow * PIXEL_HEIGHT + BOTTOM_ROW_HEIGHT);
+        controller.setTarget(targetState);
     }
 
     /**

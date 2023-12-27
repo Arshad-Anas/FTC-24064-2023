@@ -51,6 +51,7 @@ public final class MainTeleOp extends LinearOpMode {
             // Changes the level of the lift, which is changed by the d-pad
              if (keyPressed(2, GamepadKeys.Button.DPAD_UP)) robot.lift.increment();
              if (keyPressed(2, GamepadKeys.Button.DPAD_DOWN)) robot.lift.decrement();
+             if (keyPressed(2, GamepadKeys.Button.A)) robot.lift.updateTarget();
 
             // The intake's motor power is set by the tuning of the triggers on the gamepad
             robot.intake.setMotorPower(gamepadEx1.getTrigger(RIGHT_TRIGGER) - gamepadEx1.getTrigger(LEFT_TRIGGER));
