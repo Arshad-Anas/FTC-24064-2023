@@ -49,12 +49,8 @@ public final class MainTeleOp extends LinearOpMode {
             gamepadEx2.readButtons();
 
             // Changes the level of the lift, which is changed by the d-pad
-             if (keyPressed(2, DPAD_UP)) robot.lift.increment();
-             if (keyPressed(2, DPAD_DOWN)) robot.lift.decrement();
-
-//             Sets the carriage flap to open or closed
-             if (keyPressed(2, X)) robot.arm.setExtended(true);
-             if (keyPressed(2, B)) robot.arm.setExtended(false);
+             if (keyPressed(2, GamepadKeys.Button.DPAD_UP)) robot.lift.increment();
+             if (keyPressed(2, GamepadKeys.Button.DPAD_DOWN)) robot.lift.decrement();
 
             // The intake's motor power is set by the tuning of the triggers on the gamepad
             robot.intake.setMotorPower(gamepadEx1.getTrigger(RIGHT_TRIGGER) - gamepadEx1.getTrigger(LEFT_TRIGGER));

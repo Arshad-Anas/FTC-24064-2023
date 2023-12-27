@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.teamcode.subsystems.centerstage;
 
 import static com.arcrobotics.ftclib.hardware.motors.Motor.GoBILDA.RPM_435;
-
 import static org.firstinspires.ftc.teamcode.subsystems.centerstage.Robot.maxVoltage;
 import static java.lang.Math.max;
 import static java.lang.Math.min;
@@ -9,15 +8,15 @@ import static java.lang.Math.min;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.arcrobotics.ftclib.hardware.motors.MotorEx;
-import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 
-import org.firstinspires.ftc.teamcode.control.motion.State;
 import org.firstinspires.ftc.teamcode.control.controllers.PIDController;
 import org.firstinspires.ftc.teamcode.control.filters.FIRLowPassFilter;
+import org.firstinspires.ftc.teamcode.control.gainmatrices.FeedforwardGains;
 import org.firstinspires.ftc.teamcode.control.gainmatrices.LowPassGains;
 import org.firstinspires.ftc.teamcode.control.gainmatrices.PIDGains;
+import org.firstinspires.ftc.teamcode.control.motion.State;
 
 @Config
 public final class Lift {
@@ -32,6 +31,13 @@ public final class Lift {
             Double.POSITIVE_INFINITY
     );
 
+    public static FeedforwardGains feedforwardGains = new FeedforwardGains(
+            0.01,
+            0.01
+    );
+
+    private double lastKp = pidGains.kP;
+
     // Sets the filter for PID outputs and constrains overshoots with controlling (also tweak!!)
     public static LowPassGains filterGains = new LowPassGains(0, 2);
 
@@ -42,8 +48,9 @@ public final class Lift {
      */
     public static double
             BOTTOM_ROW_HEIGHT = 0,
-            PIXEL_HEIGHT = 10,
-            kG = 0;
+            PIXEL_HEIGHT = 100,
+            kG = 0,
+            PERCENT_OVERSHOOT = 0;
 
     private final MotorEx[] motors;
 
@@ -56,7 +63,6 @@ public final class Lift {
 
     private int targetRow = -1;
 
-    private boolean leaderNull, followerNull;
 
     /**
      * Constructor of Lift class; Sets variables with hw (hardwareMap)
@@ -99,10 +105,14 @@ public final class Lift {
      */
     public void run() {
         currentState = new State(this.motors[0].encoder.getPosition());
+        if (lastKp != pidGains.kP) {
+//            pidGains.computeKd(feedforwardGains, PERCENT_OVERSHOOT);
+            lastKp = pidGains.kP;
+        }
         controller.setGains(pidGains);
         derivFilter.setGains(filterGains);
 
-        run(controller.calculate(new State(this.motors[0].encoder.getPosition())), false);
+        run(controller.calculate(currentState), false);
     }
 
     public void run(double motorPower) {
@@ -124,12 +134,13 @@ public final class Lift {
 
     public void printTelemetry(MultipleTelemetry telemetry) {
         telemetry.addData("Target position (pixels)", targetRow < 0 ? "Retracted" : "Row " + targetRow);
-        telemetry.addData("Is currentState null", this.currentState == null);
         telemetry.addData("Motor position", this.motors[0].encoder.getPosition());
     }
 
     public void printNumericalTelemetry(MultipleTelemetry telemetry) {
         telemetry.addData("Current position (ticks)", currentState.x);
         telemetry.addData("Error derivative (ticks/s)", controller.getErrorDerivative());
+        telemetry.addData("Error (ticks)", controller.getErrorIntegral());
+        telemetry.addData("kD (computed)", pidGains.kD);
     }
 }
