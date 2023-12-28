@@ -14,6 +14,8 @@ public class Arm {
     private final SimpleServoPivot armPivot;
 //    private final SimpleServoPivot flap;
 
+    private boolean isDepositing = false;
+
     // TODO MEASURE
     public static final double
             ANGLE_DOWN_ARM = 180,
@@ -32,7 +34,12 @@ public class Arm {
         );
     }
 
+    public void toggleArm() {
+        setExtended(!isDepositing);
+    }
+
     public void setExtended(boolean isDepositing) {
+        this.isDepositing = isDepositing;
         armPivot.setActivated(isDepositing);
     }
 

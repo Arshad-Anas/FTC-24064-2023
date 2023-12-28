@@ -1,11 +1,6 @@
 package org.firstinspires.ftc.teamcode.subsystems.centerstage;
 
-import static com.arcrobotics.ftclib.hardware.motors.Motor.GoBILDA.*;
-
 import com.acmerobotics.dashboard.config.Config;
-import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
-import com.arcrobotics.ftclib.hardware.motors.MotorEx;
-import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 

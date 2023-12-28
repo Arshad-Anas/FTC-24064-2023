@@ -1,9 +1,9 @@
 package org.firstinspires.ftc.teamcode.opmodes;
 
-import static com.arcrobotics.ftclib.gamepad.GamepadKeys.Button.B;
+import static com.arcrobotics.ftclib.gamepad.GamepadKeys.Button.A;
 import static com.arcrobotics.ftclib.gamepad.GamepadKeys.Button.DPAD_DOWN;
 import static com.arcrobotics.ftclib.gamepad.GamepadKeys.Button.DPAD_UP;
-import static com.arcrobotics.ftclib.gamepad.GamepadKeys.Button.X;
+import static com.arcrobotics.ftclib.gamepad.GamepadKeys.Button.Y;
 import static com.arcrobotics.ftclib.gamepad.GamepadKeys.Trigger.LEFT_TRIGGER;
 import static com.arcrobotics.ftclib.gamepad.GamepadKeys.Trigger.RIGHT_TRIGGER;
 import static org.firstinspires.ftc.teamcode.opmodes.MainAuton.gamepadEx1;
@@ -15,7 +15,6 @@ import static org.firstinspires.ftc.teamcode.opmodes.MainAuton.robot;
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
-import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -49,12 +48,14 @@ public final class MainTeleOp extends LinearOpMode {
             gamepadEx2.readButtons();
 
             // Changes the level of the lift, which is changed by the d-pad
-             if (keyPressed(2, GamepadKeys.Button.DPAD_UP)) robot.lift.increment();
-             if (keyPressed(2, GamepadKeys.Button.DPAD_DOWN)) robot.lift.decrement();
-             if (keyPressed(2, GamepadKeys.Button.A)) robot.lift.updateTarget();
+             if (keyPressed(2, DPAD_UP)) robot.lift.increment();
+             if (keyPressed(2, DPAD_DOWN)) robot.lift.decrement();
+             if (keyPressed(2, A)) robot.lift.updateTarget();
 
             // The intake's motor power is set by the tuning of the triggers on the gamepad
             robot.intake.setMotorPower(gamepadEx1.getTrigger(RIGHT_TRIGGER) - gamepadEx1.getTrigger(LEFT_TRIGGER));
+
+            if (keyPressed(2, Y)) robot.arm.toggleArm();
 
             robot.run();
 
