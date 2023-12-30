@@ -108,7 +108,7 @@ public final class Lift {
      * Calls another run() method that calculates the motor output proportionally and doesn't compensate for power
      */
     public void run() {
-        currentState = new State(this.motors[0].encoder.getPosition());
+        currentState = new State(0.5 * (motors[0].encoder.getPosition() + motors[1].encoder.getPosition()));
         if (lastKp != pidGains.kP) {
 //            pidGains.computeKd(feedforwardGains, PERCENT_OVERSHOOT);
             lastKp = pidGains.kP;
@@ -139,6 +139,8 @@ public final class Lift {
     public void printTelemetry(MultipleTelemetry telemetry) {
         telemetry.addData("Target position (pixels)", targetRow < 0 ? "Retracted" : "Row " + targetRow);
         telemetry.addData("Motor position", this.motors[0].encoder.getPosition());
+        telemetry.update();
+        telemetry.addData("Target position (ticks)", targetRow * PIXEL_HEIGHT + BOTTOM_ROW_HEIGHT);
     }
 
     public void printNumericalTelemetry(MultipleTelemetry telemetry) {
