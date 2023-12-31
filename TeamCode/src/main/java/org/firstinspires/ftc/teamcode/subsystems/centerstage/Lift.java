@@ -26,9 +26,9 @@ public final class Lift {
      * A PIDGains object being set to certain values (tweak these numbers!!)
      */
     public static PIDGains pidGains = new PIDGains(
-            0.004,
-            0.001,
-            0.00005,
+            0.004595,
+            0.015,
+            0.000165,
             Double.POSITIVE_INFINITY
     );
 
@@ -50,7 +50,7 @@ public final class Lift {
     public static double
             BOTTOM_ROW_HEIGHT = 0,
             PIXEL_HEIGHT = 100,
-            kG = 0,
+            kG = 0.01,
             PERCENT_OVERSHOOT = 0;
 
     private final MotorEx[] motors;
@@ -108,7 +108,7 @@ public final class Lift {
      * Calls another run() method that calculates the motor output proportionally and doesn't compensate for power
      */
     public void run() {
-        currentState = new State(0.5 * (motors[0].encoder.getPosition() + motors[1].encoder.getPosition()));
+        currentState = new State(0.5 * (motors[0].encoder.getPosition() - motors[1].encoder.getPosition()));
         if (lastKp != pidGains.kP) {
 //            pidGains.computeKd(feedforwardGains, PERCENT_OVERSHOOT);
             lastKp = pidGains.kP;
@@ -138,8 +138,7 @@ public final class Lift {
 
     public void printTelemetry(MultipleTelemetry telemetry) {
         telemetry.addData("Target position (pixels)", targetRow < 0 ? "Retracted" : "Row " + targetRow);
-        telemetry.addData("Motor position", this.motors[0].encoder.getPosition());
-        telemetry.update();
+        telemetry.addData("Motor position", (0.5 * (motors[0].encoder.getPosition() - motors[1].encoder.getPosition())));
         telemetry.addData("Target position (ticks)", targetRow * PIXEL_HEIGHT + BOTTOM_ROW_HEIGHT);
     }
 
