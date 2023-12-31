@@ -12,19 +12,20 @@ import org.firstinspires.ftc.teamcode.subsystems.utilities.SimpleServoPivot;
 @Config
 public class Arm {
     private final SimpleServoPivot armPivot;
-//    private final SimpleServoPivot flap;
+    private final SimpleServoPivot flap;
 
     private boolean isDepositing = false;
+    private boolean isFlapClosed = false;
 
     // TODO MEASURE
-    public static final double
-            ANGLE_DOWN_ARM = 180,
-            ANGLE_UP_ARM = 0,
-            ANGLE_OPEN_FLAP = 0,
+    public static double
+            ANGLE_DOWN_ARM = 155,
+            ANGLE_UP_ARM = 70,
+            ANGLE_OPEN_FLAP = 90,
             ANGLE_CLOSED_FLAP = 0;
 
     public Arm(HardwareMap hardwareMap) {
-//        flap = new SimpleServoPivot(ANGLE_OPEN_FLAP, ANGLE_CLOSED_FLAP, getGoBildaServo(hardwareMap, "flap"));
+        flap = new SimpleServoPivot(ANGLE_OPEN_FLAP, ANGLE_CLOSED_FLAP, getGoBildaServo(hardwareMap, "flap"));
 
         armPivot = new SimpleServoPivot(
                 ANGLE_DOWN_ARM,
@@ -43,19 +44,24 @@ public class Arm {
         armPivot.setActivated(isDepositing);
     }
 
-    public void setFlapOpen(boolean isOpen) {
-//        flap.setActivated(isOpen);
+    public void toggleFlap() {
+        setFlapClosed(!isFlapClosed);
+    }
+
+    public void setFlapClosed(boolean isClosed) {
+        this.isFlapClosed = isClosed;
+        flap.setActivated(isClosed);
     }
 
     public void run() {
-//        flap.updateAngles(ANGLE_OPEN_FLAP, ANGLE_CLOSED_FLAP);
+        flap.updateAngles(ANGLE_OPEN_FLAP, ANGLE_CLOSED_FLAP);
         armPivot.updateAngles(ANGLE_DOWN_ARM, ANGLE_UP_ARM);
-//        flap.run();
+        flap.run();
         armPivot.run();
     }
 
     public void printTelemetry(MultipleTelemetry telemetry) {
-//        telemetry.addData("flap is", (flap.getActivated() ? "open" : "close"));
+        telemetry.addData("flap is", (flap.getActivated() ? "closed" : "open"));
         telemetry.addData("Arm is", "running to " + (armPivot.getActivated() ? "deposit" : "collect"));
     }
 }

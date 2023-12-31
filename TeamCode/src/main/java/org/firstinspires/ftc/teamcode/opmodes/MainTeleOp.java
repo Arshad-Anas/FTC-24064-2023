@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.opmodes;
 
 import static com.arcrobotics.ftclib.gamepad.GamepadKeys.Button.A;
+import static com.arcrobotics.ftclib.gamepad.GamepadKeys.Button.B;
 import static com.arcrobotics.ftclib.gamepad.GamepadKeys.Button.DPAD_DOWN;
 import static com.arcrobotics.ftclib.gamepad.GamepadKeys.Button.DPAD_LEFT;
 import static com.arcrobotics.ftclib.gamepad.GamepadKeys.Button.DPAD_RIGHT;
@@ -60,6 +61,7 @@ public final class MainTeleOp extends LinearOpMode {
             robot.intake.setMotorPower(gamepadEx1.getTrigger(RIGHT_TRIGGER) - gamepadEx1.getTrigger(LEFT_TRIGGER));
 
             if (keyPressed(2, Y)) robot.arm.toggleArm();
+            if (keyPressed(2, B)) robot.arm.toggleFlap();
 
             if (keyPressed(1, DPAD_UP)) robot.drivetrain.setCurrentHeading(0);
             if (keyPressed(1, DPAD_LEFT)) robot.drivetrain.setCurrentHeading(PI / 2);

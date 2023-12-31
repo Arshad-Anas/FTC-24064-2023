@@ -11,7 +11,6 @@ import com.arcrobotics.ftclib.hardware.motors.MotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 
-import org.firstinspires.ftc.teamcode.control.controllers.FeedforwardController;
 import org.firstinspires.ftc.teamcode.control.controllers.PIDController;
 import org.firstinspires.ftc.teamcode.control.filters.FIRLowPassFilter;
 import org.firstinspires.ftc.teamcode.control.gainmatrices.FeedforwardGains;
@@ -26,8 +25,8 @@ public final class Lift {
      * A PIDGains object being set to certain values (tweak these numbers!!)
      */
     public static PIDGains pidGains = new PIDGains(
-            0.004595,
-            0.015,
+            0.00375,
+            0.001,
             0.000165,
             Double.POSITIVE_INFINITY
     );
@@ -48,9 +47,10 @@ public final class Lift {
      * Remember to set these constants correctly! (in ticks)
      */
     public static double
-            BOTTOM_ROW_HEIGHT = 0,
-            PIXEL_HEIGHT = 100,
-            kG = 0.01,
+            BOTTOM_ROW_HEIGHT = 1050,
+            MAX_MOTOR_TICKS = 1600,
+            ROW_HEIGHT = 600,
+            kG = 0.011065,
             PERCENT_OVERSHOOT = 0;
 
     private final MotorEx[] motors;
@@ -83,7 +83,7 @@ public final class Lift {
      */
     // TODO Implement this!
     public void setTargetRow(int targetRow) {
-        this.targetRow = max(min(targetRow, 10), -1);
+        this.targetRow = max(min(targetRow, 1), -1);
     }
 
     public int getTargetRow() {
@@ -99,7 +99,8 @@ public final class Lift {
     }
 
     public void updateTarget() {
-        State targetState = new State(targetRow < 0 ? 0 : targetRow * PIXEL_HEIGHT + BOTTOM_ROW_HEIGHT);
+        double targetTicks = min(MAX_MOTOR_TICKS, targetRow * ROW_HEIGHT + BOTTOM_ROW_HEIGHT);
+        State targetState = new State(targetRow < 0 ? 0 : targetTicks);
         controller.setTarget(targetState);
     }
 
@@ -139,7 +140,7 @@ public final class Lift {
     public void printTelemetry(MultipleTelemetry telemetry) {
         telemetry.addData("Target position (pixels)", targetRow < 0 ? "Retracted" : "Row " + targetRow);
         telemetry.addData("Motor position", (0.5 * (motors[0].encoder.getPosition() - motors[1].encoder.getPosition())));
-        telemetry.addData("Target position (ticks)", targetRow * PIXEL_HEIGHT + BOTTOM_ROW_HEIGHT);
+        telemetry.addData("Target position (ticks)", targetRow * ROW_HEIGHT + BOTTOM_ROW_HEIGHT);
     }
 
     public void printNumericalTelemetry(MultipleTelemetry telemetry) {
