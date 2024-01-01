@@ -45,6 +45,8 @@ public final class Robot {
     }
 
     public void run() {
+        if (lift.getTargetRow() < 0) arm.setExtended(false);
+
         lift.run();
         arm.run();
         intake.run();

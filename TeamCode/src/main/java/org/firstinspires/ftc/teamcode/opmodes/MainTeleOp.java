@@ -60,8 +60,10 @@ public final class MainTeleOp extends LinearOpMode {
             // The intake's motor power is set by the tuning of the triggers on the gamepad
             robot.intake.setMotorPower(gamepadEx1.getTrigger(RIGHT_TRIGGER) - gamepadEx1.getTrigger(LEFT_TRIGGER));
 
-            if (keyPressed(2, Y)) robot.arm.toggleArm();
-            if (keyPressed(2, B)) robot.arm.toggleFlap();
+            if (robot.lift.getCurrentRow() >= 0) {
+                if (keyPressed(2, Y)) robot.arm.toggleArm();
+                if (keyPressed(2, B)) robot.arm.toggleFlap();
+            }
 
             if (keyPressed(1, DPAD_UP)) robot.drivetrain.setCurrentHeading(0);
             if (keyPressed(1, DPAD_LEFT)) robot.drivetrain.setCurrentHeading(PI / 2);
