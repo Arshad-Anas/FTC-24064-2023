@@ -25,7 +25,7 @@ public class Arm {
             ANGLE_DEPOSITING = 70,
             ANGLE_OPEN_FLAP = 90,
             ANGLE_CLOSED_FLAP = 0,
-            TIME_RETRACTION = 5;
+            TIME_RETRACTION = 1;
 
     public Arm(HardwareMap hardwareMap) {
         flap = new SimpleServoPivot(ANGLE_OPEN_FLAP, ANGLE_CLOSED_FLAP, getGoBildaServo(hardwareMap, "flap"));
@@ -41,14 +41,18 @@ public class Arm {
     public void toggleArm() {
         armPivot.toggle();
 
-        if (!armPivot.isActivated()) {
+        hasRetracted = armPivot.isActivated();
+        if (!hasRetracted) {
             timer.reset();
-            hasRetracted = false;
         }
     }
 
     public void toggleFlap() {
         flap.toggle();
+    }
+
+    public void setFlap(boolean isClosed) {
+        flap.setActivated(isClosed);
     }
 
     public void run() {
