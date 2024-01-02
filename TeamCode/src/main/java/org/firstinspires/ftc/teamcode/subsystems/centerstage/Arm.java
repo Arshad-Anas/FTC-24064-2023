@@ -25,7 +25,7 @@ public class Arm {
             ANGLE_DEPOSITING = 70,
             ANGLE_OPEN_FLAP = 90,
             ANGLE_CLOSED_FLAP = 0,
-            TIME_RETRACTION = 1;
+            TIME_RETRACT_ARM = 1;
 
     public Arm(HardwareMap hardwareMap) {
         flap = new SimpleServoPivot(ANGLE_OPEN_FLAP, ANGLE_CLOSED_FLAP, getGoBildaServo(hardwareMap, "flap"));

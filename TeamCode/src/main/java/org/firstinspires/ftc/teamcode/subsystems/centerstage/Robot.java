@@ -1,8 +1,8 @@
 package org.firstinspires.ftc.teamcode.subsystems.centerstage;
 
-import static org.firstinspires.ftc.teamcode.subsystems.centerstage.Arm.TIME_RETRACTION;
+import static org.firstinspires.ftc.teamcode.subsystems.centerstage.Arm.TIME_RETRACT_ARM;
 import static org.firstinspires.ftc.teamcode.subsystems.centerstage.Lift.TIME_CLOSE_FLAP;
-import static org.firstinspires.ftc.teamcode.subsystems.centerstage.Lift.TIME_OPEN_ARM;
+import static org.firstinspires.ftc.teamcode.subsystems.centerstage.Lift.TIME_EXTEND_ARM;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
@@ -49,7 +49,7 @@ public final class Robot {
     }
 
     public void run() {
-        if (!arm.hasRetracted && arm.timer.seconds() >= TIME_RETRACTION) {
+        if (!arm.hasRetracted && arm.timer.seconds() >= TIME_RETRACT_ARM) {
             arm.setFlap(false);
             lift.setTargetRow(-1);
             lift.updateTarget();
@@ -57,7 +57,7 @@ public final class Robot {
         }
 
         if (lift.hasElevated) {
-            if (lift.timer.seconds() >= TIME_OPEN_ARM) {
+            if (lift.timer.seconds() >= TIME_EXTEND_ARM) {
                 arm.setArm(true);
                 lift.hasElevated = false;
             }
