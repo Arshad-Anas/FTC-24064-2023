@@ -1,7 +1,11 @@
 package org.firstinspires.ftc.teamcode.subsystems.centerstage;
 
+import static com.arcrobotics.ftclib.hardware.motors.Motor.GoBILDA.RPM_117;
+
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
+import com.arcrobotics.ftclib.hardware.motors.Motor;
+import com.arcrobotics.ftclib.hardware.motors.MotorEx;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
@@ -21,6 +25,7 @@ public final class Robot {
     public final Intake intake;
     public final Lift lift;
     private final List<LynxModule> revHubs;
+    public final MotorEx climber;
 
     /**
      * Constructor of Robot; Instantiates the classes with the hw (hardwareMap)
@@ -31,6 +36,7 @@ public final class Robot {
         arm = new Arm(hardwareMap);
         intake = new Intake(hardwareMap);
         lift = new Lift(hardwareMap);
+        climber = new MotorEx(hardwareMap, "climber", RPM_117);
 
         revHubs = hardwareMap.getAll(LynxModule.class);
         for (LynxModule hub : revHubs) hub.setBulkCachingMode(LynxModule.BulkCachingMode.MANUAL);

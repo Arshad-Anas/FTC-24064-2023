@@ -70,6 +70,7 @@ public final class MainTeleOp extends LinearOpMode {
             if (keyPressed(1, DPAD_RIGHT)) robot.drivetrain.setCurrentHeading(-PI / 2);
             if (keyPressed(1, DPAD_DOWN)) robot.drivetrain.setCurrentHeading(PI);
 
+            robot.climber.set(gamepadEx2.getRightY());
             robot.run();
 
             // Field-centric drive dt with control stick inputs:
