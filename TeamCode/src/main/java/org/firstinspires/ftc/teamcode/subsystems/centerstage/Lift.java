@@ -63,7 +63,7 @@ public final class Lift {
     private State currentState = new State();
 
     private int targetRow = -1;
-    private int currentRow = -1;
+    private int setPoint = -1;
 
     /**
      * Constructor of Lift class; Sets variables with hw (hardwareMap)
@@ -86,12 +86,8 @@ public final class Lift {
         this.targetRow = max(min(targetRow, 1), -1);
     }
 
-    public int getTargetRow() {
-        return targetRow;
-    }
-
-    public int getCurrentRow() {
-        return currentRow;
+    public int getSetPoint() {
+        return setPoint;
     }
 
     public void increment() {
@@ -103,7 +99,7 @@ public final class Lift {
     }
 
     public void updateTarget() {
-        currentRow = targetRow;
+        setPoint = targetRow;
         double targetTicks = min(MAX_MOTOR_TICKS, targetRow * ROW_HEIGHT + BOTTOM_ROW_HEIGHT);
         State targetState = new State(targetRow < 0 ? 0 : targetTicks);
         controller.setTarget(targetState);

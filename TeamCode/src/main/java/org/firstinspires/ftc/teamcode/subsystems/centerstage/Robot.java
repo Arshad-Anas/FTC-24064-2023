@@ -1,9 +1,12 @@
 package org.firstinspires.ftc.teamcode.subsystems.centerstage;
 
+import static org.firstinspires.ftc.teamcode.subsystems.centerstage.Arm.TIME_RETRACTION;
+
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.subsystems.drivetrains.MecanumDrivetrain;
 
@@ -45,7 +48,11 @@ public final class Robot {
     }
 
     public void run() {
-        if (lift.getTargetRow() < 0) arm.setExtended(false);
+        if (!arm.hasRetracted && arm.timer.seconds() >= TIME_RETRACTION) {
+            lift.setTargetRow(-1);
+            lift.updateTarget();
+            arm.hasRetracted = true;
+        }
 
         lift.run();
         arm.run();
