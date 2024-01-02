@@ -47,6 +47,10 @@ public class Arm {
         }
     }
 
+    public void setArm(boolean isDepositing) {
+        armPivot.setActivated(isDepositing);
+    }
+
     public void toggleFlap() {
         flap.toggle();
     }

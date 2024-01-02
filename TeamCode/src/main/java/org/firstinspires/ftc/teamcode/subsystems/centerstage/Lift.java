@@ -10,6 +10,7 @@ import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.arcrobotics.ftclib.hardware.motors.MotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.control.controllers.PIDController;
 import org.firstinspires.ftc.teamcode.control.filters.FIRLowPassFilter;
@@ -51,6 +52,7 @@ public final class Lift {
             MAX_MOTOR_TICKS = 1620,
             ROW_HEIGHT = 600,
             kG = 0.011065,
+            TIME_ELEVATING = 1,
             PERCENT_OVERSHOOT = 0;
 
     private final MotorEx[] motors;
@@ -64,6 +66,9 @@ public final class Lift {
 
     private int targetRow = -1;
     private int setPoint = -1;
+
+    ElapsedTime timer = new ElapsedTime();
+    boolean hasElevated = false;
 
     /**
      * Constructor of Lift class; Sets variables with hw (hardwareMap)
@@ -99,6 +104,11 @@ public final class Lift {
     }
 
     public void updateTarget() {
+        hasElevated = setPoint == -1 && targetRow > setPoint;
+        if (hasElevated) {
+            timer.reset();
+        }
+
         setPoint = targetRow;
         double targetTicks = min(MAX_MOTOR_TICKS, targetRow * ROW_HEIGHT + BOTTOM_ROW_HEIGHT);
         State targetState = new State(targetRow < 0 ? 0 : targetTicks);

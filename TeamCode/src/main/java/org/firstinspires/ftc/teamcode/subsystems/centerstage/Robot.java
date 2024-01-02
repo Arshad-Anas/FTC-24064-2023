@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.subsystems.centerstage;
 
 import static org.firstinspires.ftc.teamcode.subsystems.centerstage.Arm.TIME_RETRACTION;
+import static org.firstinspires.ftc.teamcode.subsystems.centerstage.Lift.TIME_ELEVATING;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
@@ -53,6 +54,11 @@ public final class Robot {
             lift.setTargetRow(-1);
             lift.updateTarget();
             arm.hasRetracted = true;
+        }
+
+        if (lift.hasElevated && lift.timer.seconds() >= TIME_ELEVATING) {
+            arm.setArm(true);
+            lift.hasElevated = false;
         }
 
         lift.run();
