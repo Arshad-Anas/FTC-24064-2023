@@ -52,7 +52,8 @@ public final class Lift {
             MAX_MOTOR_TICKS = 1620,
             ROW_HEIGHT = 600,
             kG = 0.011065,
-            TIME_ELEVATING = 1,
+            TIME_OPEN_ARM = 1,
+            TIME_CLOSE_FLAP = 0.2,
             PERCENT_OVERSHOOT = 0;
 
     private final MotorEx[] motors;

@@ -1,13 +1,13 @@
 package org.firstinspires.ftc.teamcode.subsystems.centerstage;
 
 import static org.firstinspires.ftc.teamcode.subsystems.centerstage.Arm.TIME_RETRACTION;
-import static org.firstinspires.ftc.teamcode.subsystems.centerstage.Lift.TIME_ELEVATING;
+import static org.firstinspires.ftc.teamcode.subsystems.centerstage.Lift.TIME_CLOSE_FLAP;
+import static org.firstinspires.ftc.teamcode.subsystems.centerstage.Lift.TIME_OPEN_ARM;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.subsystems.drivetrains.MecanumDrivetrain;
 
@@ -56,9 +56,12 @@ public final class Robot {
             arm.hasRetracted = true;
         }
 
-        if (lift.hasElevated && lift.timer.seconds() >= TIME_ELEVATING) {
-            arm.setArm(true);
-            lift.hasElevated = false;
+        if (lift.hasElevated) {
+            if (lift.timer.seconds() >= TIME_OPEN_ARM) {
+                arm.setArm(true);
+                lift.hasElevated = false;
+            }
+            if (lift.timer.seconds() >= TIME_CLOSE_FLAP) arm.setFlap(true);
         }
 
         lift.run();
