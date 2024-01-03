@@ -89,7 +89,7 @@ public final class Lift {
      */
     // TODO Implement this!
     public void setTargetRow(int targetRow) {
-        this.targetRow = max(min(targetRow, 1), -1);
+        this.targetRow = max(min(targetRow, 1), 0);
     }
 
     public int getSetPoint() {

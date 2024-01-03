@@ -57,11 +57,11 @@ public final class Robot {
         }
 
         if (lift.hasElevated) {
+            if (lift.timer.seconds() >= TIME_CLOSE_FLAP) arm.setFlap(true);
             if (lift.timer.seconds() >= TIME_EXTEND_ARM) {
                 arm.setArm(true);
                 lift.hasElevated = false;
             }
-            if (lift.timer.seconds() >= TIME_CLOSE_FLAP) arm.setFlap(true);
         }
 
         lift.run();
