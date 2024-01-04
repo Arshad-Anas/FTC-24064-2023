@@ -51,7 +51,7 @@ public final class Robot {
     public void run() {
         if (!arm.hasRetracted && arm.timer.seconds() >= TIME_RETRACT_ARM) {
             arm.setFlap(false);
-            lift.setTargetRow(-1);
+            lift.retract();
             lift.updateTarget();
             arm.hasRetracted = true;
         }

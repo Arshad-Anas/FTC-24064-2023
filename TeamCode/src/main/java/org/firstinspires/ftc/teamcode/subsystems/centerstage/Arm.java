@@ -19,7 +19,7 @@ public class Arm {
 
     final ElapsedTime timer = new ElapsedTime();
 
-    // TODO MEASURE
+    // TODO Measure TIME_RETRACT_ARM
     public static double
             ANGLE_COLLECTING = 155,
             ANGLE_DEPOSITING = 70,
