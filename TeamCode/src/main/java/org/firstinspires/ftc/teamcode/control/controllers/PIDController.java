@@ -1,5 +1,8 @@
 package org.firstinspires.ftc.teamcode.control.controllers;
 
+import static java.lang.Math.abs;
+import static java.lang.Math.signum;
+
 import org.firstinspires.ftc.teamcode.control.motion.Differentiator;
 import org.firstinspires.ftc.teamcode.control.motion.Integrator;
 import org.firstinspires.ftc.teamcode.control.motion.State;
@@ -17,8 +20,7 @@ public class PIDController implements FeedbackController {
     private final Integrator integrator = new Integrator();
 
     private State error = new State();
-    private double errorIntegral;
-    private double errorDerivative;
+    private double errorIntegral, filteredErrorDerivative, rawErrorDerivative;
 
     public PIDController() {
         this(new NoFilter());
@@ -39,13 +41,14 @@ public class PIDController implements FeedbackController {
         State lastError = error;
         error = target.minus(measurement);
 
-        if (Math.signum(error.x) != Math.signum(lastError.x)) reset();
+        if (signum(error.x) != signum(lastError.x)) reset();
         errorIntegral = integrator.getIntegral(error.x);
-        errorDerivative = derivFilter.calculate(differentiator.getDerivative(error.x));
+        rawErrorDerivative = differentiator.getDerivative(error.x);
+        filteredErrorDerivative = derivFilter.calculate(rawErrorDerivative);
 
-        double output = (gains.kP * error.x) + (gains.kI * errorIntegral) + (gains.kD * errorDerivative);
+        double output = (gains.kP * error.x) + (gains.kI * errorIntegral) + (gains.kD * filteredErrorDerivative);
 
-        stopIntegration(Math.abs(output) >= gains.maxOutputWithIntegral && Math.signum(output) == Math.signum(error.x));
+        stopIntegration(abs(output) >= gains.maxOutputWithIntegral && signum(output) == signum(error.x));
 
         return output;
     }
@@ -54,8 +57,12 @@ public class PIDController implements FeedbackController {
         this.target = target;
     }
 
-    public double getErrorDerivative() {
-        return errorDerivative;
+    public double getFilteredErrorDerivative() {
+        return filteredErrorDerivative;
+    }
+
+    public double getRawErrorDerivative() {
+        return rawErrorDerivative;
     }
 
     public double getErrorIntegral() {

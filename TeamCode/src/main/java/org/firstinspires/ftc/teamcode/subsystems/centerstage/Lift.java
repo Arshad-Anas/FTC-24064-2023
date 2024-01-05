@@ -1,12 +1,12 @@
 package org.firstinspires.ftc.teamcode.subsystems.centerstage;
 
 import static com.arcrobotics.ftclib.hardware.motors.Motor.GoBILDA.RPM_435;
+import static org.firstinspires.ftc.teamcode.opmodes.MainAuton.mTelemetry;
 import static org.firstinspires.ftc.teamcode.subsystems.centerstage.Robot.maxVoltage;
 import static java.lang.Math.max;
 import static java.lang.Math.min;
 
 import com.acmerobotics.dashboard.config.Config;
-import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.arcrobotics.ftclib.hardware.motors.MotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
@@ -152,16 +152,16 @@ public final class Lift {
         for (MotorEx motor : motors) motor.set(motorPower + kG * scalar);
     }
 
-    public void printTelemetry(MultipleTelemetry telemetry) {
-        telemetry.addData("Target position (pixels)", targetRow < 0 ? "Retracted" : "Row " + targetRow);
-        telemetry.addData("Motor position", (0.5 * (motors[0].encoder.getPosition() - motors[1].encoder.getPosition())));
-        telemetry.addData("Target position (ticks)", targetRow * ROW_HEIGHT + BOTTOM_ROW_HEIGHT);
+    public void printTelemetry() {
+        mTelemetry.addData("Target position (pixels)", targetRow < 0 ? "Retracted" : "Row " + targetRow);
+        mTelemetry.addData("Motor position", (0.5 * (motors[0].encoder.getPosition() - motors[1].encoder.getPosition())));
+        mTelemetry.addData("Target position (ticks)", targetRow * ROW_HEIGHT + BOTTOM_ROW_HEIGHT);
     }
 
-    public void printNumericalTelemetry(MultipleTelemetry telemetry) {
-        telemetry.addData("Current position (ticks)", currentState.x);
-        telemetry.addData("Error derivative (ticks/s)", controller.getErrorDerivative());
-        telemetry.addData("Error (ticks)", controller.getErrorIntegral());
-        telemetry.addData("kD (computed)", pidGains.kD);
+    public void printNumericalTelemetry() {
+        mTelemetry.addData("Current position (ticks)", currentState.x);
+        mTelemetry.addData("Error derivative (ticks/s)", controller.getFilteredErrorDerivative());
+        mTelemetry.addData("Error (ticks)", controller.getErrorIntegral());
+        mTelemetry.addData("kD (computed)", pidGains.kD);
     }
 }
