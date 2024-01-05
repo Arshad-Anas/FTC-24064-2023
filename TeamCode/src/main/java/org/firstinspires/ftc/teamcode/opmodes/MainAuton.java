@@ -21,10 +21,10 @@ import org.firstinspires.ftc.teamcode.subsystems.centerstage.Robot;
 public final class MainAuton extends LinearOpMode {
 
     static Robot robot;
-    static MultipleTelemetry mTelemetry;
-    static GamepadEx gamepadEx1, gamepadEx2;
+    public static MultipleTelemetry mTelemetry;
+    public static GamepadEx gamepadEx1, gamepadEx2;
 
-    static boolean keyPressed(int gamepad, GamepadKeys.Button button) {
+    public static boolean keyPressed(int gamepad, GamepadKeys.Button button) {
         return (gamepad == 2 ? gamepadEx2 : gamepadEx1).wasJustPressed(button);
     }
 
@@ -63,9 +63,8 @@ public final class MainAuton extends LinearOpMode {
             robot.drivetrain.update();
             robot.run();
 
+            robot.printTelemetry();
             mTelemetry.update();
         }
-
-        robot.interrupt();
     }
 }
