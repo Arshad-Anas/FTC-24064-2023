@@ -12,7 +12,7 @@ import com.noahbres.meepmeep.roadrunner.entity.RoadRunnerBotEntity;
 
 public class MeepMeepTesting {
 
-    static boolean isRed = true, isRight = true;
+    static boolean isRed = true, isRight = false;
 
     public static double
             X_START_LEFT = -35,
@@ -36,12 +36,19 @@ public class MeepMeepTesting {
 
         double side = isRed ? 1 : -1;
         Pose2d startPose = MeepMeepTesting.startPose.byBoth().toPose2d();
-
         RoadRunnerBotEntity myBot = new DefaultBotBuilder(meepMeep)
                 // Set bot constraints: maxVel, maxAccel, maxAngVel, maxAngAccel, track width
                 .setConstraints(30, 30, toRadians(60), toRadians(60), 16.02362205)
                 .followTrajectorySequence(drive ->
                         drive.trajectorySequenceBuilder(startPose)
+                                .splineTo(new Vector2d(-46,-24), Math.toRadians(0))
+                            //    .addDisplacementMarker((){})
+                                .strafeLeft(2)
+                              //  .lineTo(new Vector2d(0,0), Math.toRadians(-180)
+                               // .splineToHeading(new Vector2d(10,-5),Math.toRadians(-180))
+                                .splineToSplineHeading(new Pose2d(16, -8), Math.toRadians(0))
+                                .splineTo(new Vector2d(17, -8), Math.toRadians(-90))
+                                .lineToConstantHeading(new Vector2d(45,-20))
                                 .build()
                 );
 
