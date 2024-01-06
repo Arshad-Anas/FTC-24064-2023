@@ -12,8 +12,7 @@ import org.firstinspires.ftc.teamcode.subsystems.utilities.SimpleServoPivot;
 
 @Config
 public final class Arm {
-    private final SimpleServoPivot armPivot;
-    private final SimpleServoPivot flap;
+    private final SimpleServoPivot armPivot, flap;
 
     boolean hasRetracted = true;
 
