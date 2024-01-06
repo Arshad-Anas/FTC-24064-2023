@@ -23,23 +23,23 @@ public class SimpleServoPivot {
     }
 
     public static SimpleServo getGoBildaServo(HardwareMap hardwareMap, String name) {
-        return new SimpleServo(hardwareMap, name, 0, 300);
+        return new SimpleServo(hardwareMap, name, 0, 280);
     }
 
     private final SimpleServo[] servos;
 
-    private double INITIAL_ANGLE, ACTIVATED_ANGLE;
+    private double ANGLE_INITIAL, ANGLE_ACTIVATED;
 
     private boolean activated = false;
 
-    public SimpleServoPivot(double INITIAL_ANGLE, double ACTIVATED_ANGLE, SimpleServo... servos) {
+    public SimpleServoPivot(double ANGLE_INITIAL, double ANGLE_ACTIVATED, SimpleServo... servos) {
         this.servos = servos;
-        updateAngles(INITIAL_ANGLE, ACTIVATED_ANGLE);
+        updateAngles(ANGLE_INITIAL, ANGLE_ACTIVATED);
     }
 
-    public void updateAngles(double INITIAL_ANGLE, double ACTIVATED_ANGLE) {
-        this.INITIAL_ANGLE = INITIAL_ANGLE;
-        this.ACTIVATED_ANGLE = ACTIVATED_ANGLE;
+    public void updateAngles(double ANGLE_A, double ANGLE_B) {
+        this.ANGLE_INITIAL = ANGLE_A;
+        this.ANGLE_ACTIVATED = ANGLE_B;
     }
 
     /**
@@ -63,7 +63,7 @@ public class SimpleServoPivot {
      * False if position A (default) <p>
      * True if in position B
      */
-    public boolean getActivated() {
+    public boolean isActivated() {
         return activated;
     }
 
@@ -71,6 +71,6 @@ public class SimpleServoPivot {
      * Hold {@link #servos} position
      */
     public void run() {
-        for (SimpleServo servo : servos) servo.turnToAngle(activated ? ACTIVATED_ANGLE : INITIAL_ANGLE);
+        for (SimpleServo servo : servos) servo.turnToAngle(activated ? ANGLE_ACTIVATED : ANGLE_INITIAL);
     }
 }

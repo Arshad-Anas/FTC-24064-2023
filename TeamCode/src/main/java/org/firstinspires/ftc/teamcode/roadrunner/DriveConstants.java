@@ -1,6 +1,8 @@
 package org.firstinspires.ftc.teamcode.roadrunner;
 
+import static com.qualcomm.hardware.rev.RevHubOrientationOnRobot.LogoFacingDirection.LEFT;
 import static com.qualcomm.hardware.rev.RevHubOrientationOnRobot.LogoFacingDirection.UP;
+import static com.qualcomm.hardware.rev.RevHubOrientationOnRobot.UsbFacingDirection.BACKWARD;
 import static com.qualcomm.hardware.rev.RevHubOrientationOnRobot.UsbFacingDirection.FORWARD;
 
 import com.acmerobotics.dashboard.config.Config;
@@ -49,7 +51,7 @@ public class DriveConstants {
      */
     public static double WHEEL_RADIUS = 3.77953; // in
     public static double GEAR_RATIO = 1; // output (wheel) speed / input (motor) speed
-    public static double TRACK_WIDTH = 13.3037610236; // in
+    public static double TRACK_WIDTH = 16.02362205; // in
 
     /*
      * These are the feedforward parameters used to model the drive motor behavior. If you are using
@@ -76,8 +78,8 @@ public class DriveConstants {
     /*
      * Adjust the orientations here to match your robot. See the FTC SDK documentation for details.
      */
-    public static RevHubOrientationOnRobot.LogoFacingDirection LOGO_FACING_DIR = UP;
-    public static RevHubOrientationOnRobot.UsbFacingDirection USB_FACING_DIR = FORWARD;
+    public static RevHubOrientationOnRobot.LogoFacingDirection LOGO_FACING_DIR = LEFT;
+    public static RevHubOrientationOnRobot.UsbFacingDirection USB_FACING_DIR = BACKWARD;
 
 
     public static double encoderTicksToInches(double ticks) {
