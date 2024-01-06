@@ -1,8 +1,8 @@
-package org.firstinspires.ftc.teamcode.control;
+package org.firstinspires.ftc.teamcode.control.motion;
 
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-public class Integrator {
+public final class Integrator {
 
     private double integral = 0.0;
     private boolean stopIntegration = false;

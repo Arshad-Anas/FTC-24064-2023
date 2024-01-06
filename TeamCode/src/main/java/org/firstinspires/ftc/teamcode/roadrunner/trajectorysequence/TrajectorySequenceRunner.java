@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence;
 
+import static org.firstinspires.ftc.teamcode.subsystems.centerstage.Robot.maxVoltage;
+
 import androidx.annotation.Nullable;
 
 import com.acmerobotics.dashboard.FtcDashboard;
@@ -26,7 +28,7 @@ import org.firstinspires.ftc.teamcode.roadrunner.util.DashboardUtil;
 import org.firstinspires.ftc.teamcode.roadrunner.util.LogFiles;
 
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -48,7 +50,7 @@ public class TrajectorySequenceRunner {
 
     private final NanoClock clock;
 
-    private TrajectorySequence currentTrajectorySequence;
+    private volatile TrajectorySequence currentTrajectorySequence;
     private double currentSegmentStartTime;
     private int currentSegmentIndex;
     private int lastSegmentIndex;
@@ -60,9 +62,9 @@ public class TrajectorySequenceRunner {
     private final FtcDashboard dashboard;
     private final LinkedList<Pose2d> poseHistory = new LinkedList<>();
 
-    private VoltageSensor voltageSensor;
+    private final VoltageSensor voltageSensor;
 
-    private List<Integer> lastDriveEncPositions, lastDriveEncVels, lastTrackingEncPositions, lastTrackingEncVels;
+    private final List<Integer> lastDriveEncPositions, lastDriveEncVels, lastTrackingEncPositions, lastTrackingEncVels;
 
     public TrajectorySequenceRunner(
             TrajectoryFollower follower, PIDCoefficients headingPIDCoefficients, VoltageSensor voltageSensor,
@@ -133,7 +135,7 @@ public class TrajectorySequenceRunner {
                 remainingMarkers.clear();
 
                 remainingMarkers.addAll(currentSegment.getMarkers());
-                Collections.sort(remainingMarkers, (t1, t2) -> Double.compare(t1.getTime(), t2.getTime()));
+                remainingMarkers.sort(Comparator.comparingDouble(TrajectoryMarker::getTime));
             }
 
             double deltaTime = now - currentSegmentStartTime;
@@ -201,12 +203,11 @@ public class TrajectorySequenceRunner {
             poseHistory.removeFirst();
         }
 
-        final double NOMINAL_VOLTAGE = 12.0;
         double voltage = voltageSensor.getVoltage();
-        if (driveSignal != null && !DriveConstants.RUN_USING_ENCODER) {
+        if (driveSignal != null && !DriveConstants.USE_VELO_PID) {
             driveSignal = new DriveSignal(
-                    driveSignal.getVel().times(NOMINAL_VOLTAGE / voltage),
-                    driveSignal.getAccel().times(NOMINAL_VOLTAGE / voltage)
+                    driveSignal.getVel().times(maxVoltage / voltage),
+                    driveSignal.getAccel().times(maxVoltage / voltage)
             );
         }
 
@@ -302,5 +303,10 @@ public class TrajectorySequenceRunner {
 
     public boolean isBusy() {
         return currentTrajectorySequence != null;
+    }
+
+    public void breakFollowing() {
+        currentTrajectorySequence = null;
+        remainingMarkers.clear();
     }
 }

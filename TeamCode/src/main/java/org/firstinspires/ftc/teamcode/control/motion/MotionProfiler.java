@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.control;
+package org.firstinspires.ftc.teamcode.control.motion;
 
 import com.acmerobotics.roadrunner.profile.MotionProfile;
 import com.acmerobotics.roadrunner.profile.MotionProfileGenerator;
@@ -7,17 +7,23 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.control.gainmatrices.ProfileConstraints;
 
-public class MotionProfiler {
+public final class MotionProfiler {
 
-    private MotionProfile profile;
+    private State state = new State();
 
-    private MotionState profileState = new MotionState(0.0, 0.0, 0.0, 0.0);
-
-    private final ElapsedTime profileTimer = new ElapsedTime();
+    private final ElapsedTime timer = new ElapsedTime();
 
     private ProfileConstraints constraints = new ProfileConstraints();
 
-    public void updateConstraints(ProfileConstraints constraints) {
+    private MotionProfile profile = MotionProfileGenerator.generateSimpleMotionProfile(
+            new MotionState(0, 0),
+            new MotionState(0, 0),
+            constraints.maxV,
+            constraints.maxA,
+            constraints.maxJ
+    );
+
+    public void setConstraints(ProfileConstraints constraints) {
         this.constraints = constraints;
     }
 
@@ -29,30 +35,40 @@ public class MotionProfiler {
                 constraints.maxA,
                 constraints.maxJ
         );
-        profileTimer.reset();
+        timer.reset();
     }
 
     public void update() {
-        profileState = profile.get(profileTimer.seconds());
+        MotionState mState = profile.get(timer.seconds());
+        this.state = new State(
+                mState.getX(),
+                mState.getV(),
+                mState.getA(),
+                mState.getJ()
+        );
     }
 
     public double getX() {
-        return profileState.getX();
+        return state.x;
     }
 
     public double getV() {
-        return profileState.getV();
+        return state.v;
     }
 
     public double getA() {
-        return profileState.getA();
+        return state.a;
     }
 
     public double getJ() {
-        return profileState.getJ();
+        return state.j;
+    }
+
+    public State getState() {
+        return state;
     }
 
     public boolean isDone() {
-        return profileTimer.seconds() >= profile.duration();
+        return timer.seconds() >= profile.duration();
     }
 }

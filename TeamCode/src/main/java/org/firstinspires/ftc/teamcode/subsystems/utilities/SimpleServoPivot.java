@@ -1,7 +1,8 @@
-package org.firstinspires.ftc.teamcode.subsystems;
+package org.firstinspires.ftc.teamcode.subsystems.utilities;
 
 
 import com.arcrobotics.ftclib.hardware.SimpleServo;
+import com.qualcomm.robotcore.hardware.HardwareMap;
 
 /**
  * Servo(s) with two set positions <p>
@@ -12,20 +13,33 @@ import com.arcrobotics.ftclib.hardware.SimpleServo;
  */
 public class SimpleServoPivot {
 
+    public static SimpleServo getReversedServo(SimpleServo servo) {
+        servo.setInverted(true);
+        return servo;
+    }
+
+    public static SimpleServo getAxonServo(HardwareMap hardwareMap, String name) {
+        return new SimpleServo(hardwareMap, name, 0, 355);
+    }
+
+    public static SimpleServo getGoBildaServo(HardwareMap hardwareMap, String name) {
+        return new SimpleServo(hardwareMap, name, 0, 280);
+    }
+
     private final SimpleServo[] servos;
 
-    private double ANGLE_A, ANGLE_B;
+    private double ANGLE_INITIAL, ANGLE_ACTIVATED;
 
     private boolean activated = false;
 
-    public SimpleServoPivot(SimpleServo[] servos, double ANGLE_A, double ANGLE_B) {
+    public SimpleServoPivot(double ANGLE_INITIAL, double ANGLE_ACTIVATED, SimpleServo... servos) {
         this.servos = servos;
-        updateAngles(ANGLE_A, ANGLE_B);
+        updateAngles(ANGLE_INITIAL, ANGLE_ACTIVATED);
     }
 
     public void updateAngles(double ANGLE_A, double ANGLE_B) {
-        this.ANGLE_A = ANGLE_A;
-        this.ANGLE_B = ANGLE_B;
+        this.ANGLE_INITIAL = ANGLE_A;
+        this.ANGLE_ACTIVATED = ANGLE_B;
     }
 
     /**
@@ -49,7 +63,7 @@ public class SimpleServoPivot {
      * False if position A (default) <p>
      * True if in position B
      */
-    public boolean getActivated() {
+    public boolean isActivated() {
         return activated;
     }
 
@@ -57,6 +71,6 @@ public class SimpleServoPivot {
      * Hold {@link #servos} position
      */
     public void run() {
-        for (SimpleServo servo : servos) servo.turnToAngle(activated ? ANGLE_B : ANGLE_A);
+        for (SimpleServo servo : servos) servo.turnToAngle(activated ? ANGLE_ACTIVATED : ANGLE_INITIAL);
     }
 }
