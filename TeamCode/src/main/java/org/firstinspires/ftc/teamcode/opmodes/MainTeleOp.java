@@ -5,6 +5,7 @@ import static com.arcrobotics.ftclib.gamepad.GamepadKeys.Button.B;
 import static com.arcrobotics.ftclib.gamepad.GamepadKeys.Button.DPAD_DOWN;
 import static com.arcrobotics.ftclib.gamepad.GamepadKeys.Button.DPAD_UP;
 import static com.arcrobotics.ftclib.gamepad.GamepadKeys.Button.LEFT_BUMPER;
+import static com.arcrobotics.ftclib.gamepad.GamepadKeys.Button.RIGHT_BUMPER;
 import static com.arcrobotics.ftclib.gamepad.GamepadKeys.Button.Y;
 import static com.arcrobotics.ftclib.gamepad.GamepadKeys.Trigger.LEFT_TRIGGER;
 import static com.arcrobotics.ftclib.gamepad.GamepadKeys.Trigger.RIGHT_TRIGGER;
@@ -74,11 +75,19 @@ public final class MainTeleOp extends LinearOpMode {
             }
 
             // Field-centric drive dt with control stick inputs:
-            robot.drivetrain.run(
-                    -gamepadEx1.getLeftX(),
-                    -gamepadEx1.getLeftY(),
-                    -x
-            );
+            if (gamepadEx1.isDown(RIGHT_BUMPER)) {
+                robot.drivetrain.run(
+                        -gamepadEx1.getLeftX() * 0.2,
+                        -gamepadEx1.getLeftY() * 0.2,
+                        -x * 0.2
+                );
+            } else {
+                robot.drivetrain.run(
+                        -gamepadEx1.getLeftX(),
+                        -gamepadEx1.getLeftY(),
+                        -x
+                );
+            }
 
             robot.run();
 
