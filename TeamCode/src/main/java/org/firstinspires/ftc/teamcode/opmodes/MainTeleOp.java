@@ -64,6 +64,8 @@ public final class MainTeleOp extends LinearOpMode {
                 if (keyPressed(2, B)) robot.arm.toggleFlap();
             }
 
+            robot.climber.set(gamepadEx2.getRightY());
+          
             double x = gamepadEx1.getRightX();
             if (gamepadEx1.isDown(LEFT_BUMPER)) {
                 double y = gamepadEx1.getRightY();

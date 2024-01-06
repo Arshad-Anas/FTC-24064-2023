@@ -1,11 +1,14 @@
 package org.firstinspires.ftc.teamcode.subsystems.centerstage;
 
+import static com.arcrobotics.ftclib.hardware.motors.Motor.GoBILDA.RPM_117;
+
+import com.acmerobotics.dashboard.config.Config;
+import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import static org.firstinspires.ftc.teamcode.opmodes.MainAuton.mTelemetry;
 import static org.firstinspires.ftc.teamcode.subsystems.centerstage.Arm.TIME_RETRACT_ARM;
 import static org.firstinspires.ftc.teamcode.subsystems.centerstage.Lift.TIME_CLOSE_FLAP;
 import static org.firstinspires.ftc.teamcode.subsystems.centerstage.Lift.TIME_EXTEND_ARM;
 
-import com.acmerobotics.dashboard.config.Config;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.arcrobotics.ftclib.hardware.motors.MotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -24,6 +27,7 @@ public final class Robot {
     public final Arm arm;
     public final MotorEx intake;
     public final Lift lift;
+    public final MotorEx climber;
     private final BulkReader bulkReader;
 
     /**
@@ -36,6 +40,7 @@ public final class Robot {
         arm = new Arm(hardwareMap);
         intake = new MotorEx(hardwareMap, "intake", Motor.GoBILDA.RPM_1620);
         lift = new Lift(hardwareMap);
+        climber = new MotorEx(hardwareMap, "climber", RPM_117);
     }
 
     public void readSensors() {
