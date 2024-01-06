@@ -4,7 +4,6 @@ import static java.lang.Math.PI;
 import static java.lang.Math.toRadians;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
-import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.noahbres.meepmeep.MeepMeep;
 import com.noahbres.meepmeep.roadrunner.DefaultBotBuilder;
 import com.noahbres.meepmeep.roadrunner.entity.RoadRunnerBotEntity;
@@ -12,7 +11,7 @@ import com.noahbres.meepmeep.roadrunner.entity.RoadRunnerBotEntity;
 
 public class MeepMeepTesting {
 
-    static boolean isRed = true, isRight = true;
+    static boolean isRed = true, isRight = true, isParkedLeft = false;
 
     public static double
             X_START_LEFT = -35,
@@ -25,23 +24,63 @@ public class MeepMeepTesting {
             BACKWARD = toRadians(270);
 
     public static EditablePose
-            startPose = new EditablePose(X_START_RIGHT, -61.788975, FORWARD),
-            centerSpike = new EditablePose(X_START_RIGHT, -30, FORWARD),
+            startPoseBlue = new EditablePose(X_START_RIGHT, -100, BACKWARD),
+            startPoseRed = new EditablePose(X_START_RIGHT, -61.788975, FORWARD),
+            centerSpikeBlue = new EditablePose((X_START_RIGHT + 3.5), 33.5, BACKWARD),
+            centerSpikeRed = new EditablePose((X_START_RIGHT + 3.5), -33.5, FORWARD),
             leftSpike = new EditablePose(7, -40, toRadians(120)),
             rightSpike = new EditablePose(24 - leftSpike.x, leftSpike.y, LEFT - leftSpike.heading),
-            afterSpike = new EditablePose(36, leftSpike.y, LEFT);
+            blueBackboard = new EditablePose(48, 34, LEFT),
+            redBackboard = new EditablePose(48, -34, LEFT),
+            blueParkingLeft = new EditablePose(52, -14, toRadians(165)),
+            blueParkingRight = new EditablePose(51, -54, toRadians(200));
 
     public static void main(String[] args) {
         MeepMeep meepMeep = new MeepMeep(800);
 
         double side = isRed ? 1 : -1;
-        Pose2d startPose = MeepMeepTesting.startPose.byBoth().toPose2d();
+
+        double
+                OUTTAKE_WAIT_TIME = 0.25,
+                INTAKE_WAIT_TIME = 0.65,
+                SCORING_WAIT_TIME = 0.75,
+                OPEN_FLAP_WAIT_TIME = 0.25;
+
+        Pose2d startPoseBlue = MeepMeepTesting.startPoseBlue.byBoth().toPose2d();
+        Pose2d startPoseRed = MeepMeepTesting.startPoseRed.byBoth().toPose2d();
+        Pose2d centerSpikeBlue = MeepMeepTesting.centerSpikeBlue.byBoth().toPose2d();
+        Pose2d centerSpikeRed = MeepMeepTesting.centerSpikeRed.byBoth().toPose2d();
+        Pose2d blueBackboard = MeepMeepTesting.blueBackboard.byBoth().toPose2d();
+        Pose2d redBackboard = MeepMeepTesting.redBackboard.byBoth().toPose2d();
+        Pose2d blueParkingLeft = MeepMeepTesting.blueParkingLeft.byBoth().toPose2d();
+        Pose2d blueParkingRight = MeepMeepTesting.blueParkingRight.byBoth().toPose2d();
 
         RoadRunnerBotEntity myBot = new DefaultBotBuilder(meepMeep)
                 // Set bot constraints: maxVel, maxAccel, maxAngVel, maxAngAccel, track width
                 .setConstraints(30, 30, toRadians(60), toRadians(60), 16.02362205)
+                .setDimensions(16.2981681102, 17.0079)
                 .followTrajectorySequence(drive ->
-                        drive.trajectorySequenceBuilder(startPose)
+                        drive.trajectorySequenceBuilder(isRed ? startPoseRed : startPoseBlue)
+                                .splineTo(isRed ? centerSpikeRed.vec() : centerSpikeBlue.vec(), FORWARD)
+                                /*
+                                   Starts outtake 0.5 seconds after prev. action, then waits 0.25 seconds before stopping the outtake
+                                   Then stops after 1 second
+                                 */
+                                // .UNSTABLE_addTemporalMarker(0.5, () -> intake.set(0.35))
+                                // .addTemporalMarker(0.5 + OUTTAKE_WAIT_TIME, () -> intake.set(0))
+                                .lineToLinearHeading(isRed ? redBackboard : blueBackboard)
+                                /*
+                                 Starts the lift by updating target to row 0, then executes commands to do so (within timing)
+                                 It will activate flap to open, releasing the pixels
+                                 After doing that, it'll retract back to target row -1
+                                */
+                                // .UNSTABLE_addTemporalMarker(0.5, () -> {
+                                //      robot.lift.setTargetRow(0);
+                                //      robot.lift.updateTarget();
+                                // })
+                                // .addTemporalMarker(0.5 + OPEN_FLAP_WAIT_TIME, () -> robot.arm.setFlap(true))
+                                // .addTemporalMarker((0.5 + OPEN_FLAP_WAIT_TIME) + SCORING_WAIT_TIME, () -> robot.arm.setArm(true))
+                                .lineToSplineHeading(isParkedLeft ? blueParkingLeft : blueParkingRight)
                                 .build()
                 );
 
