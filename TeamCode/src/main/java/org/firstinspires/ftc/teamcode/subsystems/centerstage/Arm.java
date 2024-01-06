@@ -1,67 +1,72 @@
 package org.firstinspires.ftc.teamcode.subsystems.centerstage;
 
+import static org.firstinspires.ftc.teamcode.opmodes.MainAuton.mTelemetry;
 import static org.firstinspires.ftc.teamcode.subsystems.utilities.SimpleServoPivot.getGoBildaServo;
 import static org.firstinspires.ftc.teamcode.subsystems.utilities.SimpleServoPivot.getReversedServo;
 
 import com.acmerobotics.dashboard.config.Config;
-import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.subsystems.utilities.SimpleServoPivot;
 
 @Config
-public class Arm {
-    private final SimpleServoPivot armPivot;
-    private final SimpleServoPivot flap;
+public final class Arm {
+    private final SimpleServoPivot armPivot, flap;
 
-    private boolean isDepositing = false;
-    private boolean isFlapClosed = false;
+    boolean hasRetracted = true;
 
-    // TODO MEASURE
+    final ElapsedTime timer = new ElapsedTime();
+
+    // TODO Measure TIME_RETRACT_ARM
     public static double
-            ANGLE_DOWN_ARM = 155,
-            ANGLE_UP_ARM = 70,
+            ANGLE_COLLECTING = 155,
+            ANGLE_DEPOSITING = 70,
             ANGLE_OPEN_FLAP = 90,
-            ANGLE_CLOSED_FLAP = 0;
+            ANGLE_CLOSED_FLAP = 0,
+            TIME_RETRACT_ARM = 1;
 
     public Arm(HardwareMap hardwareMap) {
         flap = new SimpleServoPivot(ANGLE_OPEN_FLAP, ANGLE_CLOSED_FLAP, getGoBildaServo(hardwareMap, "flap"));
 
         armPivot = new SimpleServoPivot(
-                ANGLE_DOWN_ARM,
-                ANGLE_UP_ARM,
+                ANGLE_COLLECTING,
+                ANGLE_DEPOSITING,
                 getGoBildaServo(hardwareMap, "arm1"),
                 getReversedServo(getGoBildaServo(hardwareMap, "arm2"))
         );
     }
 
     public void toggleArm() {
-        setExtended(!isDepositing);
+        armPivot.toggle();
+
+        hasRetracted = armPivot.isActivated();
+        if (!hasRetracted) {
+            timer.reset();
+        }
     }
 
-    public void setExtended(boolean isDepositing) {
-        this.isDepositing = isDepositing;
+    public void setArm(boolean isDepositing) {
         armPivot.setActivated(isDepositing);
     }
 
     public void toggleFlap() {
-        setFlapClosed(!isFlapClosed);
+        flap.toggle();
     }
 
-    public void setFlapClosed(boolean isClosed) {
-        this.isFlapClosed = isClosed;
+    public void setFlap(boolean isClosed) {
         flap.setActivated(isClosed);
     }
 
     public void run() {
         flap.updateAngles(ANGLE_OPEN_FLAP, ANGLE_CLOSED_FLAP);
-        armPivot.updateAngles(ANGLE_DOWN_ARM, ANGLE_UP_ARM);
+        armPivot.updateAngles(ANGLE_COLLECTING, ANGLE_DEPOSITING);
         flap.run();
         armPivot.run();
     }
 
-    public void printTelemetry(MultipleTelemetry telemetry) {
-        telemetry.addData("flap is", (flap.getActivated() ? "closed" : "open"));
-        telemetry.addData("Arm is", "running to " + (armPivot.getActivated() ? "deposit" : "collect"));
+    public void printTelemetry() {
+        mTelemetry.addData("flap is", (flap.isActivated() ? "closed" : "open"));
+        mTelemetry.addData("Arm is", "running to " + (armPivot.isActivated() ? "deposit" : "collect"));
     }
 }

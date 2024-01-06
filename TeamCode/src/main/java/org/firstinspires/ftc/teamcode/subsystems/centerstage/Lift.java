@@ -1,15 +1,16 @@
 package org.firstinspires.ftc.teamcode.subsystems.centerstage;
 
 import static com.arcrobotics.ftclib.hardware.motors.Motor.GoBILDA.RPM_435;
+import static org.firstinspires.ftc.teamcode.opmodes.MainAuton.mTelemetry;
 import static org.firstinspires.ftc.teamcode.subsystems.centerstage.Robot.maxVoltage;
 import static java.lang.Math.max;
 import static java.lang.Math.min;
 
 import com.acmerobotics.dashboard.config.Config;
-import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.arcrobotics.ftclib.hardware.motors.MotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.control.controllers.PIDController;
 import org.firstinspires.ftc.teamcode.control.filters.FIRLowPassFilter;
@@ -41,16 +42,18 @@ public final class Lift {
     // Sets the filter for PID outputs and constrains overshoots with controlling (also tweak!!)
     public static LowPassGains filterGains = new LowPassGains(0, 2);
 
-    // TODO Measure (ticks)
     /**
      * Sets the constants for the positions, conversions, etc
      * Remember to set these constants correctly! (in ticks)
      */
+    // TODO Measure TIME_EXTEND_ARM and TIME_CLOSE_FLAP 
     public static double
             BOTTOM_ROW_HEIGHT = 1050,
-            MAX_MOTOR_TICKS = 1600,
+            MAX_MOTOR_TICKS = 1620,
             ROW_HEIGHT = 600,
             kG = 0.011065,
+            TIME_EXTEND_ARM = 1,
+            TIME_CLOSE_FLAP = 0.2,
             PERCENT_OVERSHOOT = 0;
 
     private final MotorEx[] motors;
@@ -63,7 +66,10 @@ public final class Lift {
     private State currentState = new State();
 
     private int targetRow = -1;
-    private int currentRow = -1;
+    private int setPoint = -1;
+
+    ElapsedTime timer = new ElapsedTime();
+    boolean hasElevated = false;
 
     /**
      * Constructor of Lift class; Sets variables with hw (hardwareMap)
@@ -81,17 +87,16 @@ public final class Lift {
      * Uses the targetRow variable to find out the measurement for where the pixel should be placed
      * @param targetRow; The set target row on the backstage that the arm is suspected to drop the pixel
      */
-    // TODO Implement this!
     public void setTargetRow(int targetRow) {
-        this.targetRow = max(min(targetRow, 1), -1);
+        this.targetRow = max(min(targetRow, 1), 0);
     }
 
-    public int getTargetRow() {
-        return targetRow;
+    void retract() {
+        this.targetRow = -1;
     }
 
-    public int getCurrentRow() {
-        return currentRow;
+    public int getSetPoint() {
+        return setPoint;
     }
 
     public void increment() {
@@ -103,7 +108,12 @@ public final class Lift {
     }
 
     public void updateTarget() {
-        currentRow = targetRow;
+        hasElevated = setPoint == -1 && targetRow > setPoint;
+        if (hasElevated) {
+            timer.reset();
+        }
+
+        setPoint = targetRow;
         double targetTicks = min(MAX_MOTOR_TICKS, targetRow * ROW_HEIGHT + BOTTOM_ROW_HEIGHT);
         State targetState = new State(targetRow < 0 ? 0 : targetTicks);
         controller.setTarget(targetState);
@@ -142,16 +152,16 @@ public final class Lift {
         for (MotorEx motor : motors) motor.set(motorPower + kG * scalar);
     }
 
-    public void printTelemetry(MultipleTelemetry telemetry) {
-        telemetry.addData("Target position (pixels)", targetRow < 0 ? "Retracted" : "Row " + targetRow);
-        telemetry.addData("Motor position", (0.5 * (motors[0].encoder.getPosition() - motors[1].encoder.getPosition())));
-        telemetry.addData("Target position (ticks)", targetRow * ROW_HEIGHT + BOTTOM_ROW_HEIGHT);
+    public void printTelemetry() {
+        mTelemetry.addData("Target position (pixels)", targetRow < 0 ? "Retracted" : "Row " + targetRow);
+        mTelemetry.addData("Motor position", (0.5 * (motors[0].encoder.getPosition() - motors[1].encoder.getPosition())));
+        mTelemetry.addData("Target position (ticks)", targetRow * ROW_HEIGHT + BOTTOM_ROW_HEIGHT);
     }
 
-    public void printNumericalTelemetry(MultipleTelemetry telemetry) {
-        telemetry.addData("Current position (ticks)", currentState.x);
-        telemetry.addData("Error derivative (ticks/s)", controller.getErrorDerivative());
-        telemetry.addData("Error (ticks)", controller.getErrorIntegral());
-        telemetry.addData("kD (computed)", pidGains.kD);
+    public void printNumericalTelemetry() {
+        mTelemetry.addData("Current position (ticks)", currentState.x);
+        mTelemetry.addData("Error derivative (ticks/s)", controller.getFilteredErrorDerivative());
+        mTelemetry.addData("Error (ticks)", controller.getErrorIntegral());
+        mTelemetry.addData("kD (computed)", pidGains.kD);
     }
 }
