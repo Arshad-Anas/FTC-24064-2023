@@ -11,7 +11,7 @@ import com.noahbres.meepmeep.roadrunner.entity.RoadRunnerBotEntity;
 
 public class MeepMeepTesting {
 
-    static boolean isRed = false, isParkedLeft = false;
+    static boolean isRed = true, isParkedLeft = false;
 
     static final boolean isRight = true;
 
@@ -25,7 +25,7 @@ public class MeepMeepTesting {
             RIGHT = toRadians(0),
             BACKWARD = toRadians(270);
 
-    public static int spikeNum = 2;
+    public static int spikeNum = 0;
 
     public static EditablePose
             startPoseRed = new EditablePose(X_START_RIGHT, -61.788975, FORWARD),
@@ -75,19 +75,19 @@ public class MeepMeepTesting {
         Pose2d blueParkingRight = MeepMeepTesting.blueParkingRight.toPose2d();
 
         switch (spikeNum) {
-            case 1: {
+            case 0: {
                 mainSpikeBlue = leftSpikeBlue;
                 mainSpikeRed = leftSpikeRed;
                 break;
             }
 
-            case 2: {
+            case 1: {
                 mainSpikeBlue = centerSpikeBlue;
                 mainSpikeRed = centerSpikeRed;
                 break;
             }
 
-            case 3: {
+            case 2: {
                 mainSpikeBlue = rightSpikeBlue;
                 mainSpikeRed = rightSpikeRed;
                 break;
@@ -95,17 +95,17 @@ public class MeepMeepTesting {
         }
 
         switch (spikeNum) {
-            case 1: {
+            case 0: {
                 direction = (isRed ? toRadians(120) : toRadians(-120));
                 break;
             }
 
-            case 2: {
+            case 1: {
                 direction = (isRed ? FORWARD : BACKWARD);
                 break;
             }
 
-            case 3: {
+            case 2: {
                 direction = (isRed ? (LEFT - toRadians(120)) : (LEFT - toRadians(-120)));
                 break;
             }
