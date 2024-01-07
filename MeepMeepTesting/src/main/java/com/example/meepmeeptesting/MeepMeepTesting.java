@@ -41,16 +41,18 @@ public class MeepMeepTesting {
                 .setConstraints(30, 30, toRadians(60), toRadians(60), 16.02362205)
                 .followTrajectorySequence(drive ->
                         drive.trajectorySequenceBuilder(startPose)
-                                .splineTo(new Vector2d(-46,-24), Math.toRadians(0))
+                                .lineToSplineHeading(new Pose2d(-49,-24, Math.toRadians(0)))
                             //    .addDisplacementMarker((){})
-                                .strafeLeft(2)
+                                .lineToLinearHeading(new Pose2d(-58,-24,Math.toRadians(180)))
+                              //  .lineTo(new Vector2d(-57,-24)
+                                .strafeRight(4)
                               //  .lineTo(new Vector2d(0,0), Math.toRadians(-180)
                                // .splineToHeading(new Vector2d(10,-5),Math.toRadians(-180))
-                                .splineToSplineHeading(new Pose2d(16, -8), Math.toRadians(0))
-                                .splineTo(new Vector2d(17, -8), Math.toRadians(-90))
-                                .lineToConstantHeading(new Vector2d(45,-20))
-                                .build()
-                );
+                                .splineToSplineHeading(new Pose2d(-5, -8), Math.toRadians(0))
+                                .splineTo(new Vector2d(25, -9), Math.toRadians(0))
+                                .lineToSplineHeading(new Pose2d(49,-35, Math.toRadians(-180)))
+                                .lineTo(new Vector2d(50, -10))
+                                .build());
 
         meepMeep.setBackground(MeepMeep.Background.FIELD_CENTERSTAGE_JUICE_DARK)
                 .setDarkMode(true)
