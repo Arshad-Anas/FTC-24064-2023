@@ -53,7 +53,7 @@ public final class Lift {
             ROW_HEIGHT = 600,
             kG = 0.011065,
             TIME_EXTEND_ARM = 1,
-            TIME_CLOSE_FLAP = 0.2,
+            TIME_CLOSE_FLAP = 0,
             PERCENT_OVERSHOOT = 0;
 
     private final MotorEx[] motors;

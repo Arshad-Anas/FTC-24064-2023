@@ -6,6 +6,7 @@ import static com.arcrobotics.ftclib.gamepad.GamepadKeys.Button.DPAD_DOWN;
 import static com.arcrobotics.ftclib.gamepad.GamepadKeys.Button.DPAD_UP;
 import static com.arcrobotics.ftclib.gamepad.GamepadKeys.Button.LEFT_BUMPER;
 import static com.arcrobotics.ftclib.gamepad.GamepadKeys.Button.RIGHT_BUMPER;
+import static com.arcrobotics.ftclib.gamepad.GamepadKeys.Button.X;
 import static com.arcrobotics.ftclib.gamepad.GamepadKeys.Button.Y;
 import static com.arcrobotics.ftclib.gamepad.GamepadKeys.Trigger.LEFT_TRIGGER;
 import static com.arcrobotics.ftclib.gamepad.GamepadKeys.Trigger.RIGHT_TRIGGER;
@@ -53,20 +54,20 @@ public final class MainTeleOp extends LinearOpMode {
             gamepadEx2.readButtons();
 
             // Changes the level of the lift, which is changed by the d-pad
-             if (keyPressed(2, DPAD_UP)) robot.lift.increment();
-             if (keyPressed(2, DPAD_DOWN)) robot.lift.decrement();
-             if (keyPressed(2, A)) robot.lift.updateTarget();
+            if (keyPressed(2, DPAD_UP)) robot.lift.increment();
+            if (keyPressed(2, DPAD_DOWN)) robot.lift.decrement();
+            if (keyPressed(2, A)) robot.lift.updateTarget();
+
+            if (keyPressed(2, B)) robot.arm.toggleFlap();
+            if (keyPressed(2, X)) robot.launcher.setActivated(true);
+            if (robot.lift.getSetPoint() >= 0) {
+                if (keyPressed(2, Y)) robot.arm.toggleArm();
+            }
+            robot.climber.set(gamepadEx2.getRightY());
 
             // The intake's motor power is set by the tuning of the triggers on the gamepad
             robot.intake.set(gamepadEx1.getTrigger(RIGHT_TRIGGER) - gamepadEx1.getTrigger(LEFT_TRIGGER));
-
-            if (robot.lift.getSetPoint() >= 0) {
-                if (keyPressed(2, Y)) robot.arm.toggleArm();
-                if (keyPressed(2, B)) robot.arm.toggleFlap();
-            }
-
-            robot.climber.set(gamepadEx2.getRightY());
-          
+            
             double x = gamepadEx1.getRightX();
             if (gamepadEx1.isDown(LEFT_BUMPER)) {
                 double y = gamepadEx1.getRightY();

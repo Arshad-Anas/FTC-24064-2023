@@ -8,13 +8,16 @@ import static org.firstinspires.ftc.teamcode.opmodes.MainAuton.mTelemetry;
 import static org.firstinspires.ftc.teamcode.subsystems.centerstage.Arm.TIME_RETRACT_ARM;
 import static org.firstinspires.ftc.teamcode.subsystems.centerstage.Lift.TIME_CLOSE_FLAP;
 import static org.firstinspires.ftc.teamcode.subsystems.centerstage.Lift.TIME_EXTEND_ARM;
+import static org.firstinspires.ftc.teamcode.subsystems.utilities.SimpleServoPivot.getGoBildaServo;
 
+import com.arcrobotics.ftclib.hardware.SimpleServo;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.arcrobotics.ftclib.hardware.motors.MotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.subsystems.drivetrains.MecanumDrivetrain;
 import org.firstinspires.ftc.teamcode.subsystems.utilities.BulkReader;
+import org.firstinspires.ftc.teamcode.subsystems.utilities.SimpleServoPivot;
 
 /**
  * Gets all the classes for the robot and calls them with their right parameters
@@ -28,7 +31,11 @@ public final class Robot {
     public final MotorEx intake;
     public final Lift lift;
     public final MotorEx climber;
+    public final SimpleServoPivot launcher;
     private final BulkReader bulkReader;
+
+    private static double ANGLE_DRONE_LAUNCH = 0,
+            ANGLE_DRONE_LOAD = 160;
 
     /**
      * Constructor of Robot; Instantiates the classes with the hw (hardwareMap)
@@ -41,6 +48,7 @@ public final class Robot {
         intake = new MotorEx(hardwareMap, "intake", Motor.GoBILDA.RPM_1620);
         lift = new Lift(hardwareMap);
         climber = new MotorEx(hardwareMap, "climber", RPM_117);
+        launcher = new SimpleServoPivot(ANGLE_DRONE_LOAD, ANGLE_DRONE_LAUNCH, getGoBildaServo(hardwareMap, "launcher"));
     }
 
     public void readSensors() {
