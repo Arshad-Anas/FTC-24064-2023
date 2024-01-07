@@ -11,7 +11,9 @@ import com.noahbres.meepmeep.roadrunner.entity.RoadRunnerBotEntity;
 
 public class MeepMeepTesting {
 
-    static boolean isRed = true, isRight = true, isParkedLeft = false;
+    static boolean isRed = false, isParkedLeft = false;
+
+    static final boolean isRight = true;
 
     public static double
             X_START_LEFT = -35,
@@ -23,22 +25,33 @@ public class MeepMeepTesting {
             RIGHT = toRadians(0),
             BACKWARD = toRadians(270);
 
+    public static int spikeNum = 2;
+
     public static EditablePose
-            startPoseBlue = new EditablePose(X_START_RIGHT, -100, BACKWARD),
             startPoseRed = new EditablePose(X_START_RIGHT, -61.788975, FORWARD),
-            centerSpikeBlue = new EditablePose((X_START_RIGHT + 3.5), 33.5, BACKWARD),
+            startPoseBlue = new EditablePose(startPoseRed.byAlliance().toPose2d().vec().getX(), 61, BACKWARD),
             centerSpikeRed = new EditablePose((X_START_RIGHT + 3.5), -33.5, FORWARD),
-            leftSpike = new EditablePose(7, -40, toRadians(120)),
-            rightSpike = new EditablePose(24 - leftSpike.x, leftSpike.y, LEFT - leftSpike.heading),
-            blueBackboard = new EditablePose(48, 34, LEFT),
-            redBackboard = new EditablePose(48, -34, LEFT),
-            blueParkingLeft = new EditablePose(52, -14, toRadians(165)),
-            blueParkingRight = new EditablePose(51, -54, toRadians(200));
+            centerSpikeBlue = new EditablePose(centerSpikeRed.byAlliance().toPose2d().vec().getX(), 33.5, BACKWARD),
+            leftSpikeRed = new EditablePose(7, -40, toRadians(120)),
+            leftSpikeBlue = new EditablePose(leftSpikeRed.byAlliance().toPose2d().vec().getX(), 40, toRadians(-120)),
+            rightSpikeRed = new EditablePose(24 - leftSpikeRed.x, leftSpikeRed.y, LEFT - leftSpikeRed.heading),
+            rightSpikeBlue = new EditablePose(rightSpikeRed.byAlliance().toPose2d().vec().getX(), -leftSpikeRed.y, LEFT + leftSpikeRed.heading),
+            redBackboard = new EditablePose(48, -34, RIGHT),
+            blueBackboard = new EditablePose(redBackboard.byAlliance().toPose2d().vec().getX(), 34, RIGHT),
+            redParkingLeft = new EditablePose(52, -14, toRadians(165)),
+            redParkingRight = new EditablePose(51, -54, toRadians(200)),
+            blueParkingLeft = new EditablePose(redParkingLeft.toPose2d().vec().getX(), 60, toRadians(165)),
+            blueParkingRight = new EditablePose(redParkingRight.toPose2d().vec().getX(), 14, toRadians(200));
+
+    public static Pose2d
+            mainSpikeBlue = null,
+            mainSpikeRed = null;
 
     public static void main(String[] args) {
         MeepMeep meepMeep = new MeepMeep(800);
 
         double side = isRed ? 1 : -1;
+        double direction = toRadians(0);
 
         double
                 OUTTAKE_WAIT_TIME = 0.25,
@@ -46,29 +59,77 @@ public class MeepMeepTesting {
                 SCORING_WAIT_TIME = 0.75,
                 OPEN_FLAP_WAIT_TIME = 0.25;
 
-        Pose2d startPoseBlue = MeepMeepTesting.startPoseBlue.byBoth().toPose2d();
+        Pose2d startPoseBlue = MeepMeepTesting.startPoseBlue.toPose2d();
         Pose2d startPoseRed = MeepMeepTesting.startPoseRed.byBoth().toPose2d();
-        Pose2d centerSpikeBlue = MeepMeepTesting.centerSpikeBlue.byBoth().toPose2d();
+        Pose2d centerSpikeBlue = MeepMeepTesting.centerSpikeBlue.toPose2d();
         Pose2d centerSpikeRed = MeepMeepTesting.centerSpikeRed.byBoth().toPose2d();
-        Pose2d blueBackboard = MeepMeepTesting.blueBackboard.byBoth().toPose2d();
+        Pose2d leftSpikeBlue = MeepMeepTesting.leftSpikeBlue.toPose2d();
+        Pose2d leftSpikeRed = MeepMeepTesting.leftSpikeRed.byBoth().toPose2d();
+        Pose2d rightSpikeBlue = MeepMeepTesting.rightSpikeBlue.toPose2d();
+        Pose2d rightSpikeRed = MeepMeepTesting.rightSpikeRed.byBoth().toPose2d();
+        Pose2d blueBackboard = MeepMeepTesting.blueBackboard.toPose2d();
         Pose2d redBackboard = MeepMeepTesting.redBackboard.byBoth().toPose2d();
-        Pose2d blueParkingLeft = MeepMeepTesting.blueParkingLeft.byBoth().toPose2d();
-        Pose2d blueParkingRight = MeepMeepTesting.blueParkingRight.byBoth().toPose2d();
+        Pose2d redParkingLeft = MeepMeepTesting.redParkingLeft.byBoth().toPose2d();
+        Pose2d redParkingRight = MeepMeepTesting.redParkingRight.byBoth().toPose2d();
+        Pose2d blueParkingLeft = MeepMeepTesting.blueParkingLeft.toPose2d();
+        Pose2d blueParkingRight = MeepMeepTesting.blueParkingRight.toPose2d();
 
+        switch (spikeNum) {
+            case 1: {
+                mainSpikeBlue = leftSpikeBlue;
+                mainSpikeRed = leftSpikeRed;
+                break;
+            }
+
+            case 2: {
+                mainSpikeBlue = centerSpikeBlue;
+                mainSpikeRed = centerSpikeRed;
+                break;
+            }
+
+            case 3: {
+                mainSpikeBlue = rightSpikeBlue;
+                mainSpikeRed = rightSpikeRed;
+                break;
+            }
+        }
+
+        switch (spikeNum) {
+            case 1: {
+                direction = (isRed ? toRadians(120) : toRadians(-120));
+                break;
+            }
+
+            case 2: {
+                direction = (isRed ? FORWARD : BACKWARD);
+                break;
+            }
+
+            case 3: {
+                direction = (isRed ? (LEFT - toRadians(120)) : (LEFT - toRadians(-120)));
+                break;
+            }
+        }
+
+        double finalDirection = direction;
         RoadRunnerBotEntity myBot = new DefaultBotBuilder(meepMeep)
                 // Set bot constraints: maxVel, maxAccel, maxAngVel, maxAngAccel, track width
                 .setConstraints(30, 30, toRadians(60), toRadians(60), 16.02362205)
                 .setDimensions(16.2981681102, 17.0079)
                 .followTrajectorySequence(drive ->
                         drive.trajectorySequenceBuilder(isRed ? startPoseRed : startPoseBlue)
-                                .splineTo(isRed ? centerSpikeRed.vec() : centerSpikeBlue.vec(), FORWARD)
+                                .splineTo(isRed ? mainSpikeRed.vec() : mainSpikeBlue.vec(), finalDirection)
                                 /*
                                    Starts outtake 0.5 seconds after prev. action, then waits 0.25 seconds before stopping the outtake
                                    Then stops after 1 second
                                  */
                                 // .UNSTABLE_addTemporalMarker(0.5, () -> intake.set(0.35))
                                 // .addTemporalMarker(0.5 + OUTTAKE_WAIT_TIME, () -> intake.set(0))
-                                .lineToLinearHeading(isRed ? redBackboard : blueBackboard)
+                                .lineToSplineHeading(isRed ? redBackboard : blueBackboard)
+                                /*
+                                    Do april tag stuff here because now we can scan
+                                 */
+                                .turn(LEFT)
                                 /*
                                  Starts the lift by updating target to row 0, then executes commands to do so (within timing)
                                  It will activate flap to open, releasing the pixels
@@ -80,7 +141,7 @@ public class MeepMeepTesting {
                                 // })
                                 // .addTemporalMarker(0.5 + OPEN_FLAP_WAIT_TIME, () -> robot.arm.setFlap(true))
                                 // .addTemporalMarker((0.5 + OPEN_FLAP_WAIT_TIME) + SCORING_WAIT_TIME, () -> robot.arm.setArm(true))
-                                .lineToSplineHeading(isParkedLeft ? blueParkingLeft : blueParkingRight)
+                                .lineToSplineHeading(isRed ? (isParkedLeft ? redParkingLeft : redParkingRight) : (isParkedLeft ? blueParkingLeft : blueParkingRight))
                                 .build()
                 );
 
