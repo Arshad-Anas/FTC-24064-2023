@@ -1,16 +1,12 @@
 package org.firstinspires.ftc.teamcode.subsystems.centerstage;
 
 import static com.arcrobotics.ftclib.hardware.motors.Motor.GoBILDA.RPM_117;
-
-import com.acmerobotics.dashboard.config.Config;
-import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import static org.firstinspires.ftc.teamcode.opmodes.MainAuton.mTelemetry;
 import static org.firstinspires.ftc.teamcode.subsystems.centerstage.Arm.TIME_RETRACT_ARM;
-import static org.firstinspires.ftc.teamcode.subsystems.centerstage.Lift.TIME_CLOSE_FLAP;
 import static org.firstinspires.ftc.teamcode.subsystems.centerstage.Lift.TIME_EXTEND_ARM;
 import static org.firstinspires.ftc.teamcode.subsystems.utilities.SimpleServoPivot.getGoBildaServo;
 
-import com.arcrobotics.ftclib.hardware.SimpleServo;
+import com.acmerobotics.dashboard.config.Config;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.arcrobotics.ftclib.hardware.motors.MotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -34,11 +30,12 @@ public final class Robot {
     public final SimpleServoPivot launcher;
     private final BulkReader bulkReader;
 
-    private static double ANGLE_DRONE_LAUNCH = 0,
+    private static double
+            ANGLE_DRONE_LAUNCH = 0,
             ANGLE_DRONE_LOAD = 160;
 
     /**
-     * Constructor of Robot; Instantiates the classes with the hw (hardwareMap)
+     * Constructor of Robot; Instantiates the classes with the hardwareMap
      * @param hardwareMap; A constant map that holds all the parts for config in code
      */
     public Robot(HardwareMap hardwareMap) {
@@ -64,11 +61,15 @@ public final class Robot {
         }
 
         if (lift.hasElevated) {
-            if (lift.timer.seconds() >= TIME_CLOSE_FLAP) arm.setFlap(true);
+            arm.setFlap(true);
             if (lift.timer.seconds() >= TIME_EXTEND_ARM) {
                 arm.setArm(true);
                 lift.hasElevated = false;
             }
+        }
+
+        if (lift.getSetPoint() == -1) {
+            arm.setFlap(intake.get() <= 0);
         }
 
         lift.run();
