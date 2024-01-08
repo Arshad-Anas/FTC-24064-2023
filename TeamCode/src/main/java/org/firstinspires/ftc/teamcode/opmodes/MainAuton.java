@@ -18,6 +18,7 @@ import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
+import org.firstinspires.ftc.teamcode.roadrunner.DriveConstants;
 import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySequence;
 import org.firstinspires.ftc.teamcode.subsystems.centerstage.Arm;
 import org.firstinspires.ftc.teamcode.subsystems.centerstage.Robot;
@@ -133,36 +134,22 @@ public final class MainAuton extends LinearOpMode {
                 case 0: {
                     mainSpikeBlue = leftSpikeBlue;
                     mainSpikeRed = leftSpikeRed;
+                    direction = (isRed ? toRadians(135) : toRadians(-135));
                     break;
                 }
 
                 case 1: {
                     mainSpikeBlue = centerSpikeBlue;
                     mainSpikeRed = centerSpikeRed;
+                    direction = (isRed ? FORWARD : BACKWARD);
                     break;
                 }
 
                 case 2: {
                     mainSpikeBlue = rightSpikeBlue;
                     mainSpikeRed = rightSpikeRed;
-                    isRightCenterSpike = true;
-                    break;
-                }
-            }
-
-            switch (spikeNum) {
-                case 0: {
-                    direction = (isRed ? toRadians(135) : toRadians(-135));
-                    break;
-                }
-
-                case 1: {
-                    direction = (isRed ? FORWARD : BACKWARD);
-                    break;
-                }
-
-                case 2: {
                     direction = (isRed ? (LEFT - toRadians(135)) : (LEFT - toRadians(-135)));
+                    isRightCenterSpike = true;
                     break;
                 }
             }
@@ -180,7 +167,7 @@ public final class MainAuton extends LinearOpMode {
                     .UNSTABLE_addTemporalMarkerOffset(0.5, () -> robot.intake.set(0.35))
                     .addTemporalMarker(0.5 + OUTTAKE_WAIT_TIME, () -> robot.intake.set(0))
                     .strafeRight(isRightCenterSpike ? (isRed ? 8 : -8) : 0.0001)
-                    .turn(isRightCenterSpike ? RIGHT - toRadians(35) : 0)
+                    .turn(isRightCenterSpike ? (isRed ? (RIGHT - toRadians(35)) : (RIGHT + toRadians(35))) : 0)
                     .lineToSplineHeading(isRed ? redBackboard : blueBackboard)
                     /*
                         Do april tag stuff here because now we can scan
