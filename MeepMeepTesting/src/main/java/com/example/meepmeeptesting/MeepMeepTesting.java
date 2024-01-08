@@ -17,7 +17,8 @@ public class MeepMeepTesting {
 
     public static double
             X_START_LEFT = -35,
-            X_START_RIGHT = 12;
+            X_START_RIGHT = 12,
+            DIRECTION = toRadians(0);
 
     public static final double
             LEFT = toRadians(180),
@@ -49,9 +50,6 @@ public class MeepMeepTesting {
 
     public static void main(String[] args) {
         MeepMeep meepMeep = new MeepMeep(800);
-
-        double side = isRed ? 1 : -1;
-        double direction = toRadians(0);
 
         double
                 OUTTAKE_WAIT_TIME = 0.25,
@@ -97,29 +95,28 @@ public class MeepMeepTesting {
 
         switch (spikeNum) {
             case 0: {
-                direction = (isRed ? toRadians(135) : toRadians(-135));
+                DIRECTION = (isRed ? toRadians(135) : toRadians(-135));
                 break;
             }
 
             case 1: {
-                direction = (isRed ? FORWARD : BACKWARD);
+                DIRECTION = (isRed ? FORWARD : BACKWARD);
                 break;
             }
 
             case 2: {
-                direction = (isRed ? (LEFT - toRadians(135)) : (LEFT - toRadians(-135)));
+                DIRECTION = (isRed ? (LEFT - toRadians(135)) : (LEFT - toRadians(-135)));
                 break;
             }
         }
 
-        double finalDirection = direction;
         RoadRunnerBotEntity myBot = new DefaultBotBuilder(meepMeep)
                 // Set bot constraints: maxVel, maxAccel, maxAngVel, maxAngAccel, track width
                 .setConstraints(30, 30, toRadians(60), toRadians(60), 16.02362205)
                 .setDimensions(16.2981681102, 17.0079)
                 .followTrajectorySequence(drive ->
                         drive.trajectorySequenceBuilder(isRed ? startPoseRed : startPoseBlue)
-                                .splineTo(isRed ? mainSpikeRed.vec() : mainSpikeBlue.vec(), finalDirection)
+                                .splineTo(isRed ? mainSpikeRed.vec() : mainSpikeBlue.vec(), DIRECTION)
                                 /*
                                    Starts outtake 0.5 seconds after prev. action, then waits 0.25 seconds before stopping the outtake
                                    Then stops after 1 second

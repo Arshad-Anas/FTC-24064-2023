@@ -7,7 +7,6 @@ import static com.arcrobotics.ftclib.gamepad.GamepadKeys.Button.LEFT_BUMPER;
 import static com.arcrobotics.ftclib.gamepad.GamepadKeys.Button.RIGHT_BUMPER;
 import static com.arcrobotics.ftclib.gamepad.GamepadKeys.Button.X;
 
-import static java.lang.Math.PI;
 import static java.lang.Math.toRadians;
 
 import com.acmerobotics.dashboard.config.Config;
@@ -18,9 +17,7 @@ import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
-import org.firstinspires.ftc.teamcode.roadrunner.DriveConstants;
 import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySequence;
-import org.firstinspires.ftc.teamcode.subsystems.centerstage.Arm;
 import org.firstinspires.ftc.teamcode.subsystems.centerstage.Robot;
 
 @Config
@@ -99,18 +96,10 @@ public final class MainAuton extends LinearOpMode {
 
         while (opModeIsActive()) {
 
-            robot.readSensors();
-
-            robot.drivetrain.update();
-            robot.run();
-
-            robot.printTelemetry();
-            mTelemetry.update();
-
-            double side = isRed ? 1 : -1;
             double direction = toRadians(0);
 
             double
+                    DIRECTION = toRadians(0),
                     OUTTAKE_WAIT_TIME = 0.25,
                     SCORING_WAIT_TIME = 0.75,
                     OPEN_FLAP_WAIT_TIME = 0.25;
@@ -156,10 +145,9 @@ public final class MainAuton extends LinearOpMode {
 
             robot.drivetrain.setPoseEstimate(isRed ? startPoseRed : startPoseBlue);
 
-            double finalDirection = direction;
             TrajectorySequence trajSequenceTop = robot.drivetrain.trajectorySequenceBuilder(isRed ? startPoseRed : startPoseBlue)
 
-                    .splineTo(isRed ? mainSpikeRed.vec() : mainSpikeBlue.vec(), finalDirection)
+                    .splineTo(isRed ? mainSpikeRed.vec() : mainSpikeBlue.vec(), DIRECTION)
                     /*
                        Starts outtake 0.5 seconds after prev. action, then waits 0.25 seconds before stopping the outtake
                        Then stops after 1 second
@@ -187,10 +175,17 @@ public final class MainAuton extends LinearOpMode {
                     .lineToSplineHeading(isRed ? (isParkedLeft ? redParkingLeft : redParkingRight) : (isParkedLeft ? blueParkingLeft : blueParkingRight))
                     .build();
             }
+
+            robot.readSensors();
+
+            robot.drivetrain.update();
+            robot.run();
+
+            robot.printTelemetry();
+            mTelemetry.update();
         }
 
     private static class EditablePose {
-
         public double x, y, heading;
 
         private EditablePose(double x, double y, double heading) {
@@ -212,13 +207,6 @@ public final class MainAuton extends LinearOpMode {
 
         EditablePose byBoth() {
             return byAlliance().bySide();
-        }
-
-        private EditablePose flipBySide() {
-            boolean isRight = MainAuton.isRight == isRed;
-            if (!isRight) heading = PI - heading;
-            if (!isRight) x = (X_START_LEFT + X_START_RIGHT) / 2 - x;
-            return this;
         }
 
         Pose2d toPose2d() {
