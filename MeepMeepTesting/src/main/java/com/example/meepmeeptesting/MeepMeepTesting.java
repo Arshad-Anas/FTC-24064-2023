@@ -11,7 +11,7 @@ import com.noahbres.meepmeep.roadrunner.entity.RoadRunnerBotEntity;
 
 public class MeepMeepTesting {
 
-    static boolean isRed = true, isParkedLeft = false;
+    static boolean isRed = false, isParkedLeft = true, isRightCenterSpike = false;
 
     static final boolean isRight = true;
 
@@ -25,17 +25,17 @@ public class MeepMeepTesting {
             RIGHT = toRadians(0),
             BACKWARD = toRadians(270);
 
-    public static int spikeNum = 0;
+    public static int spikeNum = 2;
 
     public static EditablePose
             startPoseRed = new EditablePose(X_START_RIGHT, -61.788975, FORWARD),
             startPoseBlue = new EditablePose(startPoseRed.byAlliance().toPose2d().vec().getX(), 61, BACKWARD),
             centerSpikeRed = new EditablePose((X_START_RIGHT + 3.5), -33.5, FORWARD),
             centerSpikeBlue = new EditablePose(centerSpikeRed.byAlliance().toPose2d().vec().getX(), 33.5, BACKWARD),
-            leftSpikeRed = new EditablePose(7, -40, toRadians(120)),
-            leftSpikeBlue = new EditablePose(leftSpikeRed.byAlliance().toPose2d().vec().getX(), 40, toRadians(-120)),
+            leftSpikeRed = new EditablePose(7, -41, toRadians(120)),
+            leftSpikeBlue = new EditablePose(leftSpikeRed.byAlliance().toPose2d().vec().getX(), 41, toRadians(-120)),
             rightSpikeRed = new EditablePose(24 - leftSpikeRed.x, leftSpikeRed.y, LEFT - leftSpikeRed.heading),
-            rightSpikeBlue = new EditablePose(rightSpikeRed.byAlliance().toPose2d().vec().getX(), -leftSpikeRed.y, LEFT + leftSpikeRed.heading),
+            rightSpikeBlue = new EditablePose(rightSpikeRed.byAlliance().toPose2d().vec().getX(), 41, LEFT + leftSpikeRed.heading),
             redBackboard = new EditablePose(48, -34, RIGHT),
             blueBackboard = new EditablePose(redBackboard.byAlliance().toPose2d().vec().getX(), 34, RIGHT),
             redParkingLeft = new EditablePose(52, -14, toRadians(165)),
@@ -90,13 +90,14 @@ public class MeepMeepTesting {
             case 2: {
                 mainSpikeBlue = rightSpikeBlue;
                 mainSpikeRed = rightSpikeRed;
+                isRightCenterSpike = true;
                 break;
             }
         }
 
         switch (spikeNum) {
             case 0: {
-                direction = (isRed ? toRadians(120) : toRadians(-120));
+                direction = (isRed ? toRadians(135) : toRadians(-135));
                 break;
             }
 
@@ -106,7 +107,7 @@ public class MeepMeepTesting {
             }
 
             case 2: {
-                direction = (isRed ? (LEFT - toRadians(120)) : (LEFT - toRadians(-120)));
+                direction = (isRed ? (LEFT - toRadians(135)) : (LEFT - toRadians(-135)));
                 break;
             }
         }
@@ -123,8 +124,10 @@ public class MeepMeepTesting {
                                    Starts outtake 0.5 seconds after prev. action, then waits 0.25 seconds before stopping the outtake
                                    Then stops after 1 second
                                  */
-                                // .UNSTABLE_addTemporalMarker(0.5, () -> intake.set(0.35))
+                                // .UNSTABLE_addTemporalMarkerOffset(0.5, () -> intake.set(0.35))
                                 // .addTemporalMarker(0.5 + OUTTAKE_WAIT_TIME, () -> intake.set(0))
+                                .strafeRight(isRightCenterSpike ? (isRed ? 8 : -8) : 0.0001)
+                                .turn(isRightCenterSpike ? RIGHT - toRadians(35) : 0)
                                 .lineToSplineHeading(isRed ? redBackboard : blueBackboard)
                                 /*
                                     Do april tag stuff here because now we can scan
@@ -135,7 +138,7 @@ public class MeepMeepTesting {
                                  It will activate flap to open, releasing the pixels
                                  After doing that, it'll retract back to target row -1
                                 */
-                                // .UNSTABLE_addTemporalMarker(0.5, () -> {
+                                // .UNSTABLE_addTemporalMarkerOffset(0.5, () -> {
                                 //      robot.lift.setTargetRow(0);
                                 //      robot.lift.updateTarget();
                                 // })
