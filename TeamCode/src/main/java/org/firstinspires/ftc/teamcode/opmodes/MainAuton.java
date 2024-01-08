@@ -99,7 +99,6 @@ public final class MainAuton extends LinearOpMode {
             double direction = toRadians(0);
 
             double
-                    DIRECTION = toRadians(0),
                     OUTTAKE_WAIT_TIME = 0.25,
                     SCORING_WAIT_TIME = 0.75,
                     OPEN_FLAP_WAIT_TIME = 0.25;
@@ -147,7 +146,7 @@ public final class MainAuton extends LinearOpMode {
 
             TrajectorySequence trajSequenceTop = robot.drivetrain.trajectorySequenceBuilder(isRed ? startPoseRed : startPoseBlue)
 
-                    .splineTo(isRed ? mainSpikeRed.vec() : mainSpikeBlue.vec(), DIRECTION)
+                    .splineTo(isRed ? mainSpikeRed.vec() : mainSpikeBlue.vec(), direction)
                     /*
                        Starts outtake 0.5 seconds after prev. action, then waits 0.25 seconds before stopping the outtake
                        Then stops after 1 second
