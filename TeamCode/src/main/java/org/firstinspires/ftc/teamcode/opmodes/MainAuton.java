@@ -33,7 +33,10 @@ public final class MainAuton extends LinearOpMode {
 
     public static double
             X_START_LEFT = -35,
-            X_START_RIGHT = 12;
+            X_START_RIGHT = 12,
+            OUTTAKE_WAIT_TIME = 0.25,
+            SCORING_WAIT_TIME = 0.75,
+            OPEN_FLAP_WAIT_TIME = 0.25;
 
     public static final double
             LEFT = toRadians(180),
@@ -95,13 +98,9 @@ public final class MainAuton extends LinearOpMode {
         waitForStart();
 
         while (opModeIsActive()) {
+            robot.readSensors();
 
             double direction = toRadians(0);
-
-            double
-                    OUTTAKE_WAIT_TIME = 0.25,
-                    SCORING_WAIT_TIME = 0.75,
-                    OPEN_FLAP_WAIT_TIME = 0.25;
 
             Pose2d startPoseBlue = MainAuton.startPoseBlue.toPose2d();
             Pose2d startPoseRed = MainAuton.startPoseRed.byBoth().toPose2d();
@@ -123,14 +122,12 @@ public final class MainAuton extends LinearOpMode {
                     mainSpikeBlue = leftSpikeBlue;
                     mainSpikeRed = leftSpikeRed;
                     direction = (isRed ? toRadians(135) : toRadians(-135));
-                    break;
                 }
 
                 case 1: {
                     mainSpikeBlue = centerSpikeBlue;
                     mainSpikeRed = centerSpikeRed;
                     direction = (isRed ? FORWARD : BACKWARD);
-                    break;
                 }
 
                 case 2: {
@@ -138,7 +135,6 @@ public final class MainAuton extends LinearOpMode {
                     mainSpikeRed = rightSpikeRed;
                     direction = (isRed ? (LEFT - toRadians(135)) : (LEFT - toRadians(-135)));
                     isRightCenterSpike = true;
-                    break;
                 }
             }
 
@@ -169,13 +165,11 @@ public final class MainAuton extends LinearOpMode {
                           robot.lift.setTargetRow(0);
                           robot.lift.updateTarget();
                      })
-                     .addTemporalMarker(0.5 + OPEN_FLAP_WAIT_TIME, () -> robot.arm.setFlap(true))
-                     .addTemporalMarker((0.5 + OPEN_FLAP_WAIT_TIME) + SCORING_WAIT_TIME, () -> robot.arm.setArm(true))
+                     .addTemporalMarker(0.5 + OPEN_FLAP_WAIT_TIME, () -> robot.arm.setFlap(false))
+                     .addTemporalMarker((0.5 + OPEN_FLAP_WAIT_TIME) + SCORING_WAIT_TIME, () -> robot.arm.setArm(false))
                     .lineToSplineHeading(isRed ? (isParkedLeft ? redParkingLeft : redParkingRight) : (isParkedLeft ? blueParkingLeft : blueParkingRight))
                     .build();
             }
-
-            robot.readSensors();
 
             robot.drivetrain.update();
             robot.run();
