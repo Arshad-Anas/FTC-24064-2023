@@ -25,33 +25,73 @@ public class MeepMeepTesting {
             BACKWARD = toRadians(270);
 
     public static EditablePose
-            startPose = new EditablePose(X_START_RIGHT, -61.788975, FORWARD),
-            centerSpike = new EditablePose(X_START_RIGHT, -30, FORWARD),
-            leftSpike = new EditablePose(7, -40, toRadians(120)),
-            rightSpike = new EditablePose(24 - leftSpike.x, leftSpike.y, LEFT - leftSpike.heading),
-            afterSpike = new EditablePose(36, leftSpike.y, LEFT);
+         // this is red alliance
+            startPoseRed = new EditablePose(X_START_LEFT, -61.788975, FORWARD),
+            centerSpikeRed = new EditablePose(X_START_RIGHT, -30, FORWARD),
+            leftSpikeRed = new EditablePose(7, -40, toRadians(120)),
+            rightSpikeRed = new EditablePose(24 - leftSpikeRed.x, leftSpikeRed.y, LEFT - leftSpikeRed.heading),
+
+          // the below 6 are for center spike red alliance
+            firstSpikeRed = new EditablePose(-49,-24,Math.toRadians(0)),
+            whitePixelRed = new EditablePose(-58,-24,Math.toRadians(180)),
+            stageDoorRed = new EditablePose(-5, -8,Math.toRadians(0)),
+            dBRed = new EditablePose(25,-9,Math.toRadians(0)),
+            backDropRed = new EditablePose(49,-35,Math.toRadians(0)),
+
+            parKingRed = new EditablePose(50, -10, Math.toRadians(-180)),
+
+    // This is for blue alliance
+            startPoseBlue = new EditablePose(startPoseRed.byAlliance().toPose2d().vec().getX(), -61.788975,BACKWARD),
+            centerSpikeBlue = new EditablePose(centerSpikeRed.byAlliance().toPose2d().vec().getX(), 30, BACKWARD),
+            leftSpikeBlue = new EditablePose(leftSpikeRed.byAlliance().toPose2d().vec().getX(), 40, toRadians(-120)),
+            rightSpikeBlue = new EditablePose(rightSpikeRed.byAlliance().toPose2d().vec().getX(), -leftSpikeRed.y, LEFT + leftSpikeRed.heading),
+
+            // the below 6 are for center spike blue alliance
+            firstSpikeBlue = new EditablePose(firstSpikeRed.byAlliance().toPose2d().vec().getX(),24,Math.toRadians(0)),
+            whitePixelBlue = new EditablePose(whitePixelRed.byAlliance().toPose2d().vec().getX(),24,Math.toRadians(180)),
+            stageDoorBlue = new EditablePose(stageDoorRed.byAlliance().toPose2d().vec().getX(), 8,Math.toRadians(0)),
+            dBBlue = new EditablePose(dBRed.byAlliance().toPose2d().vec().getX(),9,Math.toRadians(0)),
+            backDropBlue = new EditablePose(backDropRed.byAlliance().toPose2d().vec().getX(),35,Math.toRadians(0)),
+            parKingBlue = new EditablePose(parKingRed.byAlliance().toPose2d().vec().getX(), -10, Math.toRadians(-180));
 
     public static void main(String[] args) {
-        MeepMeep meepMeep = new MeepMeep(800);
+        MeepMeep meepMeep = new MeepMeep(770);
+        Pose2d startPoseRed = MeepMeepTesting.startPoseRed.byAlliance().toPose2d();
+        Pose2d firstSpikeRed = MeepMeepTesting.firstSpikeRed.byAlliance().toPose2d();
+        Pose2d whitePixelRed = MeepMeepTesting.whitePixelRed.byAlliance().toPose2d();
+        Pose2d stageDoorRed = MeepMeepTesting.stageDoorRed.byAlliance().toPose2d();
+        Pose2d dBRed = MeepMeepTesting.dBRed.byAlliance().toPose2d();
+        Pose2d backDropRed = MeepMeepTesting.backDropRed.byAlliance().toPose2d();
+        Pose2d parKingRed = MeepMeepTesting.parKingRed.byAlliance().toPose2d();
+
+        Pose2d startPoseBlue = MeepMeepTesting.startPoseBlue.bySide().toPose2d();
+        Pose2d firstSpikeBlue = MeepMeepTesting.firstSpikeBlue.toPose2d();
+        Pose2d whitePixelBlue = MeepMeepTesting.whitePixelBlue.toPose2d();
+        Pose2d stageDoorBlue = MeepMeepTesting.stageDoorBlue.toPose2d();
+        Pose2d dBBlue = MeepMeepTesting.dBBlue.toPose2d();
+        Pose2d backDropBlue = MeepMeepTesting.backDropBlue.toPose2d();
+        Pose2d parKingBlue = MeepMeepTesting.parKingBlue.toPose2d();
+
+
 
         double side = isRed ? 1 : -1;
-        Pose2d startPose = MeepMeepTesting.startPose.byBoth().toPose2d();
+
         RoadRunnerBotEntity myBot = new DefaultBotBuilder(meepMeep)
                 // Set bot constraints: maxVel, maxAccel, maxAngVel, maxAngAccel, track width
                 .setConstraints(30, 30, toRadians(60), toRadians(60), 16.02362205)
                 .followTrajectorySequence(drive ->
-                        drive.trajectorySequenceBuilder(startPose)
-                                .lineToSplineHeading(new Pose2d(-49,-24, Math.toRadians(0)))
+                        drive.trajectorySequenceBuilder(isRed ? startPoseRed : startPoseBlue)
+                                .lineToSplineHeading(isRed ? firstSpikeRed : firstSpikeBlue)
                             //    .addDisplacementMarker((){})
-                                .lineToLinearHeading(new Pose2d(-58,-24,Math.toRadians(180)))
+                                .lineToLinearHeading(isRed ? whitePixelRed : whitePixelBlue)
                               //  .lineTo(new Vector2d(-57,-24)
-                                .strafeRight(4)
+                                .strafeRight(isRed ? 4 : -4)
                               //  .lineTo(new Vector2d(0,0), Math.toRadians(-180)
                                // .splineToHeading(new Vector2d(10,-5),Math.toRadians(-180))
-                                .splineToSplineHeading(new Pose2d(-5, -8), Math.toRadians(0))
-                                .splineTo(new Vector2d(25, -9), Math.toRadians(0))
-                                .lineToSplineHeading(new Pose2d(49,-35, Math.toRadians(-180)))
-                                .lineTo(new Vector2d(50, -10))
+                                .splineToSplineHeading(isRed ? stageDoorRed : stageDoorBlue, Math.toRadians(0))
+                                .splineTo(isRed ? dBRed.vec() : dBBlue.vec(), Math.toRadians(0))
+                                .lineToSplineHeading(isRed ? backDropRed : backDropBlue)
+                                .lineTo(isRed ? parKingRed.vec() : parKingBlue.vec())
                                 .build());
 
         meepMeep.setBackground(MeepMeep.Background.FIELD_CENTERSTAGE_JUICE_DARK)
