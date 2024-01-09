@@ -27,9 +27,12 @@ public final class MainAuton extends LinearOpMode {
     public static MultipleTelemetry mTelemetry;
     public static GamepadEx gamepadEx1, gamepadEx2;
 
-    static boolean isRed = false, isParkedLeft = true;
+    static boolean
+            isRed = false,
+            isParkedLeft = true,
+            isRight = true;
 
-    static boolean isRight = true;
+    public static int spikeNum = 2;
 
     public static double
             X_START_LEFT = -35,
@@ -43,8 +46,6 @@ public final class MainAuton extends LinearOpMode {
             FORWARD = toRadians(90),
             RIGHT = toRadians(0),
             BACKWARD = toRadians(270);
-
-    public static int spikeNum = 2;
 
     public static EditablePose
             startPoseRed = new EditablePose(X_START_RIGHT, -61.788975, FORWARD),
@@ -167,16 +168,16 @@ public final class MainAuton extends LinearOpMode {
 
                 robot.drivetrain.followTrajectorySequenceAsync(trajSequenceTop);
 
-                while (opModeIsActive()) {
-                    robot.readSensors();
+        while (opModeIsActive()) {
+            robot.readSensors();
 
-                    robot.drivetrain.update();
-                    robot.run();
+            robot.drivetrain.update();
+            robot.run();
 
-                    robot.printTelemetry();
-                    mTelemetry.update();
-                }
+            robot.printTelemetry();
+            mTelemetry.update();
         }
+    }
 
     private static class EditablePose {
         public double x, y, heading;
