@@ -12,7 +12,7 @@ import com.noahbres.meepmeep.roadrunner.entity.RoadRunnerBotEntity;
 
 public class MeepMeepTesting {
 
-    static boolean isRed = true, isRight = false;
+    static boolean isRed = true, isRight = false, isParkedLeft = false;
 
     public static double
             X_START_LEFT = -35,
@@ -27,12 +27,12 @@ public class MeepMeepTesting {
     public static EditablePose
          // this is red alliance
             startPoseRed = new EditablePose(X_START_LEFT, -61.788975, FORWARD),
-            centerSpikeRed = new EditablePose(X_START_RIGHT, -30, FORWARD),
+            centerSpikeRed = new EditablePose(-49, -24,Math.toRadians(0)),
             leftSpikeRed = new EditablePose(7, -40, toRadians(120)),
             rightSpikeRed = new EditablePose(24 - leftSpikeRed.x, leftSpikeRed.y, LEFT - leftSpikeRed.heading),
 
           // the below 6 are for center spike red alliance
-            firstSpikeRed = new EditablePose(-49,-24,Math.toRadians(0)),
+          //  firstSpikeRed = new EditablePose(-49,-24,Math.toRadians(0)),
             whitePixelRed = new EditablePose(-58,-24,Math.toRadians(180)),
             stageDoorRed = new EditablePose(-5, -8,Math.toRadians(0)),
             dBRed = new EditablePose(25,-9,Math.toRadians(0)),
@@ -42,12 +42,12 @@ public class MeepMeepTesting {
 
     // This is for blue alliance
             startPoseBlue = new EditablePose(startPoseRed.byAlliance().toPose2d().vec().getX(), -61.788975,BACKWARD),
-            centerSpikeBlue = new EditablePose(centerSpikeRed.byAlliance().toPose2d().vec().getX(), 30, BACKWARD),
+            centerSpikeBlue = new EditablePose(centerSpikeRed.byAlliance().toPose2d().vec().getX(), 24, Math.toRadians(0)),
             leftSpikeBlue = new EditablePose(leftSpikeRed.byAlliance().toPose2d().vec().getX(), 40, toRadians(-120)),
             rightSpikeBlue = new EditablePose(rightSpikeRed.byAlliance().toPose2d().vec().getX(), -leftSpikeRed.y, LEFT + leftSpikeRed.heading),
 
             // the below 6 are for center spike blue alliance
-            firstSpikeBlue = new EditablePose(firstSpikeRed.byAlliance().toPose2d().vec().getX(),24,Math.toRadians(0)),
+         //   firstSpikeBlue = new EditablePose(firstSpikeRed.byAlliance().toPose2d().vec().getX(),24,Math.toRadians(0)),
             whitePixelBlue = new EditablePose(whitePixelRed.byAlliance().toPose2d().vec().getX(),24,Math.toRadians(180)),
             stageDoorBlue = new EditablePose(stageDoorRed.byAlliance().toPose2d().vec().getX(), 8,Math.toRadians(0)),
             dBBlue = new EditablePose(dBRed.byAlliance().toPose2d().vec().getX(),9,Math.toRadians(0)),
@@ -57,7 +57,7 @@ public class MeepMeepTesting {
     public static void main(String[] args) {
         MeepMeep meepMeep = new MeepMeep(770);
         Pose2d startPoseRed = MeepMeepTesting.startPoseRed.byAlliance().toPose2d();
-        Pose2d firstSpikeRed = MeepMeepTesting.firstSpikeRed.byAlliance().toPose2d();
+        Pose2d centerSpikeRed = MeepMeepTesting.centerSpikeRed.byAlliance().toPose2d();
         Pose2d whitePixelRed = MeepMeepTesting.whitePixelRed.byAlliance().toPose2d();
         Pose2d stageDoorRed = MeepMeepTesting.stageDoorRed.byAlliance().toPose2d();
         Pose2d dBRed = MeepMeepTesting.dBRed.byAlliance().toPose2d();
@@ -65,7 +65,7 @@ public class MeepMeepTesting {
         Pose2d parKingRed = MeepMeepTesting.parKingRed.byAlliance().toPose2d();
 
         Pose2d startPoseBlue = MeepMeepTesting.startPoseBlue.bySide().toPose2d();
-        Pose2d firstSpikeBlue = MeepMeepTesting.firstSpikeBlue.toPose2d();
+        Pose2d centerSpikeBlue = MeepMeepTesting.centerSpikeBlue.toPose2d();
         Pose2d whitePixelBlue = MeepMeepTesting.whitePixelBlue.toPose2d();
         Pose2d stageDoorBlue = MeepMeepTesting.stageDoorBlue.toPose2d();
         Pose2d dBBlue = MeepMeepTesting.dBBlue.toPose2d();
@@ -81,7 +81,7 @@ public class MeepMeepTesting {
                 .setConstraints(30, 30, toRadians(60), toRadians(60), 16.02362205)
                 .followTrajectorySequence(drive ->
                         drive.trajectorySequenceBuilder(isRed ? startPoseRed : startPoseBlue)
-                                .lineToSplineHeading(isRed ? firstSpikeRed : firstSpikeBlue)
+                                .lineToSplineHeading(isRed ? centerSpikeRed : centerSpikeBlue)
                             //    .addDisplacementMarker((){})
                                 .lineToLinearHeading(isRed ? whitePixelRed : whitePixelBlue)
                               //  .lineTo(new Vector2d(-57,-24)
