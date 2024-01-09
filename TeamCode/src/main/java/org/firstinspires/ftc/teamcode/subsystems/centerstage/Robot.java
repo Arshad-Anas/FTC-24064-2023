@@ -69,7 +69,7 @@ public final class Robot {
         }
 
         if (lift.getSetPoint() == -1) {
-            arm.setFlap(intake.get() <= 0);
+            arm.setFlap(intake.get() >= 0);
         }
 
         lift.run();

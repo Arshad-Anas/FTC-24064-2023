@@ -90,11 +90,10 @@ public final class MainTeleOp extends LinearOpMode {
             robot.climber.set(gamepadEx2.getRightY());
 
             // Shared
-            // The intake power is set by the greatest trigger value
-            robot.intake.set(max(
-                    gamepadEx2.getTrigger(RIGHT_TRIGGER) - gamepadEx2.getTrigger(LEFT_TRIGGER),
-                    gamepadEx1.getTrigger(RIGHT_TRIGGER) - gamepadEx1.getTrigger(LEFT_TRIGGER)
-            ));
+            // The intake power takes precedent to the first player
+            double trigger1 = gamepadEx1.getTrigger(RIGHT_TRIGGER) - gamepadEx1.getTrigger(LEFT_TRIGGER);
+            double trigger2 = gamepadEx2.getTrigger(RIGHT_TRIGGER) - gamepadEx2.getTrigger(LEFT_TRIGGER);
+            robot.intake.set(trigger1 != 0 ? trigger1 : trigger2);
 
             robot.run();
             robot.printTelemetry();
