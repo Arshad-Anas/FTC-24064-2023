@@ -26,7 +26,7 @@ public class MeepMeepTesting {
             RIGHT = toRadians(0),
             BACKWARD = toRadians(270);
 
-    public static int spikeNum = 2;
+    public static int spikeNum = 1;
 
     public static EditablePose
             startPoseRed = new EditablePose(X_START_RIGHT, -61.788975, FORWARD),
@@ -123,8 +123,8 @@ public class MeepMeepTesting {
                                  */
                                 // .UNSTABLE_addTemporalMarkerOffset(0.5, () -> intake.set(0.35))
                                 // .addTemporalMarker(0.5 + OUTTAKE_WAIT_TIME, () -> intake.set(0))
-                                .strafeRight(isRightCenterSpike ? (isRed ? 8 : -8) : 0.0001)
-                                .turn(isRightCenterSpike ? (isRed ? (RIGHT - toRadians(35)) : (RIGHT + toRadians(35))) : 0)
+                                .strafeRight(spikeNum == 2 ? (isRed ? 8 : -8) : 0.0001)
+                                .turn(spikeNum == 2 ? (isRed ? (RIGHT - toRadians(35)) : (RIGHT + toRadians(35))) : 0)
                                 .lineToSplineHeading(isRed ? redBackboard : blueBackboard)
                                 /*
                                     Do april tag stuff here because now we can scan

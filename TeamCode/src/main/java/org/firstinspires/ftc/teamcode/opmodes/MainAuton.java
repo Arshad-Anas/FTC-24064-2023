@@ -27,7 +27,7 @@ public final class MainAuton extends LinearOpMode {
     public static MultipleTelemetry mTelemetry;
     public static GamepadEx gamepadEx1, gamepadEx2;
 
-    static boolean isRed = false, isParkedLeft = true, isRightCenterSpike = false;
+    static boolean isRed = false, isParkedLeft = true;
 
     static boolean isRight = true;
 
@@ -126,12 +126,10 @@ public final class MainAuton extends LinearOpMode {
                 mainSpikeRed = centerSpikeRed;
                 direction = (isRed ? FORWARD : BACKWARD);
             }
-
             case 2: {
                 mainSpikeBlue = rightSpikeBlue;
                 mainSpikeRed = rightSpikeRed;
                 direction = (isRed ? (LEFT - toRadians(135)) : (LEFT - toRadians(-135)));
-                isRightCenterSpike = true;
             }
         }
 
@@ -146,8 +144,8 @@ public final class MainAuton extends LinearOpMode {
                  */
                 .UNSTABLE_addTemporalMarkerOffset(0.5, () -> robot.intake.set(0.35))
                 .addTemporalMarker(0.5 + OUTTAKE_WAIT_TIME, () -> robot.intake.set(0))
-                .strafeRight(isRightCenterSpike ? (isRed ? 8 : -8) : 0.0001)
-                .turn(isRightCenterSpike ? (isRed ? (RIGHT - toRadians(35)) : (RIGHT + toRadians(35))) : 0)
+                .strafeRight(spikeNum == 2 ? (isRed ? 8 : -8) : 0.0001)
+                .turn(spikeNum == 2 ? (isRed ? (RIGHT - toRadians(35)) : (RIGHT + toRadians(35))) : 0)
                 .lineToSplineHeading(isRed ? redBackboard : blueBackboard)
                 /*
                     Do april tag stuff here because now we can scan
