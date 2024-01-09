@@ -97,85 +97,87 @@ public final class MainAuton extends LinearOpMode {
 
         waitForStart();
 
-        while (opModeIsActive()) {
-            robot.readSensors();
+        double direction = toRadians(0);
 
-            double direction = toRadians(0);
+        Pose2d startPoseBlue = MainAuton.startPoseBlue.toPose2d();
+        Pose2d startPoseRed = MainAuton.startPoseRed.byBoth().toPose2d();
+        Pose2d centerSpikeBlue = MainAuton.centerSpikeBlue.toPose2d();
+        Pose2d centerSpikeRed = MainAuton.centerSpikeRed.byBoth().toPose2d();
+        Pose2d leftSpikeBlue = MainAuton.leftSpikeBlue.toPose2d();
+        Pose2d leftSpikeRed = MainAuton.leftSpikeRed.byBoth().toPose2d();
+        Pose2d rightSpikeBlue = MainAuton.rightSpikeBlue.toPose2d();
+        Pose2d rightSpikeRed = MainAuton.rightSpikeRed.byBoth().toPose2d();
+        Pose2d blueBackboard = MainAuton.blueBackboard.toPose2d();
+        Pose2d redBackboard = MainAuton.redBackboard.byBoth().toPose2d();
+        Pose2d redParkingLeft = MainAuton.redParkingLeft.byBoth().toPose2d();
+        Pose2d redParkingRight = MainAuton.redParkingRight.byBoth().toPose2d();
+        Pose2d blueParkingLeft = MainAuton.blueParkingLeft.toPose2d();
+        Pose2d blueParkingRight = MainAuton.blueParkingRight.toPose2d();
 
-            Pose2d startPoseBlue = MainAuton.startPoseBlue.toPose2d();
-            Pose2d startPoseRed = MainAuton.startPoseRed.byBoth().toPose2d();
-            Pose2d centerSpikeBlue = MainAuton.centerSpikeBlue.toPose2d();
-            Pose2d centerSpikeRed = MainAuton.centerSpikeRed.byBoth().toPose2d();
-            Pose2d leftSpikeBlue = MainAuton.leftSpikeBlue.toPose2d();
-            Pose2d leftSpikeRed = MainAuton.leftSpikeRed.byBoth().toPose2d();
-            Pose2d rightSpikeBlue = MainAuton.rightSpikeBlue.toPose2d();
-            Pose2d rightSpikeRed = MainAuton.rightSpikeRed.byBoth().toPose2d();
-            Pose2d blueBackboard = MainAuton.blueBackboard.toPose2d();
-            Pose2d redBackboard = MainAuton.redBackboard.byBoth().toPose2d();
-            Pose2d redParkingLeft = MainAuton.redParkingLeft.byBoth().toPose2d();
-            Pose2d redParkingRight = MainAuton.redParkingRight.byBoth().toPose2d();
-            Pose2d blueParkingLeft = MainAuton.blueParkingLeft.toPose2d();
-            Pose2d blueParkingRight = MainAuton.blueParkingRight.toPose2d();
-
-            switch (spikeNum) {
-                case 0: {
-                    mainSpikeBlue = leftSpikeBlue;
-                    mainSpikeRed = leftSpikeRed;
-                    direction = (isRed ? toRadians(135) : toRadians(-135));
-                }
-
-                case 1: {
-                    mainSpikeBlue = centerSpikeBlue;
-                    mainSpikeRed = centerSpikeRed;
-                    direction = (isRed ? FORWARD : BACKWARD);
-                }
-
-                case 2: {
-                    mainSpikeBlue = rightSpikeBlue;
-                    mainSpikeRed = rightSpikeRed;
-                    direction = (isRed ? (LEFT - toRadians(135)) : (LEFT - toRadians(-135)));
-                    isRightCenterSpike = true;
-                }
+        switch (spikeNum) {
+            case 0: {
+                mainSpikeBlue = leftSpikeBlue;
+                mainSpikeRed = leftSpikeRed;
+                direction = (isRed ? toRadians(135) : toRadians(-135));
             }
 
-            robot.drivetrain.setPoseEstimate(isRed ? startPoseRed : startPoseBlue);
-
-            TrajectorySequence trajSequenceTop = robot.drivetrain.trajectorySequenceBuilder(isRed ? startPoseRed : startPoseBlue)
-
-                    .splineTo(isRed ? mainSpikeRed.vec() : mainSpikeBlue.vec(), direction)
-                    /*
-                       Starts outtake 0.5 seconds after prev. action, then waits 0.25 seconds before stopping the outtake
-                       Then stops after 1 second
-                     */
-                    .UNSTABLE_addTemporalMarkerOffset(0.5, () -> robot.intake.set(0.35))
-                    .addTemporalMarker(0.5 + OUTTAKE_WAIT_TIME, () -> robot.intake.set(0))
-                    .strafeRight(isRightCenterSpike ? (isRed ? 8 : -8) : 0.0001)
-                    .turn(isRightCenterSpike ? (isRed ? (RIGHT - toRadians(35)) : (RIGHT + toRadians(35))) : 0)
-                    .lineToSplineHeading(isRed ? redBackboard : blueBackboard)
-                    /*
-                        Do april tag stuff here because now we can scan
-                     */
-                    .turn(LEFT)
-                    /*
-                     Starts the lift by updating target to row 0, then executes commands to do so (within timing)
-                     It will activate flap to open, releasing the pixels
-                     After doing that, it'll retract back to target row -1
-                    */
-                     .UNSTABLE_addTemporalMarkerOffset(0.5, () -> {
-                          robot.lift.setTargetRow(0);
-                          robot.lift.updateTarget();
-                     })
-                     .addTemporalMarker(0.5 + OPEN_FLAP_WAIT_TIME, () -> robot.arm.setFlap(false))
-                     .addTemporalMarker((0.5 + OPEN_FLAP_WAIT_TIME) + SCORING_WAIT_TIME, () -> robot.arm.setArm(false))
-                    .lineToSplineHeading(isRed ? (isParkedLeft ? redParkingLeft : redParkingRight) : (isParkedLeft ? blueParkingLeft : blueParkingRight))
-                    .build();
+            case 1: {
+                mainSpikeBlue = centerSpikeBlue;
+                mainSpikeRed = centerSpikeRed;
+                direction = (isRed ? FORWARD : BACKWARD);
             }
 
-            robot.drivetrain.update();
-            robot.run();
+            case 2: {
+                mainSpikeBlue = rightSpikeBlue;
+                mainSpikeRed = rightSpikeRed;
+                direction = (isRed ? (LEFT - toRadians(135)) : (LEFT - toRadians(-135)));
+                isRightCenterSpike = true;
+            }
+        }
 
-            robot.printTelemetry();
-            mTelemetry.update();
+        robot.drivetrain.setPoseEstimate(isRed ? startPoseRed : startPoseBlue);
+
+        TrajectorySequence trajSequenceTop = robot.drivetrain.trajectorySequenceBuilder(isRed ? startPoseRed : startPoseBlue)
+
+                .splineTo(isRed ? mainSpikeRed.vec() : mainSpikeBlue.vec(), direction)
+                /*
+                   Starts outtake 0.5 seconds after prev. action, then waits 0.25 seconds before stopping the outtake
+                   Then stops after 1 second
+                 */
+                .UNSTABLE_addTemporalMarkerOffset(0.5, () -> robot.intake.set(0.35))
+                .addTemporalMarker(0.5 + OUTTAKE_WAIT_TIME, () -> robot.intake.set(0))
+                .strafeRight(isRightCenterSpike ? (isRed ? 8 : -8) : 0.0001)
+                .turn(isRightCenterSpike ? (isRed ? (RIGHT - toRadians(35)) : (RIGHT + toRadians(35))) : 0)
+                .lineToSplineHeading(isRed ? redBackboard : blueBackboard)
+                /*
+                    Do april tag stuff here because now we can scan
+                 */
+                .turn(LEFT)
+                /*
+                 Starts the lift by updating target to row 0, then executes commands to do so (within timing)
+                 It will activate flap to open, releasing the pixels
+                 After doing that, it'll retract back to target row -1
+                */
+                .UNSTABLE_addTemporalMarkerOffset(0.5, () -> {
+                    robot.lift.setTargetRow(0);
+                    robot.lift.updateTarget();
+                })
+                .addTemporalMarker(0.5 + OPEN_FLAP_WAIT_TIME, () -> robot.arm.setFlap(false))
+                .addTemporalMarker((0.5 + OPEN_FLAP_WAIT_TIME) + SCORING_WAIT_TIME, () -> robot.arm.setArm(false))
+                .lineToSplineHeading(isRed ? (isParkedLeft ? redParkingLeft : redParkingRight) : (isParkedLeft ? blueParkingLeft : blueParkingRight))
+                .build();
+
+                robot.drivetrain.followTrajectorySequenceAsync(trajSequenceTop);
+
+                while (opModeIsActive()) {
+                    robot.readSensors();
+
+                    robot.drivetrain.update();
+                    robot.run();
+
+                    robot.printTelemetry();
+                    mTelemetry.update();
+                }
         }
 
     private static class EditablePose {
