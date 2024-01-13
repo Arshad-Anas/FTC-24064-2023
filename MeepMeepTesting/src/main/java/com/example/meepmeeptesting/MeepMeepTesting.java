@@ -63,16 +63,17 @@ public class MeepMeepTesting {
 
     public static void main(String[] args) {
         MeepMeep meepMeep = new MeepMeep(770);
-        Pose2d startPoseRed = MeepMeepTesting.startPoseRed.byAlliance().toPose2d();
+        
+        Pose2d startRed = MeepMeepTesting.startPoseRed.byAlliance().toPose2d();
         Pose2d centerSpikeRed = MeepMeepTesting.centerSpikeRed.byAlliance().toPose2d();
         Pose2d leftSpikeRed = MeepMeepTesting.leftSpikeRed.byAlliance().toPose2d();
         Pose2d rightSpikeRed = MeepMeepTesting.rightSpikeRed.byAlliance().toPose2d();
         Pose2d whitePixelRed = MeepMeepTesting.whitePixelRed.byAlliance().toPose2d();
         Pose2d stageDoorRed = MeepMeepTesting.stageDoorRed.byAlliance().toPose2d();
-        Pose2d dBRed = MeepMeepTesting.dBRed.byAlliance().toPose2d();
-        Pose2d CenterbackDropRed = MeepMeepTesting.CenterbackDropRed.byAlliance().toPose2d();
-        Pose2d LeftbackDropRed = MeepMeepTesting.LeftbackDropRed.byAlliance().toPose2d();
-        Pose2d RightbackDropRed = MeepMeepTesting.RightbackDropRed.byAlliance().toPose2d();
+        Pose2d redTransition = MeepMeepTesting.dBRed.byAlliance().toPose2d();
+        Pose2d centerbackDropRed = MeepMeepTesting.CenterbackDropRed.byAlliance().toPose2d();
+        Pose2d leftbackDropRed = MeepMeepTesting.LeftbackDropRed.byAlliance().toPose2d();
+        Pose2d rightbackDropRed = MeepMeepTesting.RightbackDropRed.byAlliance().toPose2d();
         Pose2d parkingRightRed = MeepMeepTesting.parkingRightRed.byAlliance().toPose2d();
         Pose2d parkingLeftRed = MeepMeepTesting.parkingLeftRed.byAlliance().toPose2d();
         Pose2d leftSpikemovementRed = MeepMeepTesting.leftSpikemovementRed.byAlliance().toPose2d();
@@ -83,10 +84,10 @@ public class MeepMeepTesting {
         Pose2d rightSpikeBlue = MeepMeepTesting.rightSpikeBlue.toPose2d();
         Pose2d whitePixelBlue = MeepMeepTesting.whitePixelBlue.toPose2d();
         Pose2d stageDoorBlue = MeepMeepTesting.stageDoorBlue.toPose2d();
-        Pose2d dBBlue = MeepMeepTesting.dBBlue.toPose2d();
-        Pose2d CenterbackDropBlue = MeepMeepTesting.CenterbackDropBlue.toPose2d();
-        Pose2d LeftbackDropBlue = MeepMeepTesting.LeftbackDropBlue.toPose2d();
-        Pose2d RightbackDropBlue = MeepMeepTesting.RightbackDropBlue.toPose2d();
+        Pose2d blueTransition = MeepMeepTesting.dBBlue.toPose2d();
+        Pose2d centerbackDropBlue = MeepMeepTesting.CenterbackDropBlue.toPose2d();
+        Pose2d leftbackDropBlue = MeepMeepTesting.LeftbackDropBlue.toPose2d();
+        Pose2d rightbackDropBlue = MeepMeepTesting.RightbackDropBlue.toPose2d();
         Pose2d parkingRightBlue = MeepMeepTesting.parkingRightBlue.toPose2d();
         Pose2d parkingLeftBlue = MeepMeepTesting.parkingLeftBlue.toPose2d();
         Pose2d leftSpikemovementBlue = MeepMeepTesting.leftSpikemovementBlue.toPose2d();
@@ -99,15 +100,15 @@ public class MeepMeepTesting {
                 // Set bot constraints: maxVel, maxAccel, maxAngVel, maxAngAccel, track width
                 .setConstraints(30, 30, toRadians(60), toRadians(60), 16.02362205)
                 .followTrajectorySequence(drive ->
-                        drive.trajectorySequenceBuilder(isRed ? startPoseRed : startPoseBlue)
+                        drive.trajectorySequenceBuilder(isRed ? startRed : startPoseBlue)
                                 .lineToSplineHeading(isRed ? leftSpikeRed : leftSpikeBlue)
                             //    .addDisplacementMarker((){})
                                .lineToSplineHeading(isRed ? leftSpikemovementRed : leftSpikemovementBlue) //DO TURNARY IF LEFT SPIKE
                                 .lineToLinearHeading(isRed ? whitePixelRed : whitePixelBlue)
                                 .strafeRight(isRed ? 4 : -4)
                                 .splineToSplineHeading(isRed ? stageDoorRed : stageDoorBlue, Math.toRadians(0))
-                                .splineTo(isRed ? dBRed.vec() : dBBlue.vec(), Math.toRadians(0))
-                                .lineToSplineHeading(isRed ? LeftbackDropRed : LeftbackDropBlue )
+                                .splineTo(isRed ? redTransition.vec() : blueTransition.vec(), Math.toRadians(0))
+                                .lineToSplineHeading(isRed ? leftbackDropRed : leftbackDropBlue )
                                 .lineTo(isRed ? (isParkedLeft ? parkingLeftRed.vec() : parkingRightRed.vec()) : (isParkedLeft ? parkingLeftBlue.vec() : parkingRightBlue.vec()))
                                 .build());
 
