@@ -12,7 +12,7 @@ import com.noahbres.meepmeep.roadrunner.entity.RoadRunnerBotEntity;
 
 public class MeepMeepTesting {
 
-    static boolean isRed = false, isRight = false, isParkedLeft = false;
+    static boolean isRed = true, isRight = false, isParkedLeft = false;
 
     public static double
             X_START_LEFT = -35,
@@ -29,7 +29,7 @@ public class MeepMeepTesting {
             startPoseRed = new EditablePose(X_START_LEFT, -61.788975, FORWARD),
             centerSpikeRed = new EditablePose(-39, -38,Math.toRadians(90)),
             leftSpikeRed = new EditablePose(-46.5, -47, toRadians(90)),
-            rightSpikeRed = new EditablePose(15 + leftSpikeRed.x, 5 + leftSpikeRed.y, Math.toRadians(0)),
+            rightSpikeRed = new EditablePose(11 + leftSpikeRed.x, 13 + leftSpikeRed.y, Math.toRadians(0)),
 
           // the below 6 are for center spike red alliance
           //  firstSpikeRed = new EditablePose(-49,-24,Math.toRadians(0)),
@@ -46,7 +46,7 @@ public class MeepMeepTesting {
             startPoseBlue = new EditablePose(startPoseRed.byAlliance().toPose2d().vec().getX(), 61.788975,BACKWARD),
             centerSpikeBlue = new EditablePose(centerSpikeRed.byAlliance().toPose2d().vec().getX(), 38, Math.toRadians(-90)),
             leftSpikeBlue = new EditablePose(leftSpikeRed.byAlliance().toPose2d().vec().getX(), 47, toRadians(-90)),
-            rightSpikeBlue = new EditablePose(rightSpikeRed.byAlliance().toPose2d().vec().getX(), -leftSpikeRed.y, LEFT + leftSpikeRed.heading),
+            rightSpikeBlue = new EditablePose(rightSpikeRed.byAlliance().toPose2d().vec().getX(), 34, Math.toRadians(0)),
 
             // the below 6 are for center spike blue alliance
          //   firstSpikeBlue = new EditablePose(firstSpikeRed.byAlliance().toPose2d().vec().getX(),24,Math.toRadians(0)),
@@ -93,12 +93,9 @@ public class MeepMeepTesting {
                 .setConstraints(30, 30, toRadians(60), toRadians(60), 16.02362205)
                 .followTrajectorySequence(drive ->
                         drive.trajectorySequenceBuilder(isRed ? startPoseRed : startPoseBlue)
-                             //   .lineToSplineHeading(new Pose2d(-34,-37, Math.toRadians(90)))
-                                .lineToSplineHeading(isRed ? leftSpikeRed : leftSpikeBlue)
-                        // .splineTo(isRed ? leftSpikeRed.vec() : leftSpikeBlue.vec(), Math.toRadians(0))
+                                .lineToSplineHeading(isRed ? rightSpikeRed : rightSpikeBlue)
                             //    .addDisplacementMarker((){})
-                               .lineToSplineHeading(isRed ? leftSpikemovementRed : leftSpikemovementBlue) //DO TURNARY IF LEFT SPIKE
-                             //   .lineTo(isRed ? whitePixelRed.vec() : whitePixelBlue.vec())
+                           //    .lineToSplineHeading(isRed ? leftSpikemovementRed : leftSpikemovementBlue) //DO TURNARY IF LEFT SPIKE
                                 .lineToLinearHeading(isRed ? whitePixelRed : whitePixelBlue)
                                 .strafeRight(isRed ? 4 : -4)
                                 .splineToSplineHeading(isRed ? stageDoorRed : stageDoorBlue, Math.toRadians(0))
