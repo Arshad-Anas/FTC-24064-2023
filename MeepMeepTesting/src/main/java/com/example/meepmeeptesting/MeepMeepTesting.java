@@ -36,8 +36,9 @@ public class MeepMeepTesting {
             whitePixelRed = new EditablePose(-58,-24,Math.toRadians(-180)),
             stageDoorRed = new EditablePose(-25, -10,Math.toRadians(0)), //15 could also work here if dBRed is removed, but this require further testing
             dBRed = new EditablePose(25,-9,Math.toRadians(0)),
-            backDropRed = new EditablePose(49,-35,Math.toRadians(-180)),
-
+            CenterbackDropRed = new EditablePose(49,-35,Math.toRadians(-180)),
+            LeftbackDropRed = new EditablePose(49,-30, Math.toRadians(-180)),
+            RightbackDropRed = new EditablePose(49,-41, Math.toRadians(-180)),
             parkingLeftRed = new EditablePose(50, -10, Math.toRadians(-180)),
             parkingRightRed = new EditablePose(50,-60, Math.toRadians(-180)),
             leftSpikemovementRed = new EditablePose(-55,-45, Math.toRadians(180)),
@@ -53,7 +54,9 @@ public class MeepMeepTesting {
             whitePixelBlue = new EditablePose(whitePixelRed.byAlliance().toPose2d().vec().getX(),24,Math.toRadians(180)),
             stageDoorBlue = new EditablePose(stageDoorRed.byAlliance().toPose2d().vec().getX(), 8,Math.toRadians(0)),
             dBBlue = new EditablePose(dBRed.byAlliance().toPose2d().vec().getX(),9,Math.toRadians(0)),
-            backDropBlue = new EditablePose(backDropRed.byAlliance().toPose2d().vec().getX(),35,Math.toRadians(180)),
+            CenterbackDropBlue = new EditablePose(CenterbackDropRed.byAlliance().toPose2d().vec().getX(),35,Math.toRadians(180)),
+            LeftbackDropBlue = new EditablePose(LeftbackDropRed.byAlliance().toPose2d().vec().getX(), 30, Math.toRadians(180)),
+            RightbackDropBlue = new EditablePose(RightbackDropRed.byAlliance().toPose2d().vec().getX(), 41, Math.toRadians(180)),
             parkingRightBlue = new EditablePose(parkingRightRed.byAlliance().toPose2d().vec().getX(), 10, Math.toRadians(-180)),
             parkingLeftBlue = new EditablePose(parkingLeftRed.byAlliance().toPose2d().vec().getX(), 60, Math.toRadians(-180)),
             leftSpikemovementBlue = new EditablePose(leftSpikemovementRed.byAlliance().toPose2d().vec().getX(), 45, Math.toRadians(-180));
@@ -67,7 +70,9 @@ public class MeepMeepTesting {
         Pose2d whitePixelRed = MeepMeepTesting.whitePixelRed.byAlliance().toPose2d();
         Pose2d stageDoorRed = MeepMeepTesting.stageDoorRed.byAlliance().toPose2d();
         Pose2d dBRed = MeepMeepTesting.dBRed.byAlliance().toPose2d();
-        Pose2d backDropRed = MeepMeepTesting.backDropRed.byAlliance().toPose2d();
+        Pose2d CenterbackDropRed = MeepMeepTesting.CenterbackDropRed.byAlliance().toPose2d();
+        Pose2d LeftbackDropRed = MeepMeepTesting.LeftbackDropRed.byAlliance().toPose2d();
+        Pose2d RightbackDropRed = MeepMeepTesting.RightbackDropRed.byAlliance().toPose2d();
         Pose2d parkingRightRed = MeepMeepTesting.parkingRightRed.byAlliance().toPose2d();
         Pose2d parkingLeftRed = MeepMeepTesting.parkingLeftRed.byAlliance().toPose2d();
         Pose2d leftSpikemovementRed = MeepMeepTesting.leftSpikemovementRed.byAlliance().toPose2d();
@@ -79,7 +84,9 @@ public class MeepMeepTesting {
         Pose2d whitePixelBlue = MeepMeepTesting.whitePixelBlue.toPose2d();
         Pose2d stageDoorBlue = MeepMeepTesting.stageDoorBlue.toPose2d();
         Pose2d dBBlue = MeepMeepTesting.dBBlue.toPose2d();
-        Pose2d backDropBlue = MeepMeepTesting.backDropBlue.toPose2d();
+        Pose2d CenterbackDropBlue = MeepMeepTesting.CenterbackDropBlue.toPose2d();
+        Pose2d LeftbackDropBlue = MeepMeepTesting.LeftbackDropBlue.toPose2d();
+        Pose2d RightbackDropBlue = MeepMeepTesting.RightbackDropBlue.toPose2d();
         Pose2d parkingRightBlue = MeepMeepTesting.parkingRightBlue.toPose2d();
         Pose2d parkingLeftBlue = MeepMeepTesting.parkingLeftBlue.toPose2d();
         Pose2d leftSpikemovementBlue = MeepMeepTesting.leftSpikemovementBlue.toPose2d();
@@ -95,12 +102,12 @@ public class MeepMeepTesting {
                         drive.trajectorySequenceBuilder(isRed ? startPoseRed : startPoseBlue)
                                 .lineToSplineHeading(isRed ? rightSpikeRed : rightSpikeBlue)
                             //    .addDisplacementMarker((){})
-                           //    .lineToSplineHeading(isRed ? leftSpikemovementRed : leftSpikemovementBlue) //DO TURNARY IF LEFT SPIKE
+                          //     .lineToSplineHeading(isRed ? leftSpikemovementRed : leftSpikemovementBlue) //DO TURNARY IF LEFT SPIKE
                                 .lineToLinearHeading(isRed ? whitePixelRed : whitePixelBlue)
                                 .strafeRight(isRed ? 4 : -4)
                                 .splineToSplineHeading(isRed ? stageDoorRed : stageDoorBlue, Math.toRadians(0))
                                 .splineTo(isRed ? dBRed.vec() : dBBlue.vec(), Math.toRadians(0))
-                                .lineToSplineHeading(isRed ? backDropRed : backDropBlue )
+                                .lineToSplineHeading(isRed ? RightbackDropRed : RightbackDropBlue )
                                 .lineTo(isRed ? (isParkedLeft ? parkingLeftRed.vec() : parkingRightRed.vec()) : (isParkedLeft ? parkingLeftBlue.vec() : parkingRightBlue.vec()))
                                 .build());
 
