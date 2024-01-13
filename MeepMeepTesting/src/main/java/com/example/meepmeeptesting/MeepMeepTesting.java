@@ -12,7 +12,7 @@ import com.noahbres.meepmeep.roadrunner.entity.RoadRunnerBotEntity;
 
 public class MeepMeepTesting {
 
-    static boolean isRed = true, isRight = false, isParkedLeft = false;
+    static boolean isRed = false, isRight = false, isParkedLeft = true;
 
     public static double
             X_START_LEFT = -35,
@@ -55,8 +55,8 @@ public class MeepMeepTesting {
             stageDoorBlue = new EditablePose(stageDoorRed.byAlliance().toPose2d().vec().getX(), 8,Math.toRadians(0)),
             dBBlue = new EditablePose(dBRed.byAlliance().toPose2d().vec().getX(),9,Math.toRadians(0)),
             CenterbackDropBlue = new EditablePose(CenterbackDropRed.byAlliance().toPose2d().vec().getX(),35,Math.toRadians(180)),
-            LeftbackDropBlue = new EditablePose(LeftbackDropRed.byAlliance().toPose2d().vec().getX(), 30, Math.toRadians(180)),
-            RightbackDropBlue = new EditablePose(RightbackDropRed.byAlliance().toPose2d().vec().getX(), 41, Math.toRadians(180)),
+            LeftbackDropBlue = new EditablePose(LeftbackDropRed.byAlliance().toPose2d().vec().getX(), 41, Math.toRadians(180)),
+            RightbackDropBlue = new EditablePose(RightbackDropRed.byAlliance().toPose2d().vec().getX(), 29, Math.toRadians(180)),
             parkingRightBlue = new EditablePose(parkingRightRed.byAlliance().toPose2d().vec().getX(), 10, Math.toRadians(-180)),
             parkingLeftBlue = new EditablePose(parkingLeftRed.byAlliance().toPose2d().vec().getX(), 60, Math.toRadians(-180)),
             leftSpikemovementBlue = new EditablePose(leftSpikemovementRed.byAlliance().toPose2d().vec().getX(), 45, Math.toRadians(-180));
@@ -100,14 +100,14 @@ public class MeepMeepTesting {
                 .setConstraints(30, 30, toRadians(60), toRadians(60), 16.02362205)
                 .followTrajectorySequence(drive ->
                         drive.trajectorySequenceBuilder(isRed ? startPoseRed : startPoseBlue)
-                                .lineToSplineHeading(isRed ? rightSpikeRed : rightSpikeBlue)
+                                .lineToSplineHeading(isRed ? leftSpikeRed : leftSpikeBlue)
                             //    .addDisplacementMarker((){})
-                          //     .lineToSplineHeading(isRed ? leftSpikemovementRed : leftSpikemovementBlue) //DO TURNARY IF LEFT SPIKE
+                               .lineToSplineHeading(isRed ? leftSpikemovementRed : leftSpikemovementBlue) //DO TURNARY IF LEFT SPIKE
                                 .lineToLinearHeading(isRed ? whitePixelRed : whitePixelBlue)
                                 .strafeRight(isRed ? 4 : -4)
                                 .splineToSplineHeading(isRed ? stageDoorRed : stageDoorBlue, Math.toRadians(0))
                                 .splineTo(isRed ? dBRed.vec() : dBBlue.vec(), Math.toRadians(0))
-                                .lineToSplineHeading(isRed ? RightbackDropRed : RightbackDropBlue )
+                                .lineToSplineHeading(isRed ? LeftbackDropRed : LeftbackDropBlue )
                                 .lineTo(isRed ? (isParkedLeft ? parkingLeftRed.vec() : parkingRightRed.vec()) : (isParkedLeft ? parkingLeftBlue.vec() : parkingRightBlue.vec()))
                                 .build());
 
