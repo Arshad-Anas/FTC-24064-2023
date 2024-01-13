@@ -7,7 +7,6 @@ import static com.arcrobotics.ftclib.gamepad.GamepadKeys.Button.LEFT_BUMPER;
 import static com.arcrobotics.ftclib.gamepad.GamepadKeys.Button.RIGHT_BUMPER;
 import static com.arcrobotics.ftclib.gamepad.GamepadKeys.Button.X;
 
-import static java.lang.Math.PI;
 import static java.lang.Math.toRadians;
 
 import com.acmerobotics.dashboard.config.Config;
@@ -19,7 +18,6 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySequence;
-import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySequenceBuilder;
 import org.firstinspires.ftc.teamcode.subsystems.centerstage.Robot;
 
 @Config
@@ -66,22 +64,22 @@ public final class MainAuton extends LinearOpMode {
             leftSpikemovementRed = new EditablePose(-55,-45, Math.toRadians(180)),
 
     // This is for blue alliance
-    startPoseBlue = new EditablePose(startPoseRed.byAlliance().toPose2d().vec().getX(), 61.788975,BACKWARD),
-            centerSpikeBlue = new EditablePose(centerSpikeRed.byAlliance().toPose2d().vec().getX(), 38, Math.toRadians(-90)),
-            leftSpikeBlue = new EditablePose(leftSpikeRed.byAlliance().toPose2d().vec().getX(), 47, toRadians(-90)),
-            rightSpikeBlue = new EditablePose(rightSpikeRed.byAlliance().toPose2d().vec().getX(), 34, Math.toRadians(0)),
+    botStartBlue = new EditablePose(startPoseRed.byAlliance().toPose2d().vec().getX(), 61.788975,BACKWARD),
+            botCenterSpikeBlue = new EditablePose(centerSpikeRed.byAlliance().toPose2d().vec().getX(), 38, Math.toRadians(-90)),
+            botLeftSpikeBlue = new EditablePose(leftSpikeRed.byAlliance().toPose2d().vec().getX(), 47, toRadians(-90)),
+            botRightSpikeBlue = new EditablePose(rightSpikeRed.byAlliance().toPose2d().vec().getX(), 34, Math.toRadians(0)),
 
     // the below 6 are for center spike blue alliance
     //   firstSpikeBlue = new EditablePose(firstSpikeRed.byAlliance().toPose2d().vec().getX(),24,Math.toRadians(0)),
-    whitePixelBlue = new EditablePose(whitePixelRed.byAlliance().toPose2d().vec().getX(),24,Math.toRadians(180)),
-            stageDoorBlue = new EditablePose(stageDoorRed.byAlliance().toPose2d().vec().getX(), 8,Math.toRadians(0)),
-            dBBlue = new EditablePose(dBRed.byAlliance().toPose2d().vec().getX(),9,Math.toRadians(0)),
-            CenterbackDropBlue = new EditablePose(CenterbackDropRed.byAlliance().toPose2d().vec().getX(),35,Math.toRadians(180)),
-            LeftbackDropBlue = new EditablePose(LeftbackDropRed.byAlliance().toPose2d().vec().getX(), 41, Math.toRadians(180)),
-            RightbackDropBlue = new EditablePose(RightbackDropRed.byAlliance().toPose2d().vec().getX(), 29, Math.toRadians(180)),
-            parkingRightBlue = new EditablePose(parkingRightRed.byAlliance().toPose2d().vec().getX(), 10, Math.toRadians(-180)),
-            parkingLeftBlue = new EditablePose(parkingLeftRed.byAlliance().toPose2d().vec().getX(), 60, Math.toRadians(-180)),
-            leftSpikemovementBlue = new EditablePose(leftSpikemovementRed.byAlliance().toPose2d().vec().getX(), 45, Math.toRadians(-180));
+    botWhitePixelBlue = new EditablePose(whitePixelRed.byAlliance().toPose2d().vec().getX(),24,Math.toRadians(180)),
+            botStageDoorBlue = new EditablePose(stageDoorRed.byAlliance().toPose2d().vec().getX(), 8,Math.toRadians(0)),
+            botTransitionBlue = new EditablePose(dBRed.byAlliance().toPose2d().vec().getX(),9,Math.toRadians(0)),
+            botCenterBackdropBlue = new EditablePose(CenterbackDropRed.byAlliance().toPose2d().vec().getX(),35,Math.toRadians(180)),
+            botLeftBackdropBlue = new EditablePose(LeftbackDropRed.byAlliance().toPose2d().vec().getX(), 41, Math.toRadians(180)),
+            botRightBackdropBlue = new EditablePose(RightbackDropRed.byAlliance().toPose2d().vec().getX(), 29, Math.toRadians(180)),
+            botParkingRightBlue = new EditablePose(parkingRightRed.byAlliance().toPose2d().vec().getX(), 10, Math.toRadians(-180)),
+            botParkingLeftBlue = new EditablePose(parkingLeftRed.byAlliance().toPose2d().vec().getX(), 60, Math.toRadians(-180)),
+            botLeftSpikeMovementBlue = new EditablePose(leftSpikemovementRed.byAlliance().toPose2d().vec().getX(), 45, Math.toRadians(-180));
 
 
     @Override
@@ -124,30 +122,30 @@ public final class MainAuton extends LinearOpMode {
         Pose2d parkingLeftRed = MainAuton.parkingLeftRed.byAlliance().toPose2d();
         Pose2d leftSpikemovementRed = MainAuton.leftSpikemovementRed.byAlliance().toPose2d();
 
-        Pose2d startBlue = MainAuton.startPoseBlue.bySide().toPose2d();
-        Pose2d centerSpikeBlue = MainAuton.centerSpikeBlue.toPose2d();
-        Pose2d leftSpikeBlue = MainAuton.leftSpikeBlue.toPose2d();
-        Pose2d rightSpikeBlue = MainAuton.rightSpikeBlue.toPose2d();
-        Pose2d whitePixelBlue = MainAuton.whitePixelBlue.toPose2d();
-        Pose2d stageDoorBlue = MainAuton.stageDoorBlue.toPose2d();
-        Pose2d blueTransition = MainAuton.dBBlue.toPose2d();
-        Pose2d centerbackDropBlue = MainAuton.CenterbackDropBlue.toPose2d();
-        Pose2d leftbackDropBlue = MainAuton.LeftbackDropBlue.toPose2d();
-        Pose2d rightbackDropBlue = MainAuton.RightbackDropBlue.toPose2d();
-        Pose2d parkingRightBlue = MainAuton.parkingRightBlue.toPose2d();
-        Pose2d parkingLeftBlue = MainAuton.parkingLeftBlue.toPose2d();
-        Pose2d leftSpikemovementBlue = MainAuton.leftSpikemovementBlue.toPose2d();
+        Pose2d botStartBlue = MainAuton.botStartBlue.bySide().toPose2d();
+        Pose2d botCenterSpikeBlue = MainAuton.botCenterSpikeBlue.toPose2d();
+        Pose2d botLeftSpikeBlue = MainAuton.botLeftSpikeBlue.toPose2d();
+        Pose2d botRightSpikeBlue = MainAuton.botRightSpikeBlue.toPose2d();
+        Pose2d botWhitePixelBlue = MainAuton.botWhitePixelBlue.toPose2d();
+        Pose2d botStageDoorBlue = MainAuton.botStageDoorBlue.toPose2d();
+        Pose2d botBlueTransition = MainAuton.botTransitionBlue.toPose2d();
+        Pose2d botCenterBackdropBlue = MainAuton.botCenterBackdropBlue.toPose2d();
+        Pose2d botLeftBackdropBlue = MainAuton.botLeftBackdropBlue.toPose2d();
+        Pose2d botRightBackdropBlue = MainAuton.botRightBackdropBlue.toPose2d();
+        Pose2d botParkingRightBlue = MainAuton.botParkingRightBlue.toPose2d();
+        Pose2d botParkingLeftBlue = MainAuton.botParkingLeftBlue.toPose2d();
+        Pose2d botLeftSpikeMovementBlue = MainAuton.botLeftSpikeMovementBlue.toPose2d();
 
-        TrajectorySequence trajBack = robot.drivetrain.trajectorySequenceBuilder(isRed ? startRed : startBlue)
-                                .lineToSplineHeading(isRed ? leftSpikeRed : leftSpikeBlue)
+        TrajectorySequence trajBack = robot.drivetrain.trajectorySequenceBuilder(isRed ? startRed : botStartBlue)
+                                .lineToSplineHeading(isRed ? leftSpikeRed : botLeftSpikeBlue)
                                 //    .addDisplacementMarker((){})
-                                .lineToSplineHeading(isRed ? leftSpikemovementRed : leftSpikemovementBlue) //DO TURNARY IF LEFT SPIKE
-                                .lineToLinearHeading(isRed ? whitePixelRed : whitePixelBlue)
+                                .lineToSplineHeading(isRed ? leftSpikemovementRed : botLeftSpikeMovementBlue) //DO TURNARY IF LEFT SPIKE
+                                .lineToLinearHeading(isRed ? whitePixelRed : botWhitePixelBlue)
                                 .strafeRight(isRed ? 4 : -4)
-                                .splineToSplineHeading(isRed ? stageDoorRed : stageDoorBlue, Math.toRadians(0))
-                                .splineTo(isRed ? redTransition.vec() : blueTransition.vec(), Math.toRadians(0))
-                                .lineToSplineHeading(isRed ? leftbackDropRed : leftbackDropBlue )
-                                .lineTo(isRed ? (isParkedLeft ? parkingLeftRed.vec() : parkingRightRed.vec()) : (isParkedLeft ? parkingLeftBlue.vec() : parkingRightBlue.vec()))
+                                .splineToSplineHeading(isRed ? stageDoorRed : botStageDoorBlue, Math.toRadians(0))
+                                .splineTo(isRed ? redTransition.vec() : botBlueTransition.vec(), Math.toRadians(0))
+                                .lineToSplineHeading(isRed ? leftbackDropRed : botLeftBackdropBlue )
+                                .lineTo(isRed ? (isParkedLeft ? parkingLeftRed.vec() : parkingRightRed.vec()) : (isParkedLeft ? botParkingLeftBlue.vec() : botParkingRightBlue.vec()))
                                 .build();
 
         waitForStart();
