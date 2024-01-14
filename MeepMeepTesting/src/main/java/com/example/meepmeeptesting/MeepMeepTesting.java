@@ -10,13 +10,14 @@ import com.noahbres.meepmeep.roadrunner.DefaultBotBuilder;
 import com.noahbres.meepmeep.roadrunner.entity.RoadRunnerBotEntity;
 
 
-public class MeepMeepTesting {
+public final class MeepMeepTesting {
 
     static boolean isRed = false, isRight = false, isParkedLeft = true;
+//    static int propPlacement = 1;
 
     public static double
-            X_START_LEFT = -35,
-            X_START_RIGHT = 12;
+            X_START_BOTTOM = -35,
+            X_START_TOP = 12;
 
     public static final double
             LEFT = toRadians(180),
@@ -25,91 +26,136 @@ public class MeepMeepTesting {
             BACKWARD = toRadians(270);
 
     public static EditablePose
-         // this is red alliance
-            startPoseRed = new EditablePose(X_START_LEFT, -61.788975, FORWARD),
-            centerSpikeRed = new EditablePose(-39, -38,Math.toRadians(90)),
-            leftSpikeRed = new EditablePose(-46.5, -47, toRadians(90)),
-            rightSpikeRed = new EditablePose(11 + leftSpikeRed.x, 13 + leftSpikeRed.y, Math.toRadians(0)),
+            // This is red alliance
+            botStartPoseRed = new EditablePose(X_START_BOTTOM, -61.788975, FORWARD),
+            botCenterSpikeRed = new EditablePose(-39, -38,Math.toRadians(90)),
+            botLeftSpikeRed = new EditablePose(-46.5, -47, toRadians(90)),
+            botRightSpikeRed = new EditablePose(11 + botLeftSpikeRed.x, 13 + botLeftSpikeRed.y, Math.toRadians(0)),
 
-          // the below 6 are for center spike red alliance
-          //  firstSpikeRed = new EditablePose(-49,-24,Math.toRadians(0)),
-            whitePixelRed = new EditablePose(-58,-24,Math.toRadians(-180)),
-            stageDoorRed = new EditablePose(-25, -10,Math.toRadians(0)), //15 could also work here if dBRed is removed, but this require further testing
-            dBRed = new EditablePose(25,-9,Math.toRadians(0)),
-            CenterbackDropRed = new EditablePose(49,-35,Math.toRadians(-180)),
-            LeftbackDropRed = new EditablePose(49,-30, Math.toRadians(-180)),
-            RightbackDropRed = new EditablePose(49,-41, Math.toRadians(-180)),
-            parkingLeftRed = new EditablePose(50, -10, Math.toRadians(-180)),
-            parkingRightRed = new EditablePose(50,-60, Math.toRadians(-180)),
-            leftSpikemovementRed = new EditablePose(-55,-45, Math.toRadians(180)),
+    // The below 6 are for center spike red alliance
+    botWhitePixelRed = new EditablePose(-58,-24,Math.toRadians(-180)),
+            botStageDoorRed = new EditablePose(-25, -10,Math.toRadians(0)), //15 could also work here if dBRed is removed, but this require further testing
+            botTransitionRed = new EditablePose(25,-9,Math.toRadians(0)),
+            botCenterBackdropRed = new EditablePose(49,-35,Math.toRadians(-180)),
+            botLeftBackdropRed = new EditablePose(49,-30, Math.toRadians(-180)),
+            botRightBackdropRed = new EditablePose(49,-41, Math.toRadians(-180)),
+            botParkingLeftRed = new EditablePose(50, -10, Math.toRadians(-180)),
+            botParkingRightRed = new EditablePose(50,-60, Math.toRadians(-180)),
+            botLeftSpikeMovementRed = new EditablePose(-55,-45, Math.toRadians(180)),
 
     // This is for blue alliance
-            startPoseBlue = new EditablePose(startPoseRed.byAlliance().toPose2d().vec().getX(), 61.788975,BACKWARD),
-            centerSpikeBlue = new EditablePose(centerSpikeRed.byAlliance().toPose2d().vec().getX(), 38, Math.toRadians(-90)),
-            leftSpikeBlue = new EditablePose(leftSpikeRed.byAlliance().toPose2d().vec().getX(), 47, toRadians(-90)),
-            rightSpikeBlue = new EditablePose(rightSpikeRed.byAlliance().toPose2d().vec().getX(), 34, Math.toRadians(0)),
+    botStartBlue = new EditablePose(botStartPoseRed.byAlliance().x, 61.788975,BACKWARD),
+            botCenterSpikeBlue = new EditablePose(botCenterSpikeRed.byAlliance().x, 38, Math.toRadians(-90)),
+            botLeftSpikeBlue = new EditablePose(botLeftSpikeRed.byAlliance().x, 47, toRadians(-90)),
+            botRightSpikeBlue = new EditablePose(botRightSpikeRed.byAlliance().x, 34, Math.toRadians(0)),
 
-            // the below 6 are for center spike blue alliance
-         //   firstSpikeBlue = new EditablePose(firstSpikeRed.byAlliance().toPose2d().vec().getX(),24,Math.toRadians(0)),
-            whitePixelBlue = new EditablePose(whitePixelRed.byAlliance().toPose2d().vec().getX(),24,Math.toRadians(180)),
-            stageDoorBlue = new EditablePose(stageDoorRed.byAlliance().toPose2d().vec().getX(), 8,Math.toRadians(0)),
-            dBBlue = new EditablePose(dBRed.byAlliance().toPose2d().vec().getX(),9,Math.toRadians(0)),
-            CenterbackDropBlue = new EditablePose(CenterbackDropRed.byAlliance().toPose2d().vec().getX(),35,Math.toRadians(180)),
-            LeftbackDropBlue = new EditablePose(LeftbackDropRed.byAlliance().toPose2d().vec().getX(), 41, Math.toRadians(180)),
-            RightbackDropBlue = new EditablePose(RightbackDropRed.byAlliance().toPose2d().vec().getX(), 29, Math.toRadians(180)),
-            parkingRightBlue = new EditablePose(parkingRightRed.byAlliance().toPose2d().vec().getX(), 10, Math.toRadians(-180)),
-            parkingLeftBlue = new EditablePose(parkingLeftRed.byAlliance().toPose2d().vec().getX(), 60, Math.toRadians(-180)),
-            leftSpikemovementBlue = new EditablePose(leftSpikemovementRed.byAlliance().toPose2d().vec().getX(), 45, Math.toRadians(-180));
+    // The below 6 are for center spike blue alliance
+    botWhitePixelBlue = new EditablePose(botWhitePixelRed.byAlliance().x,24,Math.toRadians(180)),
+            botStageDoorBlue = new EditablePose(botStageDoorRed.byAlliance().x, 8,Math.toRadians(0)),
+            botTransitionBlue = new EditablePose(botTransitionRed.byAlliance().x,9,Math.toRadians(0)),
+            botCenterBackdropBlue = new EditablePose(botCenterBackdropRed.byAlliance().x,35,Math.toRadians(180)),
+            botLeftBackdropBlue = new EditablePose(botLeftBackdropRed.byAlliance().x, 41, Math.toRadians(180)),
+            botRightBackdropBlue = new EditablePose(botRightBackdropRed.byAlliance().x, 29, Math.toRadians(180)),
+            botParkingRightBlue = new EditablePose(botParkingRightRed.byAlliance().x, 10, Math.toRadians(-180)),
+            botParkingLeftBlue = new EditablePose(botParkingLeftRed.byAlliance().x, 60, Math.toRadians(-180)),
+            botLeftSpikeMovementBlue = new EditablePose(botLeftSpikeMovementRed.byAlliance().x, 45, Math.toRadians(-180));
+
+    static Pose2d mainSpikeMark = null;
+    static Pose2d yellowPixel = null;
+    static Pose2d botWhitePixelScoring = null;
 
     public static void main(String[] args) {
         MeepMeep meepMeep = new MeepMeep(770);
-        
-        Pose2d startRed = MeepMeepTesting.startPoseRed.byAlliance().toPose2d();
-        Pose2d centerSpikeRed = MeepMeepTesting.centerSpikeRed.byAlliance().toPose2d();
-        Pose2d leftSpikeRed = MeepMeepTesting.leftSpikeRed.byAlliance().toPose2d();
-        Pose2d rightSpikeRed = MeepMeepTesting.rightSpikeRed.byAlliance().toPose2d();
-        Pose2d whitePixelRed = MeepMeepTesting.whitePixelRed.byAlliance().toPose2d();
-        Pose2d stageDoorRed = MeepMeepTesting.stageDoorRed.byAlliance().toPose2d();
-        Pose2d redTransition = MeepMeepTesting.dBRed.byAlliance().toPose2d();
-        Pose2d centerbackDropRed = MeepMeepTesting.CenterbackDropRed.byAlliance().toPose2d();
-        Pose2d leftbackDropRed = MeepMeepTesting.LeftbackDropRed.byAlliance().toPose2d();
-        Pose2d rightbackDropRed = MeepMeepTesting.RightbackDropRed.byAlliance().toPose2d();
-        Pose2d parkingRightRed = MeepMeepTesting.parkingRightRed.byAlliance().toPose2d();
-        Pose2d parkingLeftRed = MeepMeepTesting.parkingLeftRed.byAlliance().toPose2d();
-        Pose2d leftSpikemovementRed = MeepMeepTesting.leftSpikemovementRed.byAlliance().toPose2d();
 
-        Pose2d startPoseBlue = MeepMeepTesting.startPoseBlue.bySide().toPose2d();
-        Pose2d centerSpikeBlue = MeepMeepTesting.centerSpikeBlue.toPose2d();
-        Pose2d leftSpikeBlue = MeepMeepTesting.leftSpikeBlue.toPose2d();
-        Pose2d rightSpikeBlue = MeepMeepTesting.rightSpikeBlue.toPose2d();
-        Pose2d whitePixelBlue = MeepMeepTesting.whitePixelBlue.toPose2d();
-        Pose2d stageDoorBlue = MeepMeepTesting.stageDoorBlue.toPose2d();
-        Pose2d blueTransition = MeepMeepTesting.dBBlue.toPose2d();
-        Pose2d centerbackDropBlue = MeepMeepTesting.CenterbackDropBlue.toPose2d();
-        Pose2d leftbackDropBlue = MeepMeepTesting.LeftbackDropBlue.toPose2d();
-        Pose2d rightbackDropBlue = MeepMeepTesting.RightbackDropBlue.toPose2d();
-        Pose2d parkingRightBlue = MeepMeepTesting.parkingRightBlue.toPose2d();
-        Pose2d parkingLeftBlue = MeepMeepTesting.parkingLeftBlue.toPose2d();
-        Pose2d leftSpikemovementBlue = MeepMeepTesting.leftSpikemovementBlue.toPose2d();
+        Pose2d botStartRed = MeepMeepTesting.botStartPoseRed.byAlliance().toPose2d();
+        Pose2d botCenterSpikeRed = MeepMeepTesting.botCenterSpikeRed.byAlliance().toPose2d();
+        Pose2d botLeftSpikeRed = MeepMeepTesting.botLeftSpikeRed.byAlliance().toPose2d();
+        Pose2d botRightSpikeRed = MeepMeepTesting.botRightSpikeRed.byAlliance().toPose2d();
+        Pose2d botWhitePixelRed = MeepMeepTesting.botWhitePixelRed.byAlliance().toPose2d();
+        Pose2d botStageDoorRed = MeepMeepTesting.botStageDoorRed.byAlliance().toPose2d();
+        Pose2d botTransitionRed = MeepMeepTesting.botTransitionRed.byAlliance().toPose2d();
+        Pose2d botCenterBackdropRed = MeepMeepTesting.botCenterBackdropRed.byAlliance().toPose2d();
+        Pose2d botLeftBackdropRed = MeepMeepTesting.botLeftBackdropRed.byAlliance().toPose2d();
+        Pose2d botRightBackdropRed = MeepMeepTesting.botRightBackdropRed.byAlliance().toPose2d();
+        Pose2d botParkingRightRed = MeepMeepTesting.botParkingRightRed.byAlliance().toPose2d();
+        Pose2d botParkingLeftRed = MeepMeepTesting.botParkingLeftRed.byAlliance().toPose2d();
+        Pose2d botLeftSpikeMovementRed = MeepMeepTesting.botLeftSpikeMovementRed.byAlliance().toPose2d();
+
+        // Blue bottom
+        Pose2d botStartBlue = MeepMeepTesting.botStartBlue.bySide().toPose2d();
+        Pose2d botCenterSpikeBlue = MeepMeepTesting.botCenterSpikeBlue.toPose2d();
+        Pose2d botLeftSpikeBlue = MeepMeepTesting.botLeftSpikeBlue.toPose2d();
+        Pose2d botRightSpikeBlue = MeepMeepTesting.botRightSpikeBlue.toPose2d();
+        Pose2d botWhitePixelBlue = MeepMeepTesting.botWhitePixelBlue.toPose2d();
+        Pose2d botStageDoorBlue = MeepMeepTesting.botStageDoorBlue.toPose2d();
+        Pose2d botTransitionBlue = MeepMeepTesting.botTransitionBlue.toPose2d();
+        Pose2d botCenterBackdropBlue = MeepMeepTesting.botCenterBackdropBlue.toPose2d();
+        Pose2d botLeftBackdropBlue = MeepMeepTesting.botLeftBackdropBlue.toPose2d();
+        Pose2d botRightBackdropBlue = MeepMeepTesting.botRightBackdropBlue.toPose2d();
+        Pose2d botParkingRightBlue = MeepMeepTesting.botParkingRightBlue.toPose2d();
+        Pose2d botParkingLeftBlue = MeepMeepTesting.botParkingLeftBlue.toPose2d();
+        Pose2d botLeftSpikeMovementBlue = MeepMeepTesting.botLeftSpikeMovementBlue.toPose2d();
+
+// Global
+
+        Vector2d parking;
+
+        // Local to bottom
+        Pose2d botWhitePixels;
+        Pose2d botStageDoor;
+        Vector2d botTransition;
 
 
+        int propPlacement = 1;
+        switch (propPlacement) {
+            case 0: {
+                mainSpikeMark = isRed ? botLeftSpikeRed : botLeftSpikeBlue;
+                yellowPixel = isRed ? botLeftBackdropRed : botLeftBackdropBlue;
+                botWhitePixelScoring = isRed ? botCenterBackdropRed : botRightBackdropBlue;
+                break;
+            }
+            case 1: {
+                mainSpikeMark = isRed ? botCenterSpikeRed : botCenterSpikeBlue;
+                yellowPixel = isRed ? botCenterBackdropRed : botCenterBackdropBlue;
+                botWhitePixelScoring = isRed ? botLeftBackdropRed : botRightBackdropBlue;
+                break;
+            }
+            case 2: {
+                mainSpikeMark = isRed ? botRightSpikeRed : botRightSpikeBlue;
+                yellowPixel = isRed ? botRightBackdropRed : botRightBackdropBlue;
+                botWhitePixelScoring = isRed ? botLeftBackdropRed : botCenterBackdropBlue;
+                break;
+            }
+        }
 
-        double side = isRed ? 1 : -1;
+        if (isRed) {
+            botWhitePixels = botWhitePixelRed;
+            botStageDoor = botStageDoorRed;
+            botTransition = botTransitionRed.vec();
+            parking = (isParkedLeft ? botParkingLeftRed : botParkingRightRed).vec();
+        } else {
+            botWhitePixels = botWhitePixelBlue;
+            botStageDoor = botStageDoorBlue;
+            botTransition = botTransitionBlue.vec();
+            parking = (isParkedLeft ? botParkingLeftBlue : botParkingRightBlue).vec();
+        }
+
+//        double side = isRed ? 1 : -1;
 
         RoadRunnerBotEntity myBot = new DefaultBotBuilder(meepMeep)
                 // Set bot constraints: maxVel, maxAccel, maxAngVel, maxAngAccel, track width
                 .setConstraints(30, 30, toRadians(60), toRadians(60), 16.02362205)
                 .followTrajectorySequence(drive ->
-                        drive.trajectorySequenceBuilder(isRed ? startRed : startPoseBlue)
-                                .lineToSplineHeading(isRed ? leftSpikeRed : leftSpikeBlue)
-                            //    .addDisplacementMarker((){})
-                               .lineToSplineHeading(isRed ? leftSpikemovementRed : leftSpikemovementBlue) //DO TURNARY IF LEFT SPIKE
-                                .lineToLinearHeading(isRed ? whitePixelRed : whitePixelBlue)
+                        drive.trajectorySequenceBuilder(isRed ? botStartRed : botStartBlue)
+                                .lineToSplineHeading(mainSpikeMark)
+//                                .lineToSplineHeading(isRed ? botLeftSpikeMovementRed : botLeftSpikeMovementBlue) // TODO DO TERNARY IF LEFT SPIKE
+                                .lineToLinearHeading(botWhitePixels)
                                 .strafeRight(isRed ? 4 : -4)
-                                .splineToSplineHeading(isRed ? stageDoorRed : stageDoorBlue, Math.toRadians(0))
-                                .splineTo(isRed ? redTransition.vec() : blueTransition.vec(), Math.toRadians(0))
-                                .lineToSplineHeading(isRed ? leftbackDropRed : leftbackDropBlue )
-                                .lineTo(isRed ? (isParkedLeft ? parkingLeftRed.vec() : parkingRightRed.vec()) : (isParkedLeft ? parkingLeftBlue.vec() : parkingRightBlue.vec()))
+                                .splineToSplineHeading(botStageDoor, Math.toRadians(0))
+                                .splineTo(botTransition, Math.toRadians(0))
+                                .lineToSplineHeading(botWhitePixelScoring)
+                                .lineToSplineHeading(yellowPixel)
+                                .lineTo(parking)
                                 .build());
 
         meepMeep.setBackground(MeepMeep.Background.FIELD_CENTERSTAGE_JUICE_DARK)
@@ -136,7 +182,7 @@ public class MeepMeepTesting {
         }
 
         private EditablePose bySide() {
-            if (isRight != isRed) x += (X_START_LEFT - X_START_RIGHT);
+            if (isRight != isRed) x += (X_START_BOTTOM - X_START_TOP);
             return this;
         }
 
@@ -147,7 +193,7 @@ public class MeepMeepTesting {
         private EditablePose flipBySide() {
             boolean isRight = MeepMeepTesting.isRight == isRed;
             if (!isRight) heading = PI - heading;
-            if (!isRight) x = (X_START_LEFT + X_START_RIGHT) / 2 - x;
+            if (!isRight) x = (X_START_BOTTOM + X_START_TOP) / 2 - x;
             return this;
         }
 

@@ -142,6 +142,7 @@ public final class MainAuton extends LinearOpMode {
         // Global
         Pose2d mainSpikeMark = null;
         Pose2d yellowPixel = null;
+        Pose2d botWhitePixelScoring = null;
         Vector2d parking;
 
         // Local to bottom
@@ -153,12 +154,18 @@ public final class MainAuton extends LinearOpMode {
             case 0:
                 mainSpikeMark = isRed ? botLeftSpikeRed : botLeftSpikeBlue;
                 yellowPixel = isRed ? botLeftBackdropRed : botLeftBackdropBlue;
+                botWhitePixelScoring = isRed ? botCenterBackdropRed : botRightBackdropBlue;
+                break;
             case 1:
                 mainSpikeMark = isRed ? botCenterSpikeRed : botCenterSpikeBlue;
                 yellowPixel = isRed ? botCenterBackdropRed : botCenterBackdropBlue;
+                botWhitePixelScoring = isRed ? botLeftBackdropRed : botRightBackdropBlue;
+                break;
             case 2:
                 mainSpikeMark = isRed ? botRightSpikeRed : botRightSpikeBlue;
                 yellowPixel = isRed ? botRightBackdropRed : botRightBackdropBlue;
+                botWhitePixelScoring = isRed ? botLeftBackdropRed : botCenterBackdropBlue;
+                break;
         }
 
         if (isRed) {
@@ -174,15 +181,16 @@ public final class MainAuton extends LinearOpMode {
         }
 
         TrajectorySequence trajBack = robot.drivetrain.trajectorySequenceBuilder(isRed ? botStartRed : botStartBlue)
-                                .lineToSplineHeading(mainSpikeMark)
-                                .lineToSplineHeading(isRed ? botLeftSpikeMovementRed : botLeftSpikeMovementBlue) // TODO DO TERNARY IF LEFT SPIKE
-                                .lineToLinearHeading(botWhitePixels)
-                                .strafeRight(isRed ? 4 : -4)
-                                .splineToSplineHeading(botStageDoor, Math.toRadians(0))
-                                .splineTo(botTransition, Math.toRadians(0))
-                                .lineToSplineHeading(yellowPixel)
-                                .lineTo(parking)
-                                .build();
+                .lineToSplineHeading(mainSpikeMark)
+//                .lineToSplineHeading(isRed ? botLeftSpikeMovementRed : botLeftSpikeMovementBlue) // TODO DO TERNARY IF LEFT SPIKE
+                .lineToLinearHeading(botWhitePixels)
+                .strafeRight(isRed ? 4 : -4)
+                .splineToSplineHeading(botStageDoor, Math.toRadians(0))
+                .splineTo(botTransition, Math.toRadians(0))
+                .lineToSplineHeading(botWhitePixelScoring)
+                .lineToSplineHeading(yellowPixel)
+                .lineTo(parking)
+                .build();
 
         waitForStart();
 
