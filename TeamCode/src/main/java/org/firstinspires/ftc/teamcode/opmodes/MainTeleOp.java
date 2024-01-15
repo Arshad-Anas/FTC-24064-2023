@@ -66,9 +66,9 @@ public final class MainTeleOp extends LinearOpMode {
             // Control drivetrain with control stick inputs:
             if (gamepadEx1.isDown(RIGHT_BUMPER)) {
                 robot.drivetrain.run(
-                        -gamepadEx1.getLeftX() * 0.5,
-                        -gamepadEx1.getLeftY() * 0.5,
-                        -x * 0.5
+                        -gamepadEx1.getLeftX() * 0.3,
+                        -gamepadEx1.getLeftY() * 0.3,
+                        -x * 0.3
                 );
             } else {
                 robot.drivetrain.run(
@@ -80,7 +80,6 @@ public final class MainTeleOp extends LinearOpMode {
 
             // Gamepad 2
             if (keyPressed(2, DPAD_UP)) robot.lift.increment();
-            if (keyPressed(2, DPAD_DOWN)) robot.lift.decrement();
             if (keyPressed(2, A)) robot.lift.updateTarget();
             if (keyPressed(2, B)) robot.arm.toggleFlap();
             if (keyPressed(2, X)) robot.launcher.setActivated(true);
