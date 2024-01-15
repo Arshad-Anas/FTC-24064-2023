@@ -77,15 +77,15 @@ public final class MainTeleOp extends LinearOpMode {
             // Field-centric drive dt with control stick inputs:
             if (gamepadEx1.isDown(RIGHT_BUMPER)) {
                 robot.drivetrain.run(
-                        -gamepadEx1.getLeftX() * 0.2,
-                        -gamepadEx1.getLeftY() * 0.2,
-                        -x * 0.2
+                        gamepadEx1.getLeftX() * 0.2,
+                        gamepadEx1.getLeftY() * 0.2,
+                        x * 0.2
                 );
             } else {
                 robot.drivetrain.run(
-                        -gamepadEx1.getLeftX(),
-                        -gamepadEx1.getLeftY(),
-                        -x
+                        gamepadEx1.getLeftX(),
+                        gamepadEx1.getLeftY(),
+                        x
                 );
             }
 
