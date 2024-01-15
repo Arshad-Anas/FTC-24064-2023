@@ -29,7 +29,7 @@ public class MeepMeepTesting {
     public static int spikeNum = 1;
 
     public static EditablePose
-            startPoseRed = new EditablePose(X_START_RIGHT, -61.788975, FORWARD),
+            startPoseRed = new EditablePose(X_START_RIGHT, -61.788975, 0),
             startPoseBlue = new EditablePose(startPoseRed.byAlliance().toPose2d().vec().getX(), 61, BACKWARD),
             centerSpikeRed = new EditablePose((X_START_RIGHT + 3.5), -33.5, FORWARD),
             centerSpikeBlue = new EditablePose(centerSpikeRed.byAlliance().toPose2d().vec().getX(), 33.5, BACKWARD),
