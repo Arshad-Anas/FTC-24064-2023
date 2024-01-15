@@ -49,19 +49,19 @@ public final class MainAuton extends LinearOpMode {
 
     public static EditablePose
             startPoseRed = new EditablePose(X_START_RIGHT, -61.788975, FORWARD),
-            startPoseBlue = new EditablePose(startPoseRed.byAlliance().toPose2d().vec().getX(), 61, BACKWARD),
+            startPoseBlue = new EditablePose(startPoseRed.byAlliance().x, 61, BACKWARD),
             centerSpikeRed = new EditablePose((X_START_RIGHT + 3.5), -33.5, FORWARD),
-            centerSpikeBlue = new EditablePose(centerSpikeRed.byAlliance().toPose2d().vec().getX(), 33.5, BACKWARD),
+            centerSpikeBlue = new EditablePose(centerSpikeRed.byAlliance().x, 33.5, BACKWARD),
             leftSpikeRed = new EditablePose(7, -41, toRadians(120)),
-            leftSpikeBlue = new EditablePose(leftSpikeRed.byAlliance().toPose2d().vec().getX(), 41, toRadians(-120)),
+            leftSpikeBlue = new EditablePose(leftSpikeRed.byAlliance().x, 41, toRadians(-120)),
             rightSpikeRed = new EditablePose(24 - leftSpikeRed.x, leftSpikeRed.y, LEFT - leftSpikeRed.heading),
-            rightSpikeBlue = new EditablePose(rightSpikeRed.byAlliance().toPose2d().vec().getX(), 41, LEFT + leftSpikeRed.heading),
+            rightSpikeBlue = new EditablePose(rightSpikeRed.byAlliance().x, 41, LEFT + leftSpikeRed.heading),
             redBackboard = new EditablePose(48, -34, RIGHT),
-            blueBackboard = new EditablePose(redBackboard.byAlliance().toPose2d().vec().getX(), 34, RIGHT),
+            blueBackboard = new EditablePose(redBackboard.byAlliance().x, 34, RIGHT),
             redParkingLeft = new EditablePose(52, -14, toRadians(165)),
             redParkingRight = new EditablePose(51, -54, toRadians(200)),
-            blueParkingLeft = new EditablePose(redParkingLeft.toPose2d().vec().getX(), 60, toRadians(165)),
-            blueParkingRight = new EditablePose(redParkingRight.toPose2d().vec().getX(), 14, toRadians(200));
+            blueParkingLeft = new EditablePose(redParkingLeft.x, 60, toRadians(165)),
+            blueParkingRight = new EditablePose(redParkingRight.x, 14, toRadians(200));
 
     public static Pose2d
             mainSpikeBlue = null,
