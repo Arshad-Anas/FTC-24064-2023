@@ -72,6 +72,7 @@ public final class Robot {
             arm.setFlap(intake.get() >= 0);
         }
 
+        launcher.run();
         lift.run();
         arm.run();
     }
