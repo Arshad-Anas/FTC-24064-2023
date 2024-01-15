@@ -297,6 +297,8 @@ public final class MainAuton extends LinearOpMode {
             parking = (isParkedLeft ? botParkingLeftBlue : botParkingRightBlue).vec();
         }
 
+        robot.drivetrain.setPoseEstimate(start);
+
         TrajectorySequenceBuilder backTrajectoryBuilder = robot.drivetrain
                 .trajectorySequenceBuilder(start)
                 .lineToSplineHeading(mainSpikeMark);
