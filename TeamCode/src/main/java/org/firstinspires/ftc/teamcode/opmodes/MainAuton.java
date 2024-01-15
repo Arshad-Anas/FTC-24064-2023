@@ -85,8 +85,8 @@ public final class MainAuton extends LinearOpMode {
             // This is for blue alliance
             botStartBlue = new EditablePose(botStartPoseRed.byAlliance().x, 61.788975, 0),
             botCenterSpikeBlue = new EditablePose(botCenterSpikeRed.byAlliance().x, 38, Math.toRadians(-90)),
-            botLeftSpikeBlue = new EditablePose(botLeftSpikeRed.byAlliance().x, 47, toRadians(-90)),
-            botRightSpikeBlue = new EditablePose(botRightSpikeRed.byAlliance().x, 34, Math.toRadians(0)),
+            botRightSpikeBlue = new EditablePose(botLeftSpikeRed.byAlliance().x, 47, toRadians(-90)),
+            botLeftSpikeBlue = new EditablePose(botRightSpikeRed.byAlliance().x, 34, Math.toRadians(0)),
             botWhitePixelBlue = new EditablePose(botWhitePixelRed.byAlliance().x, 24, Math.toRadians(180)),
             botStageDoorBlue = new EditablePose(botStageDoorRed.byAlliance().x, 8, Math.toRadians(0)),
             botTransitionBlue = new EditablePose(botTransitionRed.byAlliance().x, 9, Math.toRadians(0)),
