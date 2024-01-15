@@ -101,10 +101,6 @@ public final class Lift {
         setTargetRow(targetRow + 1);
     }
 
-    public void decrement() {
-        setTargetRow(targetRow - 1);
-    }
-
     public void updateTarget() {
         hasElevated = setPoint == -1 && targetRow > setPoint;
         if (hasElevated) {
