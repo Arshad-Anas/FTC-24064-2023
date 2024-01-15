@@ -265,7 +265,7 @@ public final class MainAuton extends LinearOpMode {
 
         switch (propPlacement) {
             case 0:
-                mainSpikeMark = isRed ? botLeftSpikeRed : botLeftSpikeBlue;
+                mainSpikeMark = isRed ? botLeftSpikeRed : botRightSpikeBlue;
                 yellowPixel = isRed ? botLeftBackdropRed : botLeftBackdropBlue;
                 botWhitePixelScoring = isRed ? botCenterBackdropRed : botRightBackdropBlue;
                 break;
@@ -275,7 +275,7 @@ public final class MainAuton extends LinearOpMode {
                 botWhitePixelScoring = isRed ? botLeftBackdropRed : botRightBackdropBlue;
                 break;
             case 2:
-                mainSpikeMark = isRed ? botRightSpikeRed : botRightSpikeBlue;
+                mainSpikeMark = isRed ? botRightSpikeRed : botLeftSpikeBlue;
                 yellowPixel = isRed ? botRightBackdropRed : botRightBackdropBlue;
                 botWhitePixelScoring = isRed ? botLeftBackdropRed : botCenterBackdropBlue;
                 break;
