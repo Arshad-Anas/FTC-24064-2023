@@ -48,20 +48,20 @@ public final class MainAuton extends LinearOpMode {
             BACKWARD = toRadians(270);
 
     public static EditablePose
-            startPoseRed = new EditablePose(X_START_RIGHT, -61.788975, FORWARD),
-            startPoseBlue = new EditablePose(startPoseRed.byAlliance().x, 61, BACKWARD),
-            centerSpikeRed = new EditablePose((X_START_RIGHT + 3.5), -33.5, FORWARD),
-            centerSpikeBlue = new EditablePose(centerSpikeRed.byAlliance().x, 33.5, BACKWARD),
-            leftSpikeRed = new EditablePose(7, -41, toRadians(120)),
-            leftSpikeBlue = new EditablePose(leftSpikeRed.byAlliance().x, 41, toRadians(-120)),
-            rightSpikeRed = new EditablePose(24 - leftSpikeRed.x, leftSpikeRed.y, LEFT - leftSpikeRed.heading),
-            rightSpikeBlue = new EditablePose(rightSpikeRed.byAlliance().x, 41, LEFT + leftSpikeRed.heading),
-            redBackboard = new EditablePose(48, -34, RIGHT),
-            blueBackboard = new EditablePose(redBackboard.byAlliance().x, 34, RIGHT),
-            redParkingLeft = new EditablePose(52, -14, toRadians(165)),
-            redParkingRight = new EditablePose(51, -54, toRadians(200)),
-            blueParkingLeft = new EditablePose(redParkingLeft.x, 60, toRadians(165)),
-            blueParkingRight = new EditablePose(redParkingRight.x, 14, toRadians(200));
+            topStartRed = new EditablePose(X_START_RIGHT, -61.788975, FORWARD),
+            topStartBlue = new EditablePose(topStartRed.byAlliance().x, 61, BACKWARD),
+            topCenterSpikeRed = new EditablePose((X_START_RIGHT + 3.5), -33.5, FORWARD),
+            topCenterSpikeBlue = new EditablePose(topCenterSpikeRed.byAlliance().x, 33.5, BACKWARD),
+            topLeftSpikeRed = new EditablePose(7, -41, toRadians(120)),
+            topLeftSpikeBlue = new EditablePose(topLeftSpikeRed.byAlliance().x, 41, toRadians(-120)),
+            topRightSpikeRed = new EditablePose(24 - topLeftSpikeRed.x, topLeftSpikeRed.y, LEFT - topLeftSpikeRed.heading),
+            topRightSpikeBlue = new EditablePose(topRightSpikeRed.byAlliance().x, 41, LEFT + topLeftSpikeRed.heading),
+            topRedBackboard = new EditablePose(48, -34, RIGHT),
+            topBlueBackboard = new EditablePose(topRedBackboard.byAlliance().x, 34, RIGHT),
+            topRedParkingLeft = new EditablePose(52, -14, toRadians(165)),
+            topRedParkingRight = new EditablePose(51, -54, toRadians(200)),
+            topBlueParkingLeft = new EditablePose(topRedParkingLeft.x, 60, toRadians(165)),
+            topBlueParkingRight = new EditablePose(topRedParkingRight.x, 14, toRadians(200));
 
     public static Pose2d
             mainSpikeBlue = null,
@@ -98,46 +98,59 @@ public final class MainAuton extends LinearOpMode {
 
         waitForStart();
 
+        robot.drivetrain.followTrajectorySequenceAsync(getTopTrajectory());
+
+        while (opModeIsActive()) {
+            robot.readSensors();
+
+            robot.drivetrain.update();
+            robot.run();
+
+            robot.printTelemetry();
+            mTelemetry.update();
+        }
+    }
+
+    private TrajectorySequence getTopTrajectory() {
         double direction = toRadians(0);
 
-        Pose2d startPoseBlue = MainAuton.startPoseBlue.toPose2d();
-        Pose2d startPoseRed = MainAuton.startPoseRed.byBoth().toPose2d();
-        Pose2d centerSpikeBlue = MainAuton.centerSpikeBlue.toPose2d();
-        Pose2d centerSpikeRed = MainAuton.centerSpikeRed.byBoth().toPose2d();
-        Pose2d leftSpikeBlue = MainAuton.leftSpikeBlue.toPose2d();
-        Pose2d leftSpikeRed = MainAuton.leftSpikeRed.byBoth().toPose2d();
-        Pose2d rightSpikeBlue = MainAuton.rightSpikeBlue.toPose2d();
-        Pose2d rightSpikeRed = MainAuton.rightSpikeRed.byBoth().toPose2d();
-        Pose2d blueBackboard = MainAuton.blueBackboard.toPose2d();
-        Pose2d redBackboard = MainAuton.redBackboard.byBoth().toPose2d();
-        Pose2d redParkingLeft = MainAuton.redParkingLeft.byBoth().toPose2d();
-        Pose2d redParkingRight = MainAuton.redParkingRight.byBoth().toPose2d();
-        Pose2d blueParkingLeft = MainAuton.blueParkingLeft.toPose2d();
-        Pose2d blueParkingRight = MainAuton.blueParkingRight.toPose2d();
+        Pose2d startPoseBlue = MainAuton.topStartBlue.toPose2d();
+        Pose2d startPoseRed = MainAuton.topStartRed.byBoth().toPose2d();
+        Pose2d centerSpikeBlue = MainAuton.topCenterSpikeBlue.toPose2d();
+        Pose2d centerSpikeRed = MainAuton.topCenterSpikeRed.byBoth().toPose2d();
+        Pose2d leftSpikeBlue = MainAuton.topLeftSpikeBlue.toPose2d();
+        Pose2d leftSpikeRed = MainAuton.topLeftSpikeRed.byBoth().toPose2d();
+        Pose2d rightSpikeBlue = MainAuton.topRightSpikeBlue.toPose2d();
+        Pose2d rightSpikeRed = MainAuton.topRightSpikeRed.byBoth().toPose2d();
+        Pose2d blueBackboard = MainAuton.topBlueBackboard.toPose2d();
+        Pose2d redBackboard = MainAuton.topRedBackboard.byBoth().toPose2d();
+        Pose2d redParkingLeft = MainAuton.topRedParkingLeft.byBoth().toPose2d();
+        Pose2d redParkingRight = MainAuton.topRedParkingRight.byBoth().toPose2d();
+        Pose2d blueParkingLeft = MainAuton.topBlueParkingLeft.toPose2d();
+        Pose2d blueParkingRight = MainAuton.topBlueParkingRight.toPose2d();
 
         switch (spikeNum) {
-            case 0: {
+            case 0:
                 mainSpikeBlue = leftSpikeBlue;
                 mainSpikeRed = leftSpikeRed;
                 direction = (isRed ? toRadians(135) : toRadians(-135));
-            }
-
-            case 1: {
+                break;
+            case 1:
                 mainSpikeBlue = centerSpikeBlue;
                 mainSpikeRed = centerSpikeRed;
                 direction = (isRed ? FORWARD : BACKWARD);
-            }
-            case 2: {
+                break;
+            case 2:
                 mainSpikeBlue = rightSpikeBlue;
                 mainSpikeRed = rightSpikeRed;
                 direction = (isRed ? (LEFT - toRadians(135)) : (LEFT - toRadians(-135)));
-            }
+                break;
         }
 
         robot.drivetrain.setPoseEstimate(isRed ? startPoseRed : startPoseBlue);
 
-        TrajectorySequence trajSequenceTop = robot.drivetrain.trajectorySequenceBuilder(isRed ? startPoseRed : startPoseBlue)
-
+        TrajectorySequence trajTop = robot.drivetrain
+                .trajectorySequenceBuilder(isRed ? startPoseRed : startPoseBlue)
                 .splineTo(isRed ? mainSpikeRed.vec() : mainSpikeBlue.vec(), direction)
                 /*
                    Starts outtake 0.5 seconds after prev. action, then waits 0.25 seconds before stopping the outtake
@@ -166,17 +179,7 @@ public final class MainAuton extends LinearOpMode {
                 .lineToSplineHeading(isRed ? (isParkedLeft ? redParkingLeft : redParkingRight) : (isParkedLeft ? blueParkingLeft : blueParkingRight))
                 .build();
 
-                robot.drivetrain.followTrajectorySequenceAsync(trajSequenceTop);
-
-        while (opModeIsActive()) {
-            robot.readSensors();
-
-            robot.drivetrain.update();
-            robot.run();
-
-            robot.printTelemetry();
-            mTelemetry.update();
-        }
+        return trajTop;
     }
 
     private static class EditablePose {
