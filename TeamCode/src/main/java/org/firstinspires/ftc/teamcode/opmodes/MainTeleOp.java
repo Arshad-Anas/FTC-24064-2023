@@ -9,8 +9,12 @@ import static com.arcrobotics.ftclib.gamepad.GamepadKeys.Button.RIGHT_BUMPER;
 import static com.arcrobotics.ftclib.gamepad.GamepadKeys.Button.Y;
 import static com.arcrobotics.ftclib.gamepad.GamepadKeys.Trigger.LEFT_TRIGGER;
 import static com.arcrobotics.ftclib.gamepad.GamepadKeys.Trigger.RIGHT_TRIGGER;
+import static org.firstinspires.ftc.teamcode.opmodes.MainAuton.BACKWARD;
+import static org.firstinspires.ftc.teamcode.opmodes.MainAuton.FORWARD;
+import static org.firstinspires.ftc.teamcode.opmodes.MainAuton.autonEndPose;
 import static org.firstinspires.ftc.teamcode.opmodes.MainAuton.gamepadEx1;
 import static org.firstinspires.ftc.teamcode.opmodes.MainAuton.gamepadEx2;
+import static org.firstinspires.ftc.teamcode.opmodes.MainAuton.isRed;
 import static org.firstinspires.ftc.teamcode.opmodes.MainAuton.keyPressed;
 import static org.firstinspires.ftc.teamcode.opmodes.MainAuton.mTelemetry;
 import static org.firstinspires.ftc.teamcode.opmodes.MainAuton.robot;
@@ -42,6 +46,8 @@ public final class MainTeleOp extends LinearOpMode {
 
         // Instantiated the robot class
         robot = new Robot(hardwareMap);
+
+        robot.drivetrain.setCurrentHeading(autonEndPose.getHeading() - (isRed ? FORWARD : BACKWARD));
 
         waitForStart();
 

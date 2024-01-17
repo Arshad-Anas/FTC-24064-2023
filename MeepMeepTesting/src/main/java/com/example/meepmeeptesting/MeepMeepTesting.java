@@ -11,14 +11,13 @@ import com.noahbres.meepmeep.roadrunner.entity.RoadRunnerBotEntity;
 
 public class MeepMeepTesting {
 
-    static boolean isRed = false, isParkedLeft = true, isRightCenterSpike = false;
+    static boolean isRed = true, isParkedLeft = false;
 
     static final boolean isRight = true;
 
     public static double
             X_START_LEFT = -35,
-            X_START_RIGHT = 12,
-            DIRECTION = toRadians(0);
+            X_START_RIGHT = 12;
 
     public static final double
             LEFT = toRadians(180),
@@ -26,27 +25,18 @@ public class MeepMeepTesting {
             RIGHT = toRadians(0),
             BACKWARD = toRadians(270);
 
-    public static int spikeNum = 1;
+    public static int spikeNum = 2;
 
     public static EditablePose
-            startPoseRed = new EditablePose(X_START_RIGHT, -61.788975, 0),
-            startPoseBlue = new EditablePose(startPoseRed.byAlliance().toPose2d().vec().getX(), 61, BACKWARD),
-            centerSpikeRed = new EditablePose((X_START_RIGHT + 3.5), -33.5, FORWARD),
-            centerSpikeBlue = new EditablePose(centerSpikeRed.byAlliance().toPose2d().vec().getX(), 33.5, BACKWARD),
-            leftSpikeRed = new EditablePose(7, -41, toRadians(120)),
-            leftSpikeBlue = new EditablePose(leftSpikeRed.byAlliance().toPose2d().vec().getX(), 41, toRadians(-120)),
-            rightSpikeRed = new EditablePose(24 - leftSpikeRed.x, leftSpikeRed.y, LEFT - leftSpikeRed.heading),
-            rightSpikeBlue = new EditablePose(rightSpikeRed.byAlliance().toPose2d().vec().getX(), 41, LEFT + leftSpikeRed.heading),
-            redBackboard = new EditablePose(48, -34, RIGHT),
-            blueBackboard = new EditablePose(redBackboard.byAlliance().toPose2d().vec().getX(), 34, RIGHT),
-            redParkingLeft = new EditablePose(52, -14, toRadians(165)),
-            redParkingRight = new EditablePose(51, -54, toRadians(200)),
-            blueParkingLeft = new EditablePose(redParkingLeft.toPose2d().vec().getX(), 60, toRadians(165)),
-            blueParkingRight = new EditablePose(redParkingRight.toPose2d().vec().getX(), 14, toRadians(200));
+            topStart = new EditablePose(X_START_RIGHT, -61.788975, FORWARD),
+            topCenterSpike = new EditablePose((X_START_RIGHT + 3.5), -33.5, FORWARD),
+            topLeftSpike = new EditablePose(7, -41, toRadians(120)),
+            topRightSpike = new EditablePose(24 - topLeftSpike.x, topLeftSpike.y, LEFT - topLeftSpike.heading),
+            topBackboard = new EditablePose(48, -34, RIGHT),
+            topParkingLeft = new EditablePose(52, -14, toRadians(165)),
+            topParkingRight = new EditablePose(51, -56, toRadians(200));
 
-    public static Pose2d
-            mainSpikeBlue = null,
-            mainSpikeRed = null;
+    public static Pose2d mainSpike = null;
 
     public static void main(String[] args) {
         MeepMeep meepMeep = new MeepMeep(800);
@@ -57,66 +47,38 @@ public class MeepMeepTesting {
                 SCORING_WAIT_TIME = 0.75,
                 OPEN_FLAP_WAIT_TIME = 0.25;
 
-        Pose2d startPoseBlue = MeepMeepTesting.startPoseBlue.toPose2d();
-        Pose2d startPoseRed = MeepMeepTesting.startPoseRed.byBoth().toPose2d();
-        Pose2d centerSpikeBlue = MeepMeepTesting.centerSpikeBlue.toPose2d();
-        Pose2d centerSpikeRed = MeepMeepTesting.centerSpikeRed.byBoth().toPose2d();
-        Pose2d leftSpikeBlue = MeepMeepTesting.leftSpikeBlue.toPose2d();
-        Pose2d leftSpikeRed = MeepMeepTesting.leftSpikeRed.byBoth().toPose2d();
-        Pose2d rightSpikeBlue = MeepMeepTesting.rightSpikeBlue.toPose2d();
-        Pose2d rightSpikeRed = MeepMeepTesting.rightSpikeRed.byBoth().toPose2d();
-        Pose2d blueBackboard = MeepMeepTesting.blueBackboard.toPose2d();
-        Pose2d redBackboard = MeepMeepTesting.redBackboard.byBoth().toPose2d();
-        Pose2d redParkingLeft = MeepMeepTesting.redParkingLeft.byBoth().toPose2d();
-        Pose2d redParkingRight = MeepMeepTesting.redParkingRight.byBoth().toPose2d();
-        Pose2d blueParkingLeft = MeepMeepTesting.blueParkingLeft.toPose2d();
-        Pose2d blueParkingRight = MeepMeepTesting.blueParkingRight.toPose2d();
+        Pose2d startPose = MeepMeepTesting.topStart.byAlliance().toPose2d();
+        Pose2d centerSpike = MeepMeepTesting.topCenterSpike.byAlliance().toPose2d();
+        Pose2d leftSpike = MeepMeepTesting.topLeftSpike.byAlliance().toPose2d();
+        Pose2d rightSpike = MeepMeepTesting.topRightSpike.byAlliance().toPose2d();
+        Pose2d backboard = MeepMeepTesting.topBackboard.byAlliance().toPose2d();
+        Pose2d parkingLeft = MeepMeepTesting.topParkingLeft.byAlliance().toPose2d();
+        Pose2d parkingRight = MeepMeepTesting.topParkingRight.byAlliance().toPose2d();
 
         switch (spikeNum) {
             case 0: {
-                mainSpikeBlue = leftSpikeBlue;
-                mainSpikeRed = leftSpikeRed;
+                mainSpike = leftSpike;
                 break;
             }
 
             case 1: {
-                mainSpikeBlue = centerSpikeBlue;
-                mainSpikeRed = centerSpikeRed;
+                mainSpike = centerSpike;
                 break;
             }
 
             case 2: {
-                mainSpikeBlue = rightSpikeBlue;
-                mainSpikeRed = rightSpikeRed;
-                isRightCenterSpike = true;
-                break;
-            }
-        }
-
-        switch (spikeNum) {
-            case 0: {
-                DIRECTION = (isRed ? toRadians(135) : toRadians(-135));
-                break;
-            }
-
-            case 1: {
-                DIRECTION = (isRed ? FORWARD : BACKWARD);
-                break;
-            }
-
-            case 2: {
-                DIRECTION = (isRed ? (LEFT - toRadians(135)) : (LEFT - toRadians(-135)));
+                mainSpike = rightSpike;
                 break;
             }
         }
 
         RoadRunnerBotEntity myBot = new DefaultBotBuilder(meepMeep)
                 // Set bot constraints: maxVel, maxAccel, maxAngVel, maxAngAccel, track width
-                .setConstraints(30, 30, toRadians(60), toRadians(60), 16.02362205)
+                .setConstraints(50.2765, 60.3457, toRadians(174.5386897712936), toRadians(60), 17.38)
                 .setDimensions(16.2981681102, 17.0079)
                 .followTrajectorySequence(drive ->
-                        drive.trajectorySequenceBuilder(isRed ? startPoseRed : startPoseBlue)
-                                .splineTo(isRed ? mainSpikeRed.vec() : mainSpikeBlue.vec(), DIRECTION)
+                        drive.trajectorySequenceBuilder(startPose)
+                                .splineTo(mainSpike.vec(), mainSpike.getHeading())
                                 /*
                                    Starts outtake 0.5 seconds after prev. action, then waits 0.25 seconds before stopping the outtake
                                    Then stops after 1 second
@@ -125,7 +87,7 @@ public class MeepMeepTesting {
                                 // .addTemporalMarker(0.5 + OUTTAKE_WAIT_TIME, () -> intake.set(0))
                                 .strafeRight(spikeNum == 2 ? (isRed ? 8 : -8) : 0.0001)
                                 .turn(spikeNum == 2 ? (isRed ? (RIGHT - toRadians(35)) : (RIGHT + toRadians(35))) : 0)
-                                .lineToSplineHeading(isRed ? redBackboard : blueBackboard)
+                                .lineToSplineHeading(backboard)
                                 /*
                                     Do april tag stuff here because now we can scan
                                  */
@@ -141,7 +103,7 @@ public class MeepMeepTesting {
                                 // })
                                 // .addTemporalMarker(0.5 + OPEN_FLAP_WAIT_TIME, () -> robot.arm.setFlap(true))
                                 // .addTemporalMarker((0.5 + OPEN_FLAP_WAIT_TIME) + SCORING_WAIT_TIME, () -> robot.arm.setArm(true))
-                                .lineToSplineHeading(isRed ? (isParkedLeft ? redParkingLeft : redParkingRight) : (isParkedLeft ? blueParkingLeft : blueParkingRight))
+                                .lineToSplineHeading((isParkedLeft ? parkingLeft : parkingRight))
                                 .build()
                 );
 
@@ -163,8 +125,8 @@ public class MeepMeepTesting {
         }
 
         private EditablePose byAlliance() {
-            if (!isRed) y = -1;
-            if (!isRed) heading= -1;
+            if (!isRed) y *= -1;
+            if (!isRed) heading *= -1;
             return this;
         }
 
