@@ -41,9 +41,10 @@ public final class MainAuton extends LinearOpMode {
     public static double
             X_START_BOTTOM = -35,
             X_START_TOP = 12,
-            OUTTAKE_WAIT_TIME = 0.25,
-            SCORING_WAIT_TIME = 0.75,
-            OPEN_FLAP_WAIT_TIME = 0.25;
+            OUTTAKE_WAIT_TIME = 0.5,
+            OPENING_SLIDE_TIME = 1.25,
+            OPEN_FLAP_WAIT_TIME = 0.25,
+            SCORING_WAIT_TIME = 1;
 
     public static final double
             LEFT = toRadians(180),
@@ -56,7 +57,8 @@ public final class MainAuton extends LinearOpMode {
             topCenterSpike = new EditablePose((X_START_TOP + 3.5), -33.5, FORWARD),
             topLeftSpike = new EditablePose(7, -41, toRadians(120)),
             topRightSpike = new EditablePose(24 - topLeftSpike.x, topLeftSpike.y, LEFT - topLeftSpike.heading),
-            topBackboard = new EditablePose(48, -34, RIGHT),
+            topBackboardBe = new EditablePose(48, -36, RIGHT),
+            topBackboardAf = new EditablePose(48, -34, RIGHT),
             topParkingLeft = new EditablePose(52, -14, toRadians(165)),
             topParkingRight = new EditablePose(51, -56, toRadians(200));
 
@@ -137,7 +139,8 @@ public final class MainAuton extends LinearOpMode {
         Pose2d centerSpike = MainAuton.topCenterSpike.byAlliance().toPose2d();
         Pose2d leftSpike = MainAuton.topLeftSpike.byAlliance().toPose2d();
         Pose2d rightSpike = MainAuton.topRightSpike.byAlliance().toPose2d();
-        Pose2d backboard = MainAuton.topBackboard.byAlliance().toPose2d();
+        Pose2d backboardBe = MainAuton.topBackboardBe.byAlliance().toPose2d();
+        Pose2d backboardAf = MainAuton.topBackboardAf.byAlliance().toPose2d();
         Pose2d parkingLeft = MainAuton.topParkingLeft.byAlliance().toPose2d();
         Pose2d parkingRight = MainAuton.topParkingRight.byAlliance().toPose2d();
 
@@ -162,8 +165,10 @@ public final class MainAuton extends LinearOpMode {
                    Starts outtake 0.5 seconds after prev. action, then waits 0.25 seconds before stopping the outtake
                    Then stops after 1 second
                  */
-                .UNSTABLE_addTemporalMarkerOffset(0.5, () -> robot.intake.set(0.35))
-                .addTemporalMarker(0.5 + OUTTAKE_WAIT_TIME, () -> robot.intake.set(0));
+                .addTemporalMarker(0.5, () -> robot.intake.set(1))
+                .addTemporalMarker(0.5 + OUTTAKE_WAIT_TIME, () -> robot.intake.set(0))
+
+                .waitSeconds(2);
 
         if (propPlacement == 2 && mainSpike == rightSpike) {
             rightTrajectoryBuilder
@@ -172,22 +177,32 @@ public final class MainAuton extends LinearOpMode {
         }
 
         rightTrajectoryBuilder
-                .lineToSplineHeading(backboard)
+                .lineToSplineHeading(backboardBe)
                 /*
                     Do april tag stuff here because now we can scan
                  */
                 .turn(LEFT)
+                .lineTo(backboardAf.vec())
                 /*
                  Starts the lift by updating target to row 0, then executes commands to do so (within timing)
                  It will activate flap to open, releasing the pixels
                  After doing that, it'll retract back to target row -1
                 */
-                .UNSTABLE_addTemporalMarkerOffset(0.5, () -> {
+                .UNSTABLE_addTemporalMarkerOffset(0.2, () -> robot.arm.setFlap(true))
+                .UNSTABLE_addTemporalMarkerOffset((0.2 + 0.2), () -> {
                     robot.lift.setTargetRow(0);
                     robot.lift.updateTarget();
                 })
-                .addTemporalMarker(0.5 + OPEN_FLAP_WAIT_TIME, () -> robot.arm.setFlap(false))
-                .addTemporalMarker((0.5 + OPEN_FLAP_WAIT_TIME) + SCORING_WAIT_TIME, () -> robot.arm.setArm(false))
+                .UNSTABLE_addTemporalMarkerOffset(0.2 + OPENING_SLIDE_TIME, () -> robot.arm.setArm(true))
+                .UNSTABLE_addTemporalMarkerOffset((0.2 + OPEN_FLAP_WAIT_TIME) + OPENING_SLIDE_TIME, () -> robot.arm.setFlap(false))
+                .UNSTABLE_addTemporalMarkerOffset((0.2 + OPEN_FLAP_WAIT_TIME) + OPENING_SLIDE_TIME + SCORING_WAIT_TIME, () -> robot.arm.setArm(false))
+                .UNSTABLE_addTemporalMarkerOffset((0.2 + OPEN_FLAP_WAIT_TIME) + OPENING_SLIDE_TIME + SCORING_WAIT_TIME + 1.5, () -> {
+                    robot.lift.setTargetRow(-1);
+                    robot.lift.updateTarget();
+                })
+
+                .waitSeconds(10)
+
                 .lineToSplineHeading(isParkedLeft ? parkingLeft : parkingRight);
 
         return rightTrajectoryBuilder.build();
