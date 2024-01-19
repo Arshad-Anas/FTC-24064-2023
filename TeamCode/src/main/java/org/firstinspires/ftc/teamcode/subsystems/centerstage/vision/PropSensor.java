@@ -28,7 +28,7 @@ public class PropSensor {
         camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
             @Override
             public void onOpened() {
-                camera.startStreaming(640, 480, OpenCvCameraRotation.UPRIGHT);
+                camera.startStreaming(1920, 1080, OpenCvCameraRotation.UPRIGHT);
                 camera.setViewportRenderingPolicy(OpenCvCamera.ViewportRenderingPolicy.OPTIMIZE_VIEW);
                 camera.setPipeline(pipeline);
             }
