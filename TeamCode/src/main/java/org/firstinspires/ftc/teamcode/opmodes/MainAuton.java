@@ -2,8 +2,10 @@ package org.firstinspires.ftc.teamcode.opmodes;
 
 import static com.arcrobotics.ftclib.gamepad.GamepadKeys.Button.A;
 import static com.arcrobotics.ftclib.gamepad.GamepadKeys.Button.B;
+import static com.arcrobotics.ftclib.gamepad.GamepadKeys.Button.DPAD_DOWN;
 import static com.arcrobotics.ftclib.gamepad.GamepadKeys.Button.DPAD_LEFT;
 import static com.arcrobotics.ftclib.gamepad.GamepadKeys.Button.DPAD_RIGHT;
+import static com.arcrobotics.ftclib.gamepad.GamepadKeys.Button.DPAD_UP;
 import static com.arcrobotics.ftclib.gamepad.GamepadKeys.Button.LEFT_BUMPER;
 import static com.arcrobotics.ftclib.gamepad.GamepadKeys.Button.RIGHT_BUMPER;
 import static com.arcrobotics.ftclib.gamepad.GamepadKeys.Button.X;
@@ -41,7 +43,7 @@ public final class MainAuton extends LinearOpMode {
     public static double
             X_START_BOTTOM = -35,
             X_START_TOP = 12,
-            OUTTAKE_WAIT_TIME = 0.5,
+            OUTTAKE_WAIT_TIME = 0.65,
             OPENING_SLIDE_TIME = 1.25,
             OPEN_FLAP_WAIT_TIME = 0.25,
             SCORING_WAIT_TIME = 1;
@@ -54,13 +56,13 @@ public final class MainAuton extends LinearOpMode {
 
     public static EditablePose
             topStart = new EditablePose(X_START_TOP, -61.788975, FORWARD),
-            topCenterSpike = new EditablePose((X_START_TOP + 3.5), -33.5, FORWARD),
+            topCenterSpike = new EditablePose((X_START_TOP + 3.5), -35.5, FORWARD),
             topLeftSpike = new EditablePose(7, -41, toRadians(120)),
             topRightSpike = new EditablePose(24 - topLeftSpike.x, topLeftSpike.y, LEFT - topLeftSpike.heading),
-            topBackboardBe = new EditablePose(48, -36, RIGHT),
-            topBackboardAf = new EditablePose(48, -34, RIGHT),
-            topParkingLeft = new EditablePose(52, -14, toRadians(165)),
-            topParkingRight = new EditablePose(51, -56, toRadians(200));
+            topBackboardBe = new EditablePose(44, -35.5, RIGHT),
+            topBackboardAf = new EditablePose(50, -35.5, RIGHT),
+            topParkingLeft = new EditablePose(49, -14, toRadians(165)),
+            topParkingRight = new EditablePose(49, -56, toRadians(200));
 
     // Bottom
     private static final EditablePose
@@ -109,11 +111,13 @@ public final class MainAuton extends LinearOpMode {
             if (keyPressed(1, X)) isRed = false;
             if (keyPressed(1, A)) isParkedLeft = true;
             if (keyPressed(1, Y)) isParkedLeft = false;
-            mTelemetry.addLine("Selected " + (isRed ? "RED" : "BLUE") + ", " + (isTop ? "RIGHT" : "LEFT") + ", " + (isParkedLeft ? "Parked Left" : "Parked Right"));
+            if (keyPressed(1, DPAD_UP)) propPlacement++;
+            if (keyPressed(1, DPAD_DOWN)) propPlacement--;
+            mTelemetry.addLine("Selected " + (isRed ? "RED" : "BLUE") + ", " + (isTop ? "RIGHT" : "LEFT") + ", " + (isParkedLeft ? "Parked Left" : "Parked Right") + ", " + propPlacement);
             mTelemetry.addLine("Press both shoulder buttons to confirm!");
             mTelemetry.update();
         }
-        mTelemetry.addLine("Confirmed " + (isRed ? "RED" : "BLUE") + ", " + (isTop ? "RIGHT" : "LEFT") + ", " + (isParkedLeft ? "Parked Left" : "Parked Right"));
+        mTelemetry.addLine("Confirmed " + (isRed ? "RED" : "BLUE") + ", " + (isTop ? "RIGHT" : "LEFT") + ", " + (isParkedLeft ? "Parked Left" : "Parked Right") + ", " + propPlacement);
         mTelemetry.update();
 
         waitForStart();
@@ -165,10 +169,10 @@ public final class MainAuton extends LinearOpMode {
                    Starts outtake 0.5 seconds after prev. action, then waits 0.25 seconds before stopping the outtake
                    Then stops after 1 second
                  */
-                .addTemporalMarker(0.5, () -> robot.intake.set(1))
+                .addTemporalMarker(0.75, () -> robot.intake.set(1))
                 .addTemporalMarker(0.5 + OUTTAKE_WAIT_TIME, () -> robot.intake.set(0))
 
-                .waitSeconds(2);
+                .waitSeconds(2.1);
 
         if (propPlacement == 2 && mainSpike == rightSpike) {
             rightTrajectoryBuilder
@@ -195,14 +199,11 @@ public final class MainAuton extends LinearOpMode {
                 })
                 .UNSTABLE_addTemporalMarkerOffset(0.2 + OPENING_SLIDE_TIME, () -> robot.arm.setArm(true))
                 .UNSTABLE_addTemporalMarkerOffset((0.2 + OPEN_FLAP_WAIT_TIME) + OPENING_SLIDE_TIME, () -> robot.arm.setFlap(false))
-                .UNSTABLE_addTemporalMarkerOffset((0.2 + OPEN_FLAP_WAIT_TIME) + OPENING_SLIDE_TIME + SCORING_WAIT_TIME, () -> robot.arm.setArm(false))
-                .UNSTABLE_addTemporalMarkerOffset((0.2 + OPEN_FLAP_WAIT_TIME) + OPENING_SLIDE_TIME + SCORING_WAIT_TIME + 1.5, () -> {
-                    robot.lift.setTargetRow(-1);
-                    robot.lift.updateTarget();
-                })
+                .UNSTABLE_addTemporalMarkerOffset((2 + OPEN_FLAP_WAIT_TIME) + OPENING_SLIDE_TIME + SCORING_WAIT_TIME, () -> robot.arm.toggleArm())
 
-                .waitSeconds(10)
+                .waitSeconds(12)
 
+                .lineTo(backboardBe.vec())
                 .lineToSplineHeading(isParkedLeft ? parkingLeft : parkingRight);
 
         return rightTrajectoryBuilder.build();
