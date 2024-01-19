@@ -25,8 +25,9 @@ public class PropSensorPipeline extends OpenCvPipeline {
 
     @Override
     public Mat processFrame(Mat input) {
+        Imgproc.cvtColor(input, input, Imgproc.COLOR_RGB2BGR, 0);
         Mat mask = createMask(input, upper, lower);
-        Imgproc.cvtColor(mask, mask, Imgproc.COLOR_BGR2GRAY);
+        Imgproc.cvtColor(mask, mask, Imgproc.COLOR_BGR2GRAY, 0);
         Rect rect = Imgproc.boundingRect(mask);
 
         Scalar color = new Scalar(0, 255, 0);
