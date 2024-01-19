@@ -43,7 +43,6 @@ public final class MainAuton extends LinearOpMode {
     public static double
             X_START_BOTTOM = -35,
             X_START_TOP = 12,
-            OUTTAKE_WAIT_TIME = 0.65,
             OPENING_SLIDE_TIME = 1.25,
             OPEN_FLAP_WAIT_TIME = 0.25,
             SCORING_WAIT_TIME = 1;
@@ -56,11 +55,13 @@ public final class MainAuton extends LinearOpMode {
 
     public static EditablePose
             topStart = new EditablePose(X_START_TOP, -61.788975, FORWARD),
-            topCenterSpike = new EditablePose((X_START_TOP + 3.5), -35.5, FORWARD),
-            topLeftSpike = new EditablePose(7, -41, toRadians(120)),
-            topRightSpike = new EditablePose(24 - topLeftSpike.x, topLeftSpike.y, LEFT - topLeftSpike.heading),
-            topBackboardBe = new EditablePose(44, -35.5, RIGHT),
-            topBackboardAf = new EditablePose(50, -35.5, RIGHT),
+            topCenterSpike = new EditablePose((X_START_TOP + 3.5), -31.5, FORWARD),
+            topLeftSpike = new EditablePose(7, -40, toRadians(135)),
+            topRightSpike = new EditablePose(26.5- topLeftSpike.x, topLeftSpike.y, LEFT - topLeftSpike.heading),
+            topBackboardBe = new EditablePose(44, -35.5, LEFT),
+            topBackboardAfLeft = new EditablePose(51.5, -31.5, RIGHT),
+            topBackboardAfCenter = new EditablePose(51.5, -35.5, RIGHT),
+            topBackboardAfRight = new EditablePose(51.5, -39.5, RIGHT),
             topParkingLeft = new EditablePose(49, -14, toRadians(165)),
             topParkingRight = new EditablePose(49, -56, toRadians(200));
 
@@ -144,19 +145,24 @@ public final class MainAuton extends LinearOpMode {
         Pose2d leftSpike = MainAuton.topLeftSpike.byAlliance().toPose2d();
         Pose2d rightSpike = MainAuton.topRightSpike.byAlliance().toPose2d();
         Pose2d backboardBe = MainAuton.topBackboardBe.byAlliance().toPose2d();
-        Pose2d backboardAf = MainAuton.topBackboardAf.byAlliance().toPose2d();
+
+        EditablePose backboardAf = null;
+
         Pose2d parkingLeft = MainAuton.topParkingLeft.byAlliance().toPose2d();
         Pose2d parkingRight = MainAuton.topParkingRight.byAlliance().toPose2d();
 
         switch (propPlacement) {
             case 0:
                 mainSpike = leftSpike;
+                backboardAf = topBackboardAfLeft.byAlliance();
                 break;
             case 1:
                 mainSpike = centerSpike;
+                backboardAf = topBackboardAfCenter.byAlliance();
                 break;
             case 2:
                 mainSpike = rightSpike;
+                backboardAf = topBackboardAfRight.byAlliance();
                 break;
         }
 
@@ -165,14 +171,10 @@ public final class MainAuton extends LinearOpMode {
         TrajectorySequenceBuilder rightTrajectoryBuilder = robot.drivetrain
                 .trajectorySequenceBuilder(startPose)
                 .splineTo(mainSpike.vec(), mainSpike.getHeading())
-                /*
-                   Starts outtake 0.5 seconds after prev. action, then waits 0.25 seconds before stopping the outtake
-                   Then stops after 1 second
-                 */
-                .addTemporalMarker(0.75, () -> robot.intake.set(1))
-                .addTemporalMarker(0.5 + OUTTAKE_WAIT_TIME, () -> robot.intake.set(0))
 
-                .waitSeconds(2.1);
+                .waitSeconds(1)
+
+                .back(2);
 
         if (propPlacement == 2 && mainSpike == rightSpike) {
             rightTrajectoryBuilder
@@ -185,8 +187,7 @@ public final class MainAuton extends LinearOpMode {
                 /*
                     Do april tag stuff here because now we can scan
                  */
-                .turn(LEFT)
-                .lineTo(backboardAf.vec())
+                .lineTo(backboardAf.toPose2d().vec())
                 /*
                  Starts the lift by updating target to row 0, then executes commands to do so (within timing)
                  It will activate flap to open, releasing the pixels
@@ -194,14 +195,13 @@ public final class MainAuton extends LinearOpMode {
                 */
                 .UNSTABLE_addTemporalMarkerOffset(0.2, () -> robot.arm.setFlap(true))
                 .UNSTABLE_addTemporalMarkerOffset((0.2 + 0.2), () -> {
-                    robot.lift.setTargetRow(0);
-                    robot.lift.updateTarget();
+                    robot.lift.setToAutonHeight();
                 })
                 .UNSTABLE_addTemporalMarkerOffset(0.2 + OPENING_SLIDE_TIME, () -> robot.arm.setArm(true))
                 .UNSTABLE_addTemporalMarkerOffset((0.2 + OPEN_FLAP_WAIT_TIME) + OPENING_SLIDE_TIME, () -> robot.arm.setFlap(false))
                 .UNSTABLE_addTemporalMarkerOffset((2 + OPEN_FLAP_WAIT_TIME) + OPENING_SLIDE_TIME + SCORING_WAIT_TIME, () -> robot.arm.toggleArm())
 
-                .waitSeconds(12)
+                .waitSeconds(9)
 
                 .lineTo(backboardBe.vec())
                 .lineToSplineHeading(isParkedLeft ? parkingLeft : parkingRight);

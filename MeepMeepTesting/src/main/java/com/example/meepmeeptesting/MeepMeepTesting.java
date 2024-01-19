@@ -29,7 +29,7 @@ public class MeepMeepTesting {
 
     public static EditablePose
             topStart = new EditablePose(X_START_RIGHT, -61.788975, FORWARD),
-            topCenterSpike = new EditablePose((X_START_RIGHT + 3.5), -35.5, FORWARD),
+            topCenterSpike = new EditablePose((X_START_RIGHT + 3.5), -38.5, FORWARD),
             topLeftSpike = new EditablePose(7, -41, toRadians(120)),
             topRightSpike = new EditablePose(24 - topLeftSpike.x, topLeftSpike.y, LEFT - topLeftSpike.heading),
             topBackboard = new EditablePose(49, -34, RIGHT),

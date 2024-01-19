@@ -49,7 +49,7 @@ public final class Lift {
     // TODO Measure TIME_EXTEND_ARM and TIME_CLOSE_FLAP 
     public static double
             BOTTOM_ROW_HEIGHT = 1050,
-            AUTON_ROW_HEIGHT = 1200,
+            AUTON_ROW_HEIGHT = 850,
             MAX_MOTOR_TICKS = 1620,
             ROW_HEIGHT = 600,
             kG = 0.011065,
