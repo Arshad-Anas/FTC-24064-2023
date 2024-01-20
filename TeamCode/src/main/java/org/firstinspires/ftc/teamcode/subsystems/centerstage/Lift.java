@@ -46,7 +46,6 @@ public final class Lift {
      * Sets the constants for the positions, conversions, etc
      * Remember to set these constants correctly! (in ticks)
      */
-    // TODO Measure TIME_EXTEND_ARM and TIME_CLOSE_FLAP 
     public static double
             BOTTOM_ROW_HEIGHT = 1050,
             AUTON_ROW_HEIGHT = 850,
@@ -54,7 +53,6 @@ public final class Lift {
             ROW_HEIGHT = 600,
             kG = 0.011065,
             TIME_EXTEND_ARM = 1,
-            TIME_CLOSE_FLAP = 0.2,
             PERCENT_OVERSHOOT = 0;
 
     private final MotorEx[] motors;
@@ -102,10 +100,6 @@ public final class Lift {
 
     public void increment() {
         setTargetRow(targetRow + 1);
-    }
-
-    public void decrement() {
-        setTargetRow(targetRow - 1);
     }
 
     public void setToAutonHeight() {

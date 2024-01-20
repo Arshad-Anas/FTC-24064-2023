@@ -148,12 +148,11 @@ public final class MainAuton extends LinearOpMode {
             robot.run();
 
             robot.printTelemetry();
+            mTelemetry.addLine();
             propSensor.printTelemetry();
             propSensor.printNumericalTelemetry();
             mTelemetry.update();
         }
-
-        autonEndPose = robot.drivetrain.getPoseEstimate();
     }
 
     private TrajectorySequence getTopTrajectory() {

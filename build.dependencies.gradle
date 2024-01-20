@@ -22,7 +22,6 @@ dependencies {
     implementation 'androidx.appcompat:appcompat:1.6.1'
     implementation 'org.firstinspires.ftc:Vision:9.0.1'
     implementation 'com.acmerobotics.dashboard:dashboard:0.4.14'
-
     implementation 'com.github.Thermal-Equilibrium:homeostasis-FTC:1.0.8'
 }
 

@@ -13,12 +13,13 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 public class PropSensor {
     private final OpenCvCamera camera;
     private final PropSensorPipeline pipeline;
-
+  
     public PropSensor(HardwareMap hardwareMap, boolean isRed) {
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
 
         WebcamName name = hardwareMap.get(WebcamName.class, "webcam");
         camera = OpenCvCameraFactory.getInstance().createWebcam(name, cameraMonitorViewId);
+  
         pipeline = new PropSensorPipeline(isRed);
 
         initializeCamera();
@@ -29,7 +30,6 @@ public class PropSensor {
             @Override
             public void onOpened() {
                 camera.startStreaming(1280, 720, OpenCvCameraRotation.UPRIGHT);
-                camera.setViewportRenderingPolicy(OpenCvCamera.ViewportRenderingPolicy.OPTIMIZE_VIEW);
                 camera.setPipeline(pipeline);
             }
 
