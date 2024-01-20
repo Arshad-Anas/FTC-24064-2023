@@ -48,6 +48,7 @@ public final class Lift {
      */
     public static double
             BOTTOM_ROW_HEIGHT = 1050,
+            AUTON_ROW_HEIGHT = 850,
             MAX_MOTOR_TICKS = 1620,
             ROW_HEIGHT = 600,
             kG = 0.011065,
@@ -99,6 +100,10 @@ public final class Lift {
 
     public void increment() {
         setTargetRow(targetRow + 1);
+    }
+
+    public void setToAutonHeight() {
+        controller.setTarget(new State(AUTON_ROW_HEIGHT));
     }
 
     public void updateTarget() {

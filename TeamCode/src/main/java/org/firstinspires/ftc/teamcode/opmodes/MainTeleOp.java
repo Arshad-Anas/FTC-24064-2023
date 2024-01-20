@@ -10,8 +10,12 @@ import static com.arcrobotics.ftclib.gamepad.GamepadKeys.Button.X;
 import static com.arcrobotics.ftclib.gamepad.GamepadKeys.Button.Y;
 import static com.arcrobotics.ftclib.gamepad.GamepadKeys.Trigger.LEFT_TRIGGER;
 import static com.arcrobotics.ftclib.gamepad.GamepadKeys.Trigger.RIGHT_TRIGGER;
+import static org.firstinspires.ftc.teamcode.opmodes.MainAuton.BACKWARD;
+import static org.firstinspires.ftc.teamcode.opmodes.MainAuton.FORWARD;
+import static org.firstinspires.ftc.teamcode.opmodes.MainAuton.autonEndPose;
 import static org.firstinspires.ftc.teamcode.opmodes.MainAuton.gamepadEx1;
 import static org.firstinspires.ftc.teamcode.opmodes.MainAuton.gamepadEx2;
+import static org.firstinspires.ftc.teamcode.opmodes.MainAuton.isRed;
 import static org.firstinspires.ftc.teamcode.opmodes.MainAuton.keyPressed;
 import static org.firstinspires.ftc.teamcode.opmodes.MainAuton.mTelemetry;
 import static org.firstinspires.ftc.teamcode.opmodes.MainAuton.robot;
@@ -66,15 +70,15 @@ public final class MainTeleOp extends LinearOpMode {
             // Control drivetrain with control stick inputs:
             if (gamepadEx1.isDown(RIGHT_BUMPER)) {
                 robot.drivetrain.run(
-                        -gamepadEx1.getLeftX() * 0.3,
-                        -gamepadEx1.getLeftY() * 0.3,
-                        -x * 0.3
+                        gamepadEx1.getLeftX() * 0.3,
+                        gamepadEx1.getLeftY() * 0.3,
+                        x * 0.3
                 );
             } else {
                 robot.drivetrain.run(
-                        -gamepadEx1.getLeftX(),
-                        -gamepadEx1.getLeftY(),
-                        -x
+                        gamepadEx1.getLeftX(),
+                        gamepadEx1.getLeftY(),
+                        x
                 );
             }
 
@@ -94,6 +98,7 @@ public final class MainTeleOp extends LinearOpMode {
             double trigger2 = gamepadEx2.getTrigger(RIGHT_TRIGGER) - gamepadEx2.getTrigger(LEFT_TRIGGER);
             robot.intake.set(trigger1 != 0 ? trigger1 : trigger2);
 
+            robot.drivetrain.update();
             robot.run();
             robot.printTelemetry();
             mTelemetry.update();

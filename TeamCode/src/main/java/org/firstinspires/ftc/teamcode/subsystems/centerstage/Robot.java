@@ -50,6 +50,7 @@ public final class Robot {
 
     public void readSensors() {
         bulkReader.bulkRead();
+        drivetrain.update();
     }
 
     public void run() {
