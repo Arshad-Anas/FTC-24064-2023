@@ -42,10 +42,20 @@ public final class MainAuton extends LinearOpMode {
 
     public static double
             X_START_BOTTOM = -37,
-            X_START_TOP = 12,
+            X_START_TOP = 12;
+
+    // Top constants
+    public static double
             OPENING_SLIDE_TIME = 1.25,
             OPEN_FLAP_WAIT_TIME = 0.25,
             SCORING_WAIT_TIME = 1;
+
+    // Bottom constants
+    public static double
+            TIME_START_INTAKE = 5,
+            TIME_START_OUTTAKE = 9,
+            TIME_STOP_OUTTAKE = 12,
+            TIME_LIFT_SLIDES = 15;
 
     public static final double
             LEFT = toRadians(180),
@@ -256,14 +266,23 @@ public final class MainAuton extends LinearOpMode {
 
         TrajectorySequenceBuilder builder = robot.drivetrain.trajectorySequenceBuilder(start)
                 .lineToSplineHeading(prop.byAlliancePose2d())
+                .back(8)
                 .lineToSplineHeading(dodge.byAlliancePose2d())
                 .lineToLinearHeading(botWhitePixelRed.byAlliancePose2d())
-                .forward(2)
-                .back(2)
+                .forward(4)
+                .addTemporalMarker(() -> robot.intake.set(-1))
+                .waitSeconds(3)
+                .back(4)
+                //.addTemporalMarker(TIME_START_OUTTAKE, () -> robot.intake.set(1))
+                //.addTemporalMarker(TIME_STOP_OUTTAKE, () -> robot.intake.set(0))
                 .strafeRight(isRed ? 4 : -4)
                 .splineToSplineHeading(botStageDoorRed.byAlliancePose2d(), Math.toRadians(0))
                 .splineTo(botTransitionRed.byAllianceVec(), Math.toRadians(0))
                 .lineToSplineHeading(botWhitePixelScoring.byAlliancePose2d())
+//                .addTemporalMarker(TIME_LIFT_EXTEND, () -> robot.lift.setToAutonHeight())
+//                .addTemporalMarker(TIME_LIFT_EXTEND + 0.2, () -> robot.arm.setArm(true))
+//                .addTemporalMarker(TIME_LIFT_EXTEND + 0.4, () -> robot.arm.setFlap(false))
+//                .addTemporalMarker(TIME_LIFT_EXTEND + 2, () -> robot.arm.toggleArm())
                 .lineToSplineHeading(yellowPixel.byAlliancePose2d())
                 .lineTo(parking.byAllianceVec());
 
