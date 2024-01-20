@@ -44,6 +44,10 @@ public class PropSensor {
         return pipeline.propPosition();
     }
 
+    public OpenCvCamera getCamera() {
+        return camera;
+    }
+
     public void printTelemetry() {
         mTelemetry.addData("Prop position", propPosition());
     }

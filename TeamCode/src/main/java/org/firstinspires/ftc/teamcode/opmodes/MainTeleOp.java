@@ -70,9 +70,9 @@ public final class MainTeleOp extends LinearOpMode {
             // Control drivetrain with control stick inputs:
             if (gamepadEx1.isDown(RIGHT_BUMPER)) {
                 robot.drivetrain.run(
-                        gamepadEx1.getLeftX() * 0.3,
-                        gamepadEx1.getLeftY() * 0.3,
-                        x * 0.3
+                        gamepadEx1.getLeftX() * 0.2,
+                        gamepadEx1.getLeftY() * 0.2,
+                        x * 0.2
                 );
             } else {
                 robot.drivetrain.run(
@@ -86,11 +86,11 @@ public final class MainTeleOp extends LinearOpMode {
             if (keyPressed(2, DPAD_UP)) robot.lift.increment();
             if (keyPressed(2, A)) robot.lift.updateTarget();
             if (keyPressed(2, B)) robot.arm.toggleFlap();
-            if (keyPressed(2, X)) robot.launcher.setActivated(true);
+            if (keyPressed(2, X)) robot.launcher.toggle();
             if (robot.lift.getSetPoint() >= 0) {
                 if (keyPressed(2, Y)) robot.arm.toggleArm();
             }
-            robot.climber.set(gamepadEx2.getRightY());
+            robot.climber.set(-gamepadEx2.getRightY());
 
             // Shared
             // The intake power takes precedent to the first player
@@ -98,7 +98,6 @@ public final class MainTeleOp extends LinearOpMode {
             double trigger2 = gamepadEx2.getTrigger(RIGHT_TRIGGER) - gamepadEx2.getTrigger(LEFT_TRIGGER);
             robot.intake.set(trigger1 != 0 ? trigger1 : trigger2);
 
-            robot.drivetrain.update();
             robot.run();
             robot.printTelemetry();
             mTelemetry.update();

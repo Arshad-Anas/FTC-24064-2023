@@ -32,7 +32,7 @@ public final class Robot {
 
     private static double
             ANGLE_DRONE_LAUNCH = 0,
-            ANGLE_DRONE_LOAD = 160;
+            ANGLE_DRONE_LOAD = 180;
 
     /**
      * Constructor of Robot; Instantiates the classes with the hardwareMap
@@ -50,7 +50,6 @@ public final class Robot {
 
     public void readSensors() {
         bulkReader.bulkRead();
-        drivetrain.update();
     }
 
     public void run() {
@@ -70,7 +69,7 @@ public final class Robot {
         }
 
         if (lift.getSetPoint() == -1) {
-            arm.setFlap(intake.get() >= 0);
+            arm.setFlap(intake.get() == 0);
         }
 
         launcher.run();
