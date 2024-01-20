@@ -46,9 +46,11 @@ public class PropSensorPipeline extends OpenCvPipeline {
     }
 
     private Mat createMask(Mat input, double[] upper, double[] lower) {
-        int counter = 0;
+        int counter = 1;
         average[0] = 0;
         average[1] = 0;
+        double[] white = {255, 255, 255};
+        double[] black = {0, 0, 0};
         Mat filtered = new Mat();
         input.copyTo(filtered);
 
@@ -56,14 +58,12 @@ public class PropSensorPipeline extends OpenCvPipeline {
             for(int j = 0; j < input.cols(); j++) {
                 double[] data = input.get(i, j);
                 if (data[2] < upper[2] && data[2] > lower[2] && data[1] < upper[1] && data[1] > lower[1] && data[0] < upper[0] && data[0] > lower[0]) {
-                    double[] black = {255, 255, 255};
-                    filtered.put(i, j, black);
-                } else {
-                    counter++;
-                    average[0] += i;
-                    average[1] += j;
-                    double[] white = {0, 0, 0};
                     filtered.put(i, j, white);
+                    counter++;
+                    average[0] += j;
+                    average[1] += i;
+                } else {
+                    filtered.put(i, j, black);
                 }
             }
         }

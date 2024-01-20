@@ -84,7 +84,7 @@ public final class MainAuton extends LinearOpMode {
             botLeftPixelDodgeRed = new EditablePose(-53, -44, LEFT),
             botCenterPixelDodgeRed = new EditablePose (-53, -38, LEFT),
             botRightPixelDodgeRed = new EditablePose(-34, -34, RIGHT),
-            botWhitePixelRed = new EditablePose(-53,-24, LEFT),
+            botWhitePixelRed = new EditablePose(-53,-22, LEFT),
             botStageDoorRed = new EditablePose(-25, -10, RIGHT),
             botTransitionRed = new EditablePose(25, -9, RIGHT),
             botCenterBackdropRed = new EditablePose(48, -35, LEFT),
@@ -111,7 +111,7 @@ public final class MainAuton extends LinearOpMode {
         gamepadEx1 = new GamepadEx(gamepad1);
 
         robot = new Robot(hardwareMap);
-        propSensor = new PropSensor(hardwareMap, isRed);
+        //propSensor = new PropSensor(hardwareMap, isRed);
 
         // Get gamepad 1 button input and save "right" and "red" booleans for autonomous configuration:
         while (opModeInInit() && !(gamepadEx1.isDown(RIGHT_BUMPER) && gamepadEx1.isDown(LEFT_BUMPER))) {
@@ -133,21 +133,11 @@ public final class MainAuton extends LinearOpMode {
         mTelemetry.addLine("Confirmed " + (isRed ? "RED" : "BLUE") + " " + (isTop ? "TOP" : "BOTTOM") + " " + (isParkedMiddle ? "PARK MIDDLE" : "PARK CORNER"));
         mTelemetry.update();
 
+        propSensor = new PropSensor(hardwareMap, isRed);
+
         waitForStart();
 
-        double tempPlacement = -1;
-        while (tempPlacement != 0 && tempPlacement != 1 && tempPlacement != 2) {
-            tempPlacement = 0;
-            tempPlacement += propSensor.propPosition();
-            Thread.sleep(100);
-            tempPlacement += propSensor.propPosition();
-            Thread.sleep(100);
-            tempPlacement += propSensor.propPosition();
-            Thread.sleep(100);
-            tempPlacement /= 3.0;
-        }
-
-        propPlacement = (int) tempPlacement;
+        propPlacement = propSensor.propPosition();
 
         robot.drivetrain.followTrajectorySequenceAsync(isTop ? getTopTrajectory() : getBottomTrajectory());
 
@@ -158,6 +148,8 @@ public final class MainAuton extends LinearOpMode {
             robot.run();
 
             robot.printTelemetry();
+            propSensor.printTelemetry();
+            propSensor.printNumericalTelemetry();
             mTelemetry.update();
         }
 
@@ -269,10 +261,10 @@ public final class MainAuton extends LinearOpMode {
                 .back(8)
                 .lineToSplineHeading(dodge.byAlliancePose2d())
                 .lineToLinearHeading(botWhitePixelRed.byAlliancePose2d())
-                .forward(4)
+                .forward(7)
                 .addTemporalMarker(() -> robot.intake.set(-1))
                 .waitSeconds(3)
-                .back(4)
+                .back(7)
                 //.addTemporalMarker(TIME_START_OUTTAKE, () -> robot.intake.set(1))
                 //.addTemporalMarker(TIME_STOP_OUTTAKE, () -> robot.intake.set(0))
                 .strafeRight(isRed ? 4 : -4)
