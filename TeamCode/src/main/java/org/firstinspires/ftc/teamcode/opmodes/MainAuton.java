@@ -135,9 +135,12 @@ public final class MainAuton extends LinearOpMode {
 
         propSensor = new PropSensor(hardwareMap, isRed);
 
-        waitForStart();
+        while (opModeInInit()) {
+            propPlacement = propSensor.propPosition();
+        }
 
-        propPlacement = propSensor.propPosition();
+        propSensor.getCamera().stopStreaming();
+        propSensor.getCamera().closeCameraDevice();
 
         robot.drivetrain.followTrajectorySequenceAsync(isTop ? getTopTrajectory() : getBottomTrajectory());
 
@@ -151,9 +154,6 @@ public final class MainAuton extends LinearOpMode {
             robot.drivetrain.update();
             robot.run();
         }
-
-        propSensor.getCamera().stopStreaming();
-        propSensor.getCamera().closeCameraDevice();
     }
 
     private TrajectorySequence getTopTrajectory() {
