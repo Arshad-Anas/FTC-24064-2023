@@ -136,7 +136,10 @@ public final class MainAuton extends LinearOpMode {
         mTelemetry.addLine("Confirmed " + (isRed ? "RED" : "BLUE") + " " + (isTop ? "TOP" : "BOTTOM") + " " + (isParkedMiddle ? "PARK MIDDLE" : "PARK CORNER"));
         mTelemetry.update();
 
+
         while (!propSensor.getIsOpened()) {}
+
+        propSensor = new PropSensor(hardwareMap, isRed);
 
         while (opModeInInit()) {
             propPlacement = propSensor.propPosition();
