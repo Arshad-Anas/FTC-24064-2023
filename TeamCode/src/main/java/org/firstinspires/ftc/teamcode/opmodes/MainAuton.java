@@ -65,15 +65,15 @@ public final class MainAuton extends LinearOpMode {
 
     public static EditablePose
             topStart = new EditablePose(X_START_TOP, -61.788975, FORWARD),
-            topCenterSpike = new EditablePose((X_START_TOP + 3.5), -31.5, FORWARD),
-            topLeftSpike = new EditablePose(7, -40, toRadians(135)),
-            topRightSpike = new EditablePose(26.5- topLeftSpike.x, topLeftSpike.y, LEFT - topLeftSpike.heading),
+            topCenterSpike = new EditablePose((X_START_TOP + 3.5), -32, FORWARD),
+            topLeftSpike = new EditablePose((X_START_TOP - 8.5), -32, toRadians(135)),
+            topRightSpike = new EditablePose(26.5 - topLeftSpike.x, topLeftSpike.y, LEFT - topLeftSpike.heading),
             topBackboardBe = new EditablePose(44, -35.5, LEFT),
             topBackboardAfLeft = new EditablePose(51.5, -31.5, RIGHT),
             topBackboardAfCenter = new EditablePose(51.5, -35.5, RIGHT),
             topBackboardAfRight = new EditablePose(51.5, -39.5, RIGHT),
-            topParkingLeft = new EditablePose(49, -10, toRadians(165)),
-            topParkingRight = new EditablePose(49, -56, toRadians(200));
+            topParkingLeft = new EditablePose(51, -10, toRadians(165)),
+            topParkingRight = new EditablePose(51, -56, toRadians(200));
 
     // Bottom
     public static EditablePose
@@ -104,12 +104,6 @@ public final class MainAuton extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
 
-        propSensor = new PropSensor(hardwareMap, isRed);
-
-        while (opModeInInit()) {
-            propPlacement = propSensor.propPosition();
-        }
-
         // Initialize multiple telemetry outputs:
         mTelemetry = new MultipleTelemetry(telemetry);
 
@@ -136,8 +130,17 @@ public final class MainAuton extends LinearOpMode {
             mTelemetry.addLine("Press both shoulder buttons to confirm!");
             mTelemetry.update();
         }
+
+        propSensor = new PropSensor(hardwareMap, isRed);
+
         mTelemetry.addLine("Confirmed " + (isRed ? "RED" : "BLUE") + " " + (isTop ? "TOP" : "BOTTOM") + " " + (isParkedMiddle ? "PARK MIDDLE" : "PARK CORNER"));
         mTelemetry.update();
+
+        while (!propSensor.getIsOpened()) {}
+
+        while (opModeInInit()) {
+            propPlacement = propSensor.propPosition();
+        }
 
         propSensor.getCamera().stopStreaming();
         propSensor.getCamera().closeCameraDevice();
@@ -171,16 +174,16 @@ public final class MainAuton extends LinearOpMode {
 
         switch (propPlacement) {
             case 0:
-                mainSpike = leftSpike;
-                backboardAf = topBackboardAfLeft.byAlliance();
+                mainSpike = rightSpike;
+                backboardAf = topBackboardAfRight.byAlliance();
                 break;
             case 1:
                 mainSpike = centerSpike;
                 backboardAf = topBackboardAfCenter.byAlliance();
                 break;
             case 2:
-                mainSpike = rightSpike;
-                backboardAf = topBackboardAfRight.byAlliance();
+                mainSpike = leftSpike;
+                backboardAf = topBackboardAfLeft.byAlliance();
                 break;
         }
 
@@ -192,10 +195,11 @@ public final class MainAuton extends LinearOpMode {
 
                 .waitSeconds(1)
 
-                .back(2);
+                .back(3);
 
-        if (propPlacement == 2 && mainSpike == rightSpike) {
+        if (propPlacement == 2 && mainSpike == leftSpike) {
             rightTrajectoryBuilder
+                    .back(6)
                     .strafeRight(isRed ? 8 : -8)
                     .turn(isRed ? (RIGHT - toRadians(35)) : (RIGHT + toRadians(35)));
         }
@@ -211,15 +215,15 @@ public final class MainAuton extends LinearOpMode {
                  It will activate flap to open, releasing the pixels
                  After doing that, it'll retract back to target row -1
                 */
-                .UNSTABLE_addTemporalMarkerOffset(0.2, () -> robot.arm.setFlap(true))
+                .UNSTABLE_addTemporalMarkerOffset(0.2, () -> robot.arm.toggleFlap())
                 .UNSTABLE_addTemporalMarkerOffset((0.2 + 0.2), () -> {
                     robot.lift.setToAutonHeight();
                 })
                 .UNSTABLE_addTemporalMarkerOffset(0.2 + OPENING_SLIDE_TIME, () -> robot.arm.setArm(true))
-                .UNSTABLE_addTemporalMarkerOffset((0.2 + OPEN_FLAP_WAIT_TIME) + OPENING_SLIDE_TIME, () -> robot.arm.setFlap(false))
+                .UNSTABLE_addTemporalMarkerOffset((0.2 + OPEN_FLAP_WAIT_TIME) + OPENING_SLIDE_TIME, () -> robot.arm.toggleFlap())
                 .UNSTABLE_addTemporalMarkerOffset((2 + OPEN_FLAP_WAIT_TIME) + OPENING_SLIDE_TIME + SCORING_WAIT_TIME, () -> robot.arm.toggleArm())
 
-                .waitSeconds(9)
+                .waitSeconds(7)
 
                 .lineTo(backboardBe.vec())
                 .lineToSplineHeading(isParkedMiddle ? parkingLeft : parkingRight);

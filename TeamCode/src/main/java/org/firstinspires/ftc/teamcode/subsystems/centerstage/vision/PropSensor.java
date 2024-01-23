@@ -12,6 +12,7 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 
 public class PropSensor {
     private final OpenCvCamera camera;
+    public static boolean isOpened = false;
     private final PropSensorPipeline pipeline;
   
     public PropSensor(HardwareMap hardwareMap, boolean isRed) {
@@ -31,6 +32,7 @@ public class PropSensor {
             @Override
             public void onOpened() {
                 camera.startStreaming(1280, 720, OpenCvCameraRotation.UPRIGHT);
+                isOpened = true;
             }
 
             @Override
@@ -54,5 +56,9 @@ public class PropSensor {
 
     public void printNumericalTelemetry() {
         mTelemetry.addData("FPS", camera.getFps());
+    }
+
+    public boolean getIsOpened() {
+        return isOpened;
     }
 }
