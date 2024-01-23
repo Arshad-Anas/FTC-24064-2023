@@ -104,6 +104,12 @@ public final class MainAuton extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
 
+        propSensor = new PropSensor(hardwareMap, isRed);
+
+        while (opModeInInit()) {
+            propPlacement = propSensor.propPosition();
+        }
+
         // Initialize multiple telemetry outputs:
         mTelemetry = new MultipleTelemetry(telemetry);
 
@@ -132,12 +138,6 @@ public final class MainAuton extends LinearOpMode {
         }
         mTelemetry.addLine("Confirmed " + (isRed ? "RED" : "BLUE") + " " + (isTop ? "TOP" : "BOTTOM") + " " + (isParkedMiddle ? "PARK MIDDLE" : "PARK CORNER"));
         mTelemetry.update();
-
-        propSensor = new PropSensor(hardwareMap, isRed);
-
-        while (opModeInInit()) {
-            propPlacement = propSensor.propPosition();
-        }
 
         propSensor.getCamera().stopStreaming();
         propSensor.getCamera().closeCameraDevice();
