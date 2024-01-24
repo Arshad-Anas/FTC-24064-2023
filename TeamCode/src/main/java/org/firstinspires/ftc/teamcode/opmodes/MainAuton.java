@@ -65,20 +65,22 @@ public final class MainAuton extends LinearOpMode {
             RIGHT = toRadians(0),
             BACKWARD = toRadians(270);
 
+    public static double
+            BACKBOARD_X = 54.1;
+
     public static EditablePose
             topStart = new EditablePose(X_START_TOP, -61.788975, FORWARD),
             topCenterSpike = new EditablePose((X_START_TOP + 3.5), -32, FORWARD),
             topLeftSpike = new EditablePose((X_START_TOP - 4.75), -40.5, toRadians(135)),
             topRightSpike = new EditablePose(26.5 - topLeftSpike.x, topLeftSpike.y, LEFT - topLeftSpike.heading),
             topBackboardBe = new EditablePose(44, -35.5, LEFT),
-            topBackboardAfLeft = new EditablePose(51.5, -31.5, RIGHT),
-            topBackboardAfCenter = new EditablePose(51.5, -35.5, RIGHT),
-            topBackboardAfRight = new EditablePose(51.5, -39.5, RIGHT),
+            topBackboardAfLeft = new EditablePose(BACKBOARD_X, -31.5, RIGHT),
+            topBackboardAfCenter = new EditablePose(BACKBOARD_X, -35.5, RIGHT),
+            topBackboardAfRight = new EditablePose(BACKBOARD_X, -39.5, RIGHT),
             topParkingLeft = new EditablePose(51, -10, toRadians(165)),
             topParkingRight = new EditablePose(51, -56, toRadians(200));
 
-    public static double
-            BACKBOARD_X = 54.1;
+
 
     // Bottom
     public static EditablePose
