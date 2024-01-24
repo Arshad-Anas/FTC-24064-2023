@@ -66,7 +66,7 @@ public final class MainAuton extends LinearOpMode {
     public static EditablePose
             topStart = new EditablePose(X_START_TOP, -61.788975, FORWARD),
             topCenterSpike = new EditablePose((X_START_TOP + 3.5), -32, FORWARD),
-            topLeftSpike = new EditablePose((X_START_TOP - 8.5), -32, toRadians(135)),
+            topLeftSpike = new EditablePose((X_START_TOP - 8.5), -40.5, toRadians(135)),
             topRightSpike = new EditablePose(26.5 - topLeftSpike.x, topLeftSpike.y, LEFT - topLeftSpike.heading),
             topBackboardBe = new EditablePose(44, -35.5, LEFT),
             topBackboardAfLeft = new EditablePose(51.5, -31.5, RIGHT),
@@ -136,14 +136,21 @@ public final class MainAuton extends LinearOpMode {
         mTelemetry.addLine("Confirmed " + (isRed ? "RED" : "BLUE") + " " + (isTop ? "TOP" : "BOTTOM") + " " + (isParkedMiddle ? "PARK MIDDLE" : "PARK CORNER"));
         mTelemetry.update();
 
-
-        while (!propSensor.getIsOpened()) {}
-
-        propSensor = new PropSensor(hardwareMap, isRed);
+        mTelemetry.addLine("Initializing Camera!!");
+        mTelemetry.update();
 
         while (opModeInInit()) {
             propPlacement = propSensor.propPosition();
+            mTelemetry.addData("Predicted Prop Placement", propPlacement);
+            mTelemetry.update();
         }
+        mTelemetry.clearAll();
+
+        while (!propSensor.getIsOpened()) {
+            mTelemetry.addLine("Stuck in isOpened?");
+            mTelemetry.update();
+        }
+        mTelemetry.clearAll();
 
         propSensor.getCamera().stopStreaming();
         propSensor.getCamera().closeCameraDevice();
@@ -218,7 +225,6 @@ public final class MainAuton extends LinearOpMode {
                  It will activate flap to open, releasing the pixels
                  After doing that, it'll retract back to target row -1
                 */
-                .UNSTABLE_addTemporalMarkerOffset(0.2, () -> robot.arm.toggleFlap())
                 .UNSTABLE_addTemporalMarkerOffset((0.2 + 0.2), () -> {
                     robot.lift.setToAutonHeight();
                 })
