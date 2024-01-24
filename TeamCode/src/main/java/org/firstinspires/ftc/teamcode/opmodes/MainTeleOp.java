@@ -49,7 +49,8 @@ public final class MainTeleOp extends LinearOpMode {
         // Instantiate robot
         robot = new Robot(hardwareMap);
 
-        robot.drivetrain.setCurrentHeading(autonEndPose.getHeading() - (isRed ? FORWARD : BACKWARD));
+        if (autonEndPose != null)
+            robot.drivetrain.setCurrentHeading(autonEndPose.getHeading() - (isRed ? FORWARD : BACKWARD));
 
         waitForStart();
 

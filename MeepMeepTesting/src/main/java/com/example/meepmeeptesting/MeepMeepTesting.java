@@ -1,6 +1,5 @@
 package com.example.meepmeeptesting;
 
-import static java.lang.Math.PI;
 import static java.lang.Math.toRadians;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
@@ -18,11 +17,7 @@ public class MeepMeepTesting {
 
     public static double
             X_START_BOTTOM = -37,
-            X_START_RIGHT = 12,
-            TIME_START_INTAKE = 5,
-            TIME_START_OUTTAKE = 9,
-            TIME_STOP_OUTTAKE = 12,
-            TIME_LIFT_SLIDES = 15;
+            X_START_RIGHT = 12;
 
     public static final double
             LEFT = toRadians(180),
@@ -35,46 +30,42 @@ public class MeepMeepTesting {
     public static EditablePose
             botStartRed = new EditablePose(X_START_BOTTOM, -61.788975, FORWARD),
             botLeftSpikeRed = new EditablePose(-47, -44, FORWARD),
-            botCenterSpikeRed = new EditablePose(-39, -37, FORWARD),
-            botRightSpikeRed = new EditablePose(-33, -34, toRadians(130 - 90)),
-            botLeftPixelDodgeRed = new EditablePose(-53, -44, LEFT),
-            botCenterPixelDodgeRed = new EditablePose (-53, -38, LEFT),
-            botRightPixelDodgeRed = new EditablePose(-50, -33, LEFT),
-            botWhitePixelRed = new EditablePose(-53,-24, LEFT),
+            botCenterSpikeRed = new EditablePose(-41, -38, FORWARD),
+            botRightSpikeRed = new EditablePose(-32, -39, toRadians(145 - 90)),
+            botLeftPixelDodgeRed = new EditablePose(-57, -44, LEFT),
+            botCenterRightPixelDodgeRed = new EditablePose (-57, -38, LEFT),
+            botWhitePixelRed = new EditablePose(-57,-24, LEFT),
             botStageDoorRed = new EditablePose(-25, -10, RIGHT),
             botTransitionRed = new EditablePose(25, -9, RIGHT),
             botCenterBackdropRed = new EditablePose(48, -35, LEFT),
             botLeftBackdropRed = new EditablePose(48, -29, LEFT),
-            botRightBackdropRed = new EditablePose(48, -41, LEFT),
-            botParkingLeftRed = new EditablePose(47.5, -10, LEFT),
-            botParkingRightRed = new EditablePose(47.5, -60, LEFT);
+            botRightBackdropRed = new EditablePose(48, -41, LEFT);
 
     public static void main(String[] args) {
         MeepMeep meepMeep = new MeepMeep(700);
-        EditablePose prop, dodge, yellowPixel, botWhitePixelScoring, parking;
+        EditablePose prop, dodge, yellowPixel, botWhitePixelScoring;
         prop = dodge = yellowPixel = botWhitePixelScoring = null;
 
         switch (propPlacement) {
             case 0:
                 prop = isRed ? botLeftSpikeRed : botRightSpikeRed;
-                dodge = isRed ? botLeftPixelDodgeRed : botRightPixelDodgeRed;
+                dodge = isRed ? botLeftPixelDodgeRed : botCenterRightPixelDodgeRed;
                 yellowPixel = isRed ? botLeftBackdropRed : botRightBackdropRed;
                 botWhitePixelScoring = isRed ? botCenterBackdropRed : botLeftBackdropRed;
                 break;
             case 1:
                 prop = botCenterSpikeRed;
-                dodge = botCenterPixelDodgeRed;
+                dodge = botCenterRightPixelDodgeRed;
                 yellowPixel = botCenterBackdropRed;
                 botWhitePixelScoring = botLeftBackdropRed;
                 break;
             case 2:
                 prop = isRed ? botRightSpikeRed : botLeftSpikeRed;
-                dodge = isRed ? botRightPixelDodgeRed : botLeftPixelDodgeRed;
+                dodge = isRed ? botCenterRightPixelDodgeRed : botLeftPixelDodgeRed;
                 yellowPixel = isRed ? botRightBackdropRed : botLeftBackdropRed;
                 botWhitePixelScoring = isRed ? botLeftBackdropRed : botCenterBackdropRed;
                 break;
         }
-        parking = isParkedMiddle ? botParkingLeftRed : botParkingRightRed;
 
         Pose2d start = botStartRed.byAlliancePose2d();
         //robot.drivetrain.setPoseEstimate(start);
@@ -83,32 +74,37 @@ public class MeepMeepTesting {
         EditablePose finalDodge = dodge;
         EditablePose finalBotWhitePixelScoring = botWhitePixelScoring;
         EditablePose finalYellowPixel = yellowPixel;
+        EditablePose botRightSpikePrepRed = new EditablePose(-38.5, -34, FORWARD);
         RoadRunnerBotEntity myBot = new DefaultBotBuilder(meepMeep)
                 // Set bot constraints: maxVel, maxAccel, maxAngVel, maxAngAccel, track width
                 .setConstraints(50.2765, 60.3457, toRadians(174.5386897712936), toRadians(60), 17.38)
                 .setDimensions(16.2981681102, 17.0079)
                 .followTrajectorySequence(drive ->
                         drive.trajectorySequenceBuilder(start)
+                                .lineTo(botRightSpikePrepRed.byAllianceVec())
                                 .lineToSplineHeading(finalProp.byAlliancePose2d())
                                 .back(8)
                                 .lineToSplineHeading(finalDodge.byAlliancePose2d())
                                 .lineToLinearHeading(botWhitePixelRed.byAlliancePose2d())
-                                .forward(2)
-                                //.addTemporalMarker(TIME_START_INTAKE, () -> robot.intake.set(-1))
-                                .waitSeconds(3)
-                                .back(2)
-                                //.addTemporalMarker(TIME_START_OUTTAKE, () -> robot.intake.set(1))
-                                //.addTemporalMarker(TIME_STOP_OUTTAKE, () -> robot.intake.set(0))
+                                .forward(5)
+                                .turn(toRadians(isRed ? -35 : 35))
+                                .turn(toRadians(isRed ? 15 : -15))
+                                //.addTemporalMarker(() -> robot.intake.set(-1)) // Intake
+                                .forward(0.3)
+                                .waitSeconds(2)
+                                .back(5.3)
+                                //.addTemporalMarker(() -> robot.intake.set(1)) // Outtake
                                 .strafeRight(isRed ? 4 : -4)
+                                //.addTemporalMarker(() -> robot.intake.set(0)) // Stop outtaking
                                 .splineToSplineHeading(botStageDoorRed.byAlliancePose2d(), Math.toRadians(0))
                                 .splineTo(botTransitionRed.byAllianceVec(), Math.toRadians(0))
+                                //.addTemporalMarker(() -> robot.lift.setToAutonHeight()) // Lift and arm extend
                                 .lineToSplineHeading(finalBotWhitePixelScoring.byAlliancePose2d())
-                                //.addTemporalMarker(TIME_LIFT_EXTEND, () -> robot.lift.setToAutonHeight())
-                                //.addTemporalMarker(TIME_LIFT_EXTEND + 0.2, () -> robot.arm.setArm(true))
-                                //.addTemporalMarker(TIME_LIFT_EXTEND + 0.4, () -> robot.arm.setFlap(false))
-                                //.addTemporalMarker(TIME_LIFT_EXTEND + 2, () -> robot.arm.toggle())
+                                //.addTemporalMarker(() -> robot.arm.setFlap(false)) // Open flap
+                                //.UNSTABLE_addTemporalMarkerOffset(0.5, () -> robot.arm.setFlap(true)) // Close flap 0.1 seconds after opening them
                                 .lineToSplineHeading(finalYellowPixel.byAlliancePose2d())
-                                .lineTo(parking.byAllianceVec())
+                                //.addTemporalMarker(() -> robot.arm.setFlap(false))
+                                //.UNSTABLE_addTemporalMarkerOffset(1, () -> robot.arm.toggleArm());
                                 .build()
                 );
 
