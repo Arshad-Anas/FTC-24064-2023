@@ -89,13 +89,9 @@ public final class MainAuton extends LinearOpMode {
             botTransitionRed = new EditablePose(25, -9, RIGHT),
             botCenterBackdropRed = new EditablePose(48, -35, LEFT),
             botLeftBackdropRed = new EditablePose(48, -29, LEFT),
-            botRightBackdropRed = new EditablePose(48, -41, LEFT),
-            botParkingLeftRed = new EditablePose(47.5, -10, LEFT),
-            botParkingRightRed = new EditablePose(47.5, -60, LEFT);
+            botRightBackdropRed = new EditablePose(48, -41, LEFT);
 
-    public static Pose2d
-            mainSpike = null,
-            autonEndPose = null;
+    public static Pose2d autonEndPose = null;
 
     public static boolean keyPressed(int gamepad, GamepadKeys.Button button) {
         return (gamepad == 2 ? gamepadEx2 : gamepadEx1).wasJustPressed(button);
@@ -133,14 +129,11 @@ public final class MainAuton extends LinearOpMode {
 
         propSensor = new PropSensor(hardwareMap, isRed);
 
-        mTelemetry.addLine("Confirmed " + (isRed ? "RED" : "BLUE") + " " + (isTop ? "TOP" : "BOTTOM") + " " + (isParkedMiddle ? "PARK MIDDLE" : "PARK CORNER"));
-        mTelemetry.update();
-
         while (!propSensor.getIsOpened()) {
+            mTelemetry.addLine("Confirmed " + (isRed ? "RED" : "BLUE") + " " + (isTop ? "TOP" : "BOTTOM") + " " + (isParkedMiddle ? "PARK MIDDLE" : "PARK CORNER"));
             mTelemetry.addLine("Camera is not open");
             mTelemetry.update();
         }
-        mTelemetry.clearAll();
 
         while (!isStarted() && !isStopRequested()) {
             propPlacement = propSensor.propPosition();
@@ -148,8 +141,6 @@ public final class MainAuton extends LinearOpMode {
             mTelemetry.update();
             sleep(50);
         }
-        mTelemetry.clearAll();
-        propPlacement = propSensor.propPosition();
 
         propSensor.getCamera().stopStreaming();
         propSensor.getCamera().closeCameraDevice();
@@ -166,10 +157,12 @@ public final class MainAuton extends LinearOpMode {
             robot.drivetrain.update();
             robot.run();
         }
+
+        autonEndPose = robot.drivetrain.getPoseEstimate();
     }
 
     private TrajectorySequence getTopTrajectory() {
-
+        Pose2d mainSpike = null;
         Pose2d startPose = MainAuton.topStart.byAlliance().toPose2d();
         Pose2d centerSpike = MainAuton.topCenterSpike.byAlliance().toPose2d();
         Pose2d leftSpike = MainAuton.topLeftSpike.byAlliance().toPose2d();
@@ -240,7 +233,7 @@ public final class MainAuton extends LinearOpMode {
     }
 
     private TrajectorySequence getBottomTrajectory() {
-        EditablePose prop, dodge, yellowPixel, botWhitePixelScoring, parking;
+        EditablePose prop, dodge, yellowPixel, botWhitePixelScoring;
         prop = dodge = yellowPixel = botWhitePixelScoring = null;
 
         switch (propPlacement) {
@@ -263,7 +256,6 @@ public final class MainAuton extends LinearOpMode {
                 botWhitePixelScoring = isRed ? botLeftBackdropRed : botCenterBackdropRed;
                 break;
         }
-        parking = isParkedMiddle ? botParkingLeftRed : botParkingRightRed;
 
         Pose2d start = botStartRed.byAlliancePose2d();
         robot.drivetrain.setPoseEstimate(start);
@@ -273,20 +265,17 @@ public final class MainAuton extends LinearOpMode {
                 .back(8)
                 .lineToSplineHeading(dodge.byAlliancePose2d())
                 .lineToLinearHeading(botWhitePixelRed.byAlliancePose2d())
-                .forward(7)
+                .forward(9)
+                .back(2)
                 .addTemporalMarker(() -> robot.intake.set(-1)) // Intake
-                .waitSeconds(3)
-                .back(7)
-                .addTemporalMarker(() -> {
-                    robot.intake.set(1); // Outtake
-                    robot.arm.setFlap(true); // Close flap
-                })
+                .waitSeconds(2)
+                .back(9)
+                .addTemporalMarker(() -> robot.intake.set(1)) // Outtake
                 .strafeRight(isRed ? 4 : -4)
                 .addTemporalMarker(() -> robot.intake.set(0)) // Stop outtaking
                 .splineToSplineHeading(botStageDoorRed.byAlliancePose2d(), Math.toRadians(0))
                 .splineTo(botTransitionRed.byAllianceVec(), Math.toRadians(0))
-                .addTemporalMarker(() -> robot.lift.setToAutonHeight()) // Lift extend
-                .UNSTABLE_addTemporalMarkerOffset(0.4, () -> robot.arm.setArm(true)) // Extend arm
+                .addTemporalMarker(() -> robot.lift.setToAutonHeight()) // Lift and arm extend
                 .lineToSplineHeading(botWhitePixelScoring.byAlliancePose2d())
                 .addTemporalMarker(() -> robot.arm.setFlap(false)) // Open flap
                 .UNSTABLE_addTemporalMarkerOffset(0.1, () -> robot.arm.setFlap(true)) // Close flap 0.1 seconds after opening them

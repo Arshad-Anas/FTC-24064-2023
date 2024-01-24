@@ -31,14 +31,12 @@ public class PropSensor {
         camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
             @Override
             public void onOpened() {
-                camera.startStreaming(1280, 720, OpenCvCameraRotation.UPRIGHT);
+                camera.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT);
                 isOpened = true;
             }
 
             @Override
-            public void onError(int errorCode) {
-                // This will be called if the camera could not be opened
-            }
+            public void onError(int errorCode) {}
         });
     }
 
@@ -50,15 +48,15 @@ public class PropSensor {
         return camera;
     }
 
+    public boolean getIsOpened() {
+        return isOpened;
+    }
+
     public void printTelemetry() {
-        mTelemetry.addData("Prop position", propPosition());
+        mTelemetry.addData("Predicted prop position", propPosition());
     }
 
     public void printNumericalTelemetry() {
         mTelemetry.addData("FPS", camera.getFps());
-    }
-
-    public boolean getIsOpened() {
-        return isOpened;
     }
 }

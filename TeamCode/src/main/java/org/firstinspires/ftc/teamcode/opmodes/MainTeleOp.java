@@ -49,6 +49,8 @@ public final class MainTeleOp extends LinearOpMode {
         // Instantiate robot
         robot = new Robot(hardwareMap);
 
+        robot.drivetrain.setCurrentHeading(autonEndPose.getHeading() - (isRed ? FORWARD : BACKWARD));
+
         waitForStart();
 
         // Control loop:
@@ -98,6 +100,7 @@ public final class MainTeleOp extends LinearOpMode {
             double trigger2 = gamepadEx2.getTrigger(RIGHT_TRIGGER) - gamepadEx2.getTrigger(LEFT_TRIGGER);
             robot.intake.set(trigger1 != 0 ? trigger1 : trigger2);
 
+            robot.drivetrain.update();
             robot.run();
             robot.printTelemetry();
             mTelemetry.update();

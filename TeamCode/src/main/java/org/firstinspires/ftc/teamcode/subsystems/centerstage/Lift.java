@@ -82,16 +82,12 @@ public final class Lift {
         batteryVoltageSensor = hardwareMap.voltageSensor.iterator().next();
     }
 
-    /**
-     * Uses the targetRow variable to find out the measurement for where the pixel should be placed
-     * @param targetRow; The set target row on the backstage that the arm is suspected to drop the pixel
-     */
     public void setTargetRow(int targetRow) {
         this.targetRow = max(min(targetRow, 1), 0);
     }
 
     void retract() {
-        this.targetRow = -1;
+        targetRow = -1;
     }
 
     public int getSetPoint() {
@@ -105,8 +101,8 @@ public final class Lift {
     public void setToAutonHeight() {
         hasElevated = true;
         timer.reset();
-        controller.setTarget(new State(AUTON_ROW_HEIGHT));
         setPoint = 0;
+        controller.setTarget(new State(AUTON_ROW_HEIGHT));
     }
 
     public void updateTarget() {
