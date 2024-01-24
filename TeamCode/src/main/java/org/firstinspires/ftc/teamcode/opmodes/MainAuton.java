@@ -92,9 +92,9 @@ public final class MainAuton extends LinearOpMode {
             botWhitePixelRed = new EditablePose(-59.5,-24, LEFT),
             botStageDoorRed = new EditablePose(-25, -10, RIGHT),
             botTransitionRed = new EditablePose(25, -9, RIGHT),
-            botLeftBackdropRed = new EditablePose(BACKBOARD_X, -35, LEFT),
-            botCenterBackdropRed = new EditablePose(BACKBOARD_X, -39, LEFT),
-            botRightBackdropRed = new EditablePose(BACKBOARD_X, -42, LEFT);
+            botLeftBackdropRed = new EditablePose(BACKBOARD_X, -30, LEFT),
+            botCenterBackdropRed = new EditablePose(BACKBOARD_X, -36.5, LEFT),
+            botRightBackdropRed = new EditablePose(BACKBOARD_X, -43, LEFT);
 
     public static Pose2d autonEndPose = null;
 
