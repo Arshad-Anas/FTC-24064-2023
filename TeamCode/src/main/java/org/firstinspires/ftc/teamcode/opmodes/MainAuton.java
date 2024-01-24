@@ -136,21 +136,20 @@ public final class MainAuton extends LinearOpMode {
         mTelemetry.addLine("Confirmed " + (isRed ? "RED" : "BLUE") + " " + (isTop ? "TOP" : "BOTTOM") + " " + (isParkedMiddle ? "PARK MIDDLE" : "PARK CORNER"));
         mTelemetry.update();
 
-        mTelemetry.addLine("Initializing Camera!!");
-        mTelemetry.update();
+        while (!propSensor.getIsOpened()) {
+            mTelemetry.addLine("Camera is not open");
+            mTelemetry.update();
+        }
+        mTelemetry.clearAll();
 
-        while (opModeInInit()) {
+        while (!isStarted() && !isStopRequested()) {
             propPlacement = propSensor.propPosition();
             mTelemetry.addData("Predicted Prop Placement", propPlacement);
             mTelemetry.update();
+            sleep(50);
         }
         mTelemetry.clearAll();
-
-        while (!propSensor.getIsOpened()) {
-            mTelemetry.addLine("Stuck in isOpened?");
-            mTelemetry.update();
-        }
-        mTelemetry.clearAll();
+        propPlacement = propSensor.propPosition();
 
         propSensor.getCamera().stopStreaming();
         propSensor.getCamera().closeCameraDevice();

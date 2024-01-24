@@ -103,6 +103,8 @@ public final class Lift {
     }
 
     public void setToAutonHeight() {
+        hasElevated = true;
+        timer.reset();
         controller.setTarget(new State(AUTON_ROW_HEIGHT));
         setPoint = 0;
     }
