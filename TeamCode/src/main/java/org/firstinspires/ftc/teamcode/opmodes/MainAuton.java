@@ -11,8 +11,6 @@ import static com.arcrobotics.ftclib.gamepad.GamepadKeys.Button.Y;
 
 import static java.lang.Math.toRadians;
 
-import android.drm.DrmStore;
-
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
@@ -66,37 +64,24 @@ public final class MainAuton extends LinearOpMode {
             BACKWARD = toRadians(270);
 
     public static double
-            BACKBOARD_X = 54.1;
-
-    public static EditablePose
-            topStart = new EditablePose(X_START_TOP, -61.788975, FORWARD),
-            topCenterSpike = new EditablePose((X_START_TOP + 3.5), -32, FORWARD),
-            topLeftSpike = new EditablePose((X_START_TOP - 4.75), -40.5, toRadians(135)),
-            topRightSpike = new EditablePose(26.5 - topLeftSpike.x, topLeftSpike.y, LEFT - topLeftSpike.heading),
-            topBackboardBe = new EditablePose(44, -35.5, LEFT),
-            topBackboardAfLeft = new EditablePose(BACKBOARD_X, -31.5, RIGHT),
-            topBackboardAfCenter = new EditablePose(BACKBOARD_X, -35.5, RIGHT),
-            topBackboardAfRight = new EditablePose(BACKBOARD_X, -39.5, RIGHT),
-            topParkingLeft = new EditablePose(51, -10, toRadians(165)),
-            topParkingRight = new EditablePose(51, -56, toRadians(200));
-
-
+            BACKBOARD_X = 52.18;
 
     // Bottom
     public static EditablePose
             botStartRed = new EditablePose(X_START_BOTTOM, -61.788975, FORWARD),
-            botLeftSpikeRed = new EditablePose(-50.5, -40, FORWARD),
+            botLeftSpikeRed = new EditablePose(-51, -39, FORWARD),
             botCenterSpikeRed = new EditablePose(-41, -32, FORWARD),
-            botRightSpikePrepRed = new EditablePose(-38.5, -34, FORWARD),
-            botRightSpikeRed = new EditablePose(-34, -34, RIGHT),
-            botLeftPixelDodgeRed = new EditablePose(-59.5, -44, LEFT),
-            botRightCenterPixelDodgeRed = new EditablePose (-59.5, -38, LEFT),
-            botWhitePixelRed = new EditablePose(-59.5,-24, LEFT),
-            botStageDoorRed = new EditablePose(-25, -10, RIGHT),
-            botTransitionRed = new EditablePose(25, -9, RIGHT),
+            botRightSpikeRed = new EditablePose(-37, -34, FORWARD),
+            botLeftPixelDodgeRed = new EditablePose(-42, -50, FORWARD),
+            botCenterPixelDodgeRed = new EditablePose (-53, -38, FORWARD),
+            botCenterPixelDodgeRed2 = new EditablePose(-53, -20, FORWARD),
+            botStageDoorRed = new EditablePose(-30, -9, RIGHT),
+            botTransitionRed = new EditablePose(25, -9, LEFT),
             botLeftBackdropRed = new EditablePose(BACKBOARD_X, -30, LEFT),
             botCenterBackdropRed = new EditablePose(BACKBOARD_X, -36.5, LEFT),
             botRightBackdropRed = new EditablePose(BACKBOARD_X, -43, LEFT);
+
+    private static EditablePose start, prop, dodge, yellowPixel;
 
     public static Pose2d autonEndPose = null;
 
@@ -152,7 +137,7 @@ public final class MainAuton extends LinearOpMode {
         propSensor.getCamera().stopStreaming();
         propSensor.getCamera().closeCameraDevice();
 
-        robot.drivetrain.followTrajectorySequenceAsync(isTop ? getTopTrajectory() : getBottomTrajectory());
+        robot.drivetrain.followTrajectorySequenceAsync(getTrajectory());
 
         while (opModeIsActive()) {
             if (!opModeIsActive()) {
@@ -168,140 +153,84 @@ public final class MainAuton extends LinearOpMode {
         autonEndPose = robot.drivetrain.getPoseEstimate();
     }
 
-    private TrajectorySequence getTopTrajectory() {
-        Pose2d mainSpike = null;
-        Pose2d startPose = MainAuton.topStart.byAlliance().toPose2d();
-        Pose2d centerSpike = MainAuton.topCenterSpike.byAlliance().toPose2d();
-        Pose2d leftSpike = MainAuton.topLeftSpike.byAlliance().toPose2d();
-        Pose2d rightSpike = MainAuton.topRightSpike.byAlliance().toPose2d();
-        Pose2d backboardBe = MainAuton.topBackboardBe.byAlliance().toPose2d();
-
-        EditablePose backboardAf = null;
-
-        Pose2d parkingLeft = MainAuton.topParkingLeft.byAlliance().toPose2d();
-        Pose2d parkingRight = MainAuton.topParkingRight.byAlliance().toPose2d();
-
+    private TrajectorySequence getTrajectory() {
         switch (propPlacement) {
             case 0:
-                mainSpike = isRed ? leftSpike : rightSpike;
-                backboardAf = isRed ?  topBackboardAfLeft.byAlliance() : topBackboardAfRight.byAlliance();
-                break;
-            case 1:
-                mainSpike = centerSpike;
-                backboardAf = topBackboardAfCenter.byAlliance();
-                break;
-            case 2:
-                mainSpike = isRed ? rightSpike : leftSpike;
-                backboardAf = isRed ?  topBackboardAfRight.byAlliance() : topBackboardAfLeft.byAlliance();
-                break;
-        }
-
-        robot.drivetrain.setPoseEstimate(startPose);
-
-        TrajectorySequenceBuilder rightTrajectoryBuilder = robot.drivetrain
-                .trajectorySequenceBuilder(startPose)
-                .splineToConstantHeading(mainSpike.vec(), FORWARD)
-                .addTemporalMarker(() -> robot.intake.set(0.25))
-                .UNSTABLE_addTemporalMarkerOffset(1, () -> robot.intake.set(0))
-
-                .waitSeconds(1)
-
-                .back(4);
-
-        if (isRed && propPlacement == 2 || !isRed && propPlacement == 0) {
-            rightTrajectoryBuilder
-                    .back(7)
-                    .strafeRight(isRed ? 8 : -8)
-                    .turn(isRed ? (RIGHT - toRadians(35)) : (RIGHT + toRadians(35)));
-        }
-
-        rightTrajectoryBuilder
-                .lineToSplineHeading(backboardBe)
-                /*
-                    Do april tag stuff here because now we can scan
-                 */
-                .lineTo(backboardAf.toPose2d().vec())
-                /*
-                 Starts the lift by updating target to row 0, then executes commands to do so (within timing)
-                 It will activate flap to open, releasing the pixels
-                 After doing that, it'll retract back to target row -1
-                */
-                .UNSTABLE_addTemporalMarkerOffset((0.2 + 0.2), () -> {
-                    robot.lift.setToAutonHeight();
-                })
-                .UNSTABLE_addTemporalMarkerOffset((0.2 + OPEN_FLAP_WAIT_TIME) + OPENING_SLIDE_TIME, () -> robot.arm.setFlap(false))
-                .UNSTABLE_addTemporalMarkerOffset((2 + OPEN_FLAP_WAIT_TIME) + OPENING_SLIDE_TIME + SCORING_WAIT_TIME, () -> robot.arm.toggleArm())
-
-                .waitSeconds(7)
-
-                .lineTo(backboardBe.vec())
-                .lineToSplineHeading(isParkedMiddle ? parkingLeft : parkingRight);
-
-        return rightTrajectoryBuilder.build();
-    }
-
-    private TrajectorySequence getBottomTrajectory() {
-        EditablePose prop, dodge, yellowPixel, botWhitePixelScoring;
-        prop = dodge = yellowPixel = botWhitePixelScoring = null;
-
-        switch (propPlacement) {
-            case 0:
-                prop = isRed ? botLeftSpikeRed : botRightSpikeRed;
-                dodge = isRed ? botLeftPixelDodgeRed : botRightCenterPixelDodgeRed;
+                prop = isTop ? (isRed ? botRightSpikeRed : botLeftSpikeRed) : (isRed ? botLeftSpikeRed : botRightSpikeRed);
+                dodge = botLeftPixelDodgeRed;
                 yellowPixel = isRed ? botLeftBackdropRed : botRightBackdropRed;
-                botWhitePixelScoring = isRed ? botCenterBackdropRed : botLeftBackdropRed;
                 break;
             case 1:
                 prop = botCenterSpikeRed;
-                dodge = botRightCenterPixelDodgeRed;
+                dodge = botCenterPixelDodgeRed;
                 yellowPixel = botCenterBackdropRed;
-                botWhitePixelScoring = botLeftBackdropRed;
                 break;
             case 2:
-                prop = isRed ? botRightSpikeRed : botLeftSpikeRed;
-                dodge = isRed ? botRightCenterPixelDodgeRed : botLeftPixelDodgeRed;
+                prop = isTop ? (isRed ? botLeftSpikeRed : botRightSpikeRed) : (isRed ? botRightSpikeRed : botLeftSpikeRed);
+                dodge = botLeftPixelDodgeRed;
                 yellowPixel = isRed ? botRightBackdropRed : botLeftBackdropRed;
-                botWhitePixelScoring = isRed ? botLeftBackdropRed : botCenterBackdropRed;
                 break;
         }
 
-        Pose2d start = botStartRed.byAlliancePose2d();
-        robot.drivetrain.setPoseEstimate(start);
+        start = botStartRed;
+        robot.drivetrain.setPoseEstimate(start.bySide().byAlliancePose2d());
 
-        TrajectorySequenceBuilder builder = robot.drivetrain.trajectorySequenceBuilder(start);
+        TrajectorySequenceBuilder builder = robot.drivetrain.trajectorySequenceBuilder(start.bySide().byAlliancePose2d());
 
-        if (propPlacement == 0 && !isRed || propPlacement == 2 && isRed) {
-            builder.lineTo(botRightSpikePrepRed.byAllianceVec());
-        }
+        addPurplePixel(builder);
 
-        builder.lineToSplineHeading(prop.byAlliancePose2d())
-                .addTemporalMarker(() -> robot.intake.set(0.25))
-                .UNSTABLE_addTemporalMarkerOffset(1, () -> robot.intake.set(0))
-                .back(9.5)
-                .lineToSplineHeading(dodge.byAlliancePose2d())
-                .lineToLinearHeading(botWhitePixelRed.byAlliancePose2d())
-                .forward(4)
-                .turn(toRadians(isRed ? -42 : 42))
-                .turn(toRadians(isRed ? 25 : -25))
-                .addTemporalMarker(() -> robot.intake.set(-1)) // Intake
-                .back(0.25)
-                .waitSeconds(1)
-                .addTemporalMarker(() -> robot.intake.set(1)) // Outtake
-                .back(3.5)
-                .strafeRight(isRed ? 4 : -4)
-                .addTemporalMarker(() -> robot.intake.set(0)) // Stop outtaking
-                .splineToSplineHeading(botStageDoorRed.byAlliancePose2d(), Math.toRadians(0))
-                .splineTo(botTransitionRed.byAllianceVec(), Math.toRadians(0))
-                .lineToSplineHeading(botWhitePixelScoring.byAlliancePose2d())
-                .addTemporalMarker(() -> robot.lift.setToAutonHeight()) // Lift and arm extend
-                .UNSTABLE_addTemporalMarkerOffset(1, () -> robot.arm.setFlap(false)) // Open flap
-                .UNSTABLE_addTemporalMarkerOffset(1.15, () -> robot.arm.setFlap(true)) // Close flap 0.3 seconds after opening them
-                .waitSeconds(2.5)
+        if (!isTop)
+            builder.splineToConstantHeading(botStageDoorRed.byAllianceVec(), RIGHT)
+                .lineToSplineHeading(botTransitionRed.byAlliancePose2d())
                 .lineToSplineHeading(yellowPixel.byAlliancePose2d())
-                .addTemporalMarker(() -> robot.arm.setFlap(false))
-                .UNSTABLE_addTemporalMarkerOffset(1, () -> robot.arm.toggleArm());
+                .addTemporalMarker(() -> robot.lift.setToAutonHeight()) // Lift and arm extend
+                .UNSTABLE_addTemporalMarkerOffset(1, () -> robot.arm.setFlap(false))
+                .waitSeconds(2)
+                .UNSTABLE_addTemporalMarkerOffset(2.2, () -> robot.arm.toggleArm());
 
         return builder.build();
+    }
+
+    private void addPurplePixel(TrajectorySequenceBuilder builder) {
+        builder.lineToSplineHeading(prop.bySide().byAlliancePose2d());
+
+        if (!isTop) {
+            if (isLeft() || isCenter())
+                builder.addTemporalMarker(() -> robot.intake.set(0.25))
+                        .UNSTABLE_addTemporalMarkerOffset(1, () -> robot.intake.set(0))
+                        .back(11)
+                        .lineToSplineHeading(dodge.byAlliancePose2d());
+
+            if (isCenter())
+                builder.lineToSplineHeading(botCenterPixelDodgeRed2.byAlliancePose2d());
+
+            if (isRight())
+                builder.turn(toRadians(isRed ? -90 : 90))
+                        .addTemporalMarker(() -> robot.intake.set(0.25))
+                        .UNSTABLE_addTemporalMarkerOffset(1, () -> robot.intake.set(0))
+                        .turn(toRadians(isRed ? 90 : -90));
+        } else {
+            if (isLeft())
+                builder.turn(toRadians(isRed ? 90 : -90))
+                        .addTemporalMarker(() -> robot.intake.set(0.25))
+                        .UNSTABLE_addTemporalMarkerOffset(1, () -> robot.intake.set(0))
+                        .turn(toRadians(isRed ? -90 : 90));
+            else
+                builder.addTemporalMarker(() -> robot.intake.set(0.25))
+                        .UNSTABLE_addTemporalMarkerOffset(1, () -> robot.intake.set(0));
+        }
+    }
+
+    private boolean isCenter() {
+        return propPlacement == 1;
+    }
+
+    private boolean isLeft() {
+        return isRed && propPlacement == 0 || !isRed && propPlacement == 2;
+    }
+
+    private boolean isRight() {
+        return isRed && propPlacement == 2 || !isRed && propPlacement == 0;
     }
 
     private static class EditablePose {
@@ -334,10 +263,10 @@ public final class MainAuton extends LinearOpMode {
             return new Pose2d(x, y, heading);
         }
 
-//        private EditablePose bySide() {
-//            if (isTop != isRed) x += (X_START_BOTTOM - X_START_TOP);
-//            return this;
-//        }
+        private EditablePose bySide() {
+            if (isTop) x = x * -1 - 23.5;
+            return this;
+        }
 //
 //        private EditablePose byBoth() {
 //            return byAlliance().bySide();
