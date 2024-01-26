@@ -64,22 +64,22 @@ public final class MainAuton extends LinearOpMode {
             BACKWARD = toRadians(270);
 
     public static double
-            BACKBOARD_X = 52.18;
+            BACKBOARD_X = 59;
 
     // Bottom
     public static EditablePose
             botStartRed = new EditablePose(X_START_BOTTOM, -61.788975, FORWARD),
-            botLeftSpikeRed = new EditablePose(-51, -39, FORWARD),
+            botLeftSpikeRed = new EditablePose(-50, -39, FORWARD),
             botCenterSpikeRed = new EditablePose(-41, -32, FORWARD),
-            botRightSpikeRed = new EditablePose(-37, -34, FORWARD),
-            botLeftPixelDodgeRed = new EditablePose(-42, -50, FORWARD),
+            botRightSpikeRed = new EditablePose(-37, -35.5, FORWARD),
+            botLeftPixelDodgeRed = new EditablePose(-36.5, -50, FORWARD),
             botCenterPixelDodgeRed = new EditablePose (-53, -38, FORWARD),
-            botCenterPixelDodgeRed2 = new EditablePose(-53, -20, FORWARD),
-            botStageDoorRed = new EditablePose(-30, -9, RIGHT),
-            botTransitionRed = new EditablePose(25, -9, LEFT),
-            botLeftBackdropRed = new EditablePose(BACKBOARD_X, -30, LEFT),
-            botCenterBackdropRed = new EditablePose(BACKBOARD_X, -36.5, LEFT),
-            botRightBackdropRed = new EditablePose(BACKBOARD_X, -43, LEFT);
+            botCenterPixelDodgeRed2 = new EditablePose(-53, -10, FORWARD),
+            botStageDoorRed = new EditablePose(-36.5, -7, RIGHT),
+            botTransitionRed = new EditablePose(40, -7, LEFT),
+            botLeftBackdropRed = new EditablePose(BACKBOARD_X - 2, -27, LEFT),
+            botCenterBackdropRed = new EditablePose(BACKBOARD_X, -31, LEFT),
+            botRightBackdropRed = new EditablePose(BACKBOARD_X - 2.75, -52, LEFT);
 
     private static EditablePose start, prop, dodge, yellowPixel;
 
@@ -173,20 +173,31 @@ public final class MainAuton extends LinearOpMode {
         }
 
         start = botStartRed;
-        robot.drivetrain.setPoseEstimate(start.bySide().byAlliancePose2d());
+        Pose2d startPose2d = start.bySide().byAlliancePose2d();
+        robot.drivetrain.setPoseEstimate(startPose2d);
 
-        TrajectorySequenceBuilder builder = robot.drivetrain.trajectorySequenceBuilder(start.bySide().byAlliancePose2d());
+        TrajectorySequenceBuilder builder = robot.drivetrain.trajectorySequenceBuilder(startPose2d);
 
         addPurplePixel(builder);
 
-        if (!isTop)
-            builder.splineToConstantHeading(botStageDoorRed.byAllianceVec(), RIGHT)
-                .lineToSplineHeading(botTransitionRed.byAlliancePose2d())
-                .lineToSplineHeading(yellowPixel.byAlliancePose2d())
-                .addTemporalMarker(() -> robot.lift.setToAutonHeight()) // Lift and arm extend
-                .UNSTABLE_addTemporalMarkerOffset(1, () -> robot.arm.setFlap(false))
-                .waitSeconds(2)
-                .UNSTABLE_addTemporalMarkerOffset(2.2, () -> robot.arm.toggleArm());
+        if (!isTop) {
+            if (isLeft() || isRight())
+                builder.lineTo(botStageDoorRed.byAllianceVec());
+            else
+                builder.splineToConstantHeading(botStageDoorRed.byAllianceVec(), RIGHT);
+
+            builder.lineToSplineHeading(botTransitionRed.byAlliancePose2d())
+                    .lineToSplineHeading(yellowPixel.byAlliancePose2d())
+                    .addTemporalMarker(() -> robot.lift.setToAutonHeight()) // Lift and arm extend
+                    .UNSTABLE_addTemporalMarkerOffset(1, () -> robot.arm.setFlap(false))
+                    .waitSeconds(2)
+                    .addTemporalMarker(() -> {
+                        robot.lift.setTargetRow(0);
+                        robot.lift.updateTarget();
+                    })
+                    .waitSeconds(2)
+                    .addTemporalMarker(() -> robot.arm.toggleArm());
+        }
 
         return builder.build();
     }
@@ -196,7 +207,7 @@ public final class MainAuton extends LinearOpMode {
 
         if (!isTop) {
             if (isLeft() || isCenter())
-                builder.addTemporalMarker(() -> robot.intake.set(0.25))
+                builder.addTemporalMarker(() -> robot.intake.set(0.30))
                         .UNSTABLE_addTemporalMarkerOffset(1, () -> robot.intake.set(0))
                         .back(11)
                         .lineToSplineHeading(dodge.byAlliancePose2d());
@@ -206,17 +217,22 @@ public final class MainAuton extends LinearOpMode {
 
             if (isRight())
                 builder.turn(toRadians(isRed ? -90 : 90))
-                        .addTemporalMarker(() -> robot.intake.set(0.25))
+                        .forward(3)
+                        .addTemporalMarker(() -> robot.intake.set(0.30))
                         .UNSTABLE_addTemporalMarkerOffset(1, () -> robot.intake.set(0))
-                        .turn(toRadians(isRed ? 90 : -90));
+                        .waitSeconds(0.5)
+                        .back(8)
+                        .turn(toRadians(180));
         } else {
             if (isLeft())
                 builder.turn(toRadians(isRed ? 90 : -90))
-                        .addTemporalMarker(() -> robot.intake.set(0.25))
+                        .forward(3)
+                        .addTemporalMarker(() -> robot.intake.set(0.30))
                         .UNSTABLE_addTemporalMarkerOffset(1, () -> robot.intake.set(0))
-                        .turn(toRadians(isRed ? -90 : 90));
+                        .waitSeconds(0.5)
+                        .back(8);
             else
-                builder.addTemporalMarker(() -> robot.intake.set(0.25))
+                builder.addTemporalMarker(() -> robot.intake.set(0.30))
                         .UNSTABLE_addTemporalMarkerOffset(1, () -> robot.intake.set(0));
         }
     }

@@ -15,7 +15,7 @@ public class MeepMeepTesting {
 
     static boolean isRed = true, isParkedMiddle = false;
 
-    static final boolean isTop = true;
+    static final boolean isTop = false;
 
     public static double
             X_START_BOTTOM = -37,
@@ -27,25 +27,25 @@ public class MeepMeepTesting {
             RIGHT = toRadians(0),
             BACKWARD = toRadians(270);
 
-    public static int propPlacement = 0;
+    public static int propPlacement = 2;
 
     public static double
-            BACKBOARD_X = 52.18;
+            BACKBOARD_X = 58;
 
     // Bottom
     public static EditablePose
             botStartRed = new EditablePose(X_START_BOTTOM, -61.788975, FORWARD),
-            botLeftSpikeRed = new EditablePose(-51, -39, FORWARD),
+            botLeftSpikeRed = new EditablePose(-50, -39, FORWARD),
             botCenterSpikeRed = new EditablePose(-41, -32, FORWARD),
-            botRightSpikeRed = new EditablePose(-37, -34, FORWARD),
-            botLeftPixelDodgeRed = new EditablePose(-42, -50, FORWARD),
+            botRightSpikeRed = new EditablePose(-37, -35.5, FORWARD),
+            botLeftPixelDodgeRed = new EditablePose(-36.5, -50, FORWARD),
             botCenterPixelDodgeRed = new EditablePose (-53, -38, FORWARD),
-            botCenterPixelDodgeRed2 = new EditablePose(-53, -20, FORWARD),
-            botStageDoorRed = new EditablePose(-30, -9, RIGHT),
-            botTransitionRed = new EditablePose(25, -9, LEFT),
-            botLeftBackdropRed = new EditablePose(BACKBOARD_X, -30, LEFT),
-            botCenterBackdropRed = new EditablePose(BACKBOARD_X, -36.5, LEFT),
-            botRightBackdropRed = new EditablePose(BACKBOARD_X, -43, LEFT);
+            botCenterPixelDodgeRed2 = new EditablePose(-53, -10, FORWARD),
+            botStageDoorRed = new EditablePose(-36.5, -7, RIGHT),
+            botTransitionRed = new EditablePose(40, -7, LEFT),
+            botLeftBackdropRed = new EditablePose(BACKBOARD_X - 2, -27, LEFT),
+            botCenterBackdropRed = new EditablePose(BACKBOARD_X, -31, LEFT),
+            botRightBackdropRed = new EditablePose(BACKBOARD_X - 2.75, -52, LEFT);
 
     private static EditablePose start, prop, dodge, yellowPixel;
 
@@ -83,16 +83,19 @@ public class MeepMeepTesting {
 //                                .back(11) // Left, Center
 //                                .lineToSplineHeading(dodge.byAlliancePose2d()) // Left, Center
 //                                .lineToSplineHeading(botCenterPixelDodgeRed2.byAlliancePose2d()) // Center
-//                                .turn(toRadians(isRed ? -90 : 90)) // Right
-//                                .turn(toRadians(isRed ? 90 : -90)) // Right
+                                .turn(toRadians(isRed ? -90 : 90)) // Right
+                                .forward(4)
+                                .back(6)
+                                .turn(toRadians(180)) // Right
 //                                .addTemporalMarker(() -> robot.intake.set(0.25))
 //                                .UNSTABLE_addTemporalMarkerOffset(1, () -> robot.intake.set(0))
-//                                .splineToConstantHeading(botStageDoorRed.byAllianceVec(), RIGHT)
-//                                .lineToSplineHeading(botTransitionRed.byAlliancePose2d())
-//                                .lineToSplineHeading(yellowPixel.byAlliancePose2d())
+                                .lineTo(botStageDoorRed.byAllianceVec()) // Left
+//                                .splineToConstantHeading(botStageDoorRed.byAllianceVec(), RIGHT) // Not left
+                                .lineToSplineHeading(botTransitionRed.byAlliancePose2d())
+                                .lineToSplineHeading(yellowPixel.byAlliancePose2d())
 //                                .addTemporalMarker(() -> robot.lift.setToAutonHeight()) // Lift and arm extend
 //                                .UNSTABLE_addTemporalMarkerOffset(1, () -> robot.arm.setFlap(false))
-//                                .waitSeconds(2)
+                                .waitSeconds(2)
 //                                .UNSTABLE_addTemporalMarkerOffset(2.2, () -> robot.arm.toggleArm());
                                 .build()
                 );

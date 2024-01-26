@@ -48,7 +48,7 @@ public final class Lift {
      */
     public static double
             BOTTOM_ROW_HEIGHT = 1050,
-            AUTON_ROW_HEIGHT = 850,
+            AUTON_ROW_HEIGHT = 675,
             MAX_MOTOR_TICKS = 1620,
             ROW_HEIGHT = 600,
             kG = 0.011065,
