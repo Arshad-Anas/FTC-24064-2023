@@ -15,7 +15,7 @@ public class MeepMeepTesting {
 
     static boolean isRed = true, isParkedMiddle = false;
 
-    static final boolean isTop = false;
+    static final boolean isTop = true;
 
     public static double
             X_START_BOTTOM = -37,
@@ -27,7 +27,7 @@ public class MeepMeepTesting {
             RIGHT = toRadians(0),
             BACKWARD = toRadians(270);
 
-    public static int propPlacement = 2;
+    public static int propPlacement = 1;
 
     public static double
             BACKBOARD_X = 58;
@@ -45,7 +45,13 @@ public class MeepMeepTesting {
             botTransitionRed = new EditablePose(40, -7, LEFT),
             botLeftBackdropRed = new EditablePose(BACKBOARD_X - 2, -27, LEFT),
             botCenterBackdropRed = new EditablePose(BACKBOARD_X, -31, LEFT),
-            botRightBackdropRed = new EditablePose(BACKBOARD_X - 2.75, -52, LEFT);
+            botRightBackdropRed = new EditablePose(BACKBOARD_X - 2.75, -52, LEFT),
+
+            // Top
+            topLeftBackdropRed = new EditablePose(BACKBOARD_X - 7, -28.5, LEFT),
+            topCenterBackdropRed = new EditablePose(BACKBOARD_X - 7, -35, LEFT),
+            topRightBackdropRed = new EditablePose(BACKBOARD_X - 7, -41.5, LEFT),
+            topParkingRed = new EditablePose(47.5, -60, LEFT);
 
     private static EditablePose start, prop, dodge, yellowPixel;
 
@@ -56,17 +62,17 @@ public class MeepMeepTesting {
             case 0:
                 prop = isTop ? (isRed ? botRightSpikeRed : botLeftSpikeRed) : (isRed ? botLeftSpikeRed : botRightSpikeRed);
                 dodge = botLeftPixelDodgeRed;
-                yellowPixel = isRed ? botLeftBackdropRed : botRightBackdropRed;
+                yellowPixel = isTop ? (isRed ? topLeftBackdropRed : topRightBackdropRed) : (isRed ? botLeftBackdropRed : botRightBackdropRed);
                 break;
             case 1:
                 prop = botCenterSpikeRed;
                 dodge = botCenterPixelDodgeRed;
-                yellowPixel = botCenterBackdropRed;
+                yellowPixel = isTop? topCenterBackdropRed : botCenterBackdropRed;
                 break;
             case 2:
                 prop = isTop ? (isRed ? botLeftSpikeRed : botRightSpikeRed) : (isRed ? botRightSpikeRed : botLeftSpikeRed);
                 dodge = botLeftPixelDodgeRed;
-                yellowPixel = isRed ? botRightBackdropRed : botLeftBackdropRed;
+                yellowPixel = isTop ? (isRed ? topRightBackdropRed : topLeftBackdropRed) : (isRed ? botRightBackdropRed : botLeftBackdropRed);
                 break;
         }
 
@@ -80,23 +86,13 @@ public class MeepMeepTesting {
                 .followTrajectorySequence(drive ->
                         drive.trajectorySequenceBuilder(start.bySide().byAlliancePose2d())
                                 .lineToSplineHeading(prop.bySide().byAlliancePose2d())
-//                                .back(11) // Left, Center
-//                                .lineToSplineHeading(dodge.byAlliancePose2d()) // Left, Center
-//                                .lineToSplineHeading(botCenterPixelDodgeRed2.byAlliancePose2d()) // Center
-                                .turn(toRadians(isRed ? -90 : 90)) // Right
-                                .forward(4)
-                                .back(6)
-                                .turn(toRadians(180)) // Right
-//                                .addTemporalMarker(() -> robot.intake.set(0.25))
-//                                .UNSTABLE_addTemporalMarkerOffset(1, () -> robot.intake.set(0))
-                                .lineTo(botStageDoorRed.byAllianceVec()) // Left
-//                                .splineToConstantHeading(botStageDoorRed.byAllianceVec(), RIGHT) // Not left
-                                .lineToSplineHeading(botTransitionRed.byAlliancePose2d())
+//                                .turn(toRadians(isRed ? 90 : -90)) // left
+//                                .forward(3) // left
+                                .back(11) // If not left
                                 .lineToSplineHeading(yellowPixel.byAlliancePose2d())
-//                                .addTemporalMarker(() -> robot.lift.setToAutonHeight()) // Lift and arm extend
-//                                .UNSTABLE_addTemporalMarkerOffset(1, () -> robot.arm.setFlap(false))
-                                .waitSeconds(2)
-//                                .UNSTABLE_addTemporalMarkerOffset(2.2, () -> robot.arm.toggleArm());
+                                .forward(3)
+                                .lineToSplineHeading(topParkingRed.byAlliancePose2d())
+                                .back(13)
                                 .build()
                 );
 
