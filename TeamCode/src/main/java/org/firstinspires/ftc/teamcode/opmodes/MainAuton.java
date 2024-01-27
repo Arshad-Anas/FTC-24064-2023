@@ -50,7 +50,7 @@ public final class MainAuton extends LinearOpMode {
     public static EditablePose
             // Bottom
             botStartRed = new EditablePose(BOTTOM_START_X, -61.788975, FORWARD),
-            botLeftSpikeRed = new EditablePose(-50, -39, FORWARD),
+            botLeftSpikeRed = new EditablePose(-50, -36.5, FORWARD),
             botCenterSpikeRed = new EditablePose(-41, -32, FORWARD),
             botRightSpikeRed = new EditablePose(-37, -35.5, FORWARD),
             botLeftPixelDodgeRed = new EditablePose(-36.5, -50, FORWARD),
@@ -59,12 +59,12 @@ public final class MainAuton extends LinearOpMode {
             botStageDoorRed = new EditablePose(-36.5, -7, RIGHT),
             botTransitionRed = new EditablePose(40, -7, LEFT),
             botLeftBackdropRed = new EditablePose(BACKBOARD_X - 2, -27, LEFT),
-            botCenterBackdropRed = new EditablePose(BACKBOARD_X, -31, LEFT),
+            botCenterBackdropRed = new EditablePose(BACKBOARD_X, -35.5, LEFT),
             botRightBackdropRed = new EditablePose(BACKBOARD_X - 2.75, -52, LEFT),
             // Top
-            topLeftBackdropRed = new EditablePose(BACKBOARD_X - 7, -28.5, LEFT),
-            topCenterBackdropRed = new EditablePose(BACKBOARD_X - 7, -35, LEFT),
-            topRightBackdropRed = new EditablePose(BACKBOARD_X - 7, -41.5, LEFT),
+            topLeftBackdropRed = new EditablePose(BACKBOARD_X - 7, -27, LEFT),
+            topCenterBackdropRed = new EditablePose(BACKBOARD_X - 6, -31, LEFT),
+            topRightBackdropRed = new EditablePose(BACKBOARD_X - 7, -38, LEFT),
             topParkingRed = new EditablePose(47.5, -60, LEFT);
 
     private static EditablePose prop, dodge, yellowPixel;
@@ -180,12 +180,12 @@ public final class MainAuton extends LinearOpMode {
         builder.lineToSplineHeading(yellowPixel.byAlliancePose2d())
                 .addTemporalMarker(() -> robot.lift.setToAutonHeight()) // Lift and arm extend
                 .UNSTABLE_addTemporalMarkerOffset(1, () -> robot.arm.setFlap(false))
-                .waitSeconds(0.75)
+                .waitSeconds(2)
                 .addTemporalMarker(() -> {
                     robot.lift.setTargetRow(0);
                     robot.lift.updateTarget();
                 })
-                .waitSeconds(1)
+                .waitSeconds(2)
                 .addTemporalMarker(() -> robot.arm.toggleArm());
 
         // Parking for top
@@ -201,7 +201,7 @@ public final class MainAuton extends LinearOpMode {
         if (!isTop) {
             if (isLeft() || isCenter())
                 builder.addTemporalMarker(() -> robot.intake.set(0.30))
-                        .UNSTABLE_addTemporalMarkerOffset(1, () -> robot.intake.set(0))
+                        .UNSTABLE_addTemporalMarkerOffset(0.2, () -> robot.intake.set(0))
                         .back(11)
                         .lineToSplineHeading(dodge.byAlliancePose2d());
 
@@ -212,7 +212,7 @@ public final class MainAuton extends LinearOpMode {
                 builder.turn(toRadians(isRed ? -90 : 90))
                         .forward(3)
                         .addTemporalMarker(() -> robot.intake.set(0.30))
-                        .UNSTABLE_addTemporalMarkerOffset(1, () -> robot.intake.set(0))
+                        .UNSTABLE_addTemporalMarkerOffset(0.2, () -> robot.intake.set(0))
                         .waitSeconds(0.5)
                         .back(8)
                         .turn(toRadians(180));
@@ -221,11 +221,11 @@ public final class MainAuton extends LinearOpMode {
                 builder.turn(toRadians(isRed ? 90 : -90))
                         .forward(3)
                         .addTemporalMarker(() -> robot.intake.set(0.30))
-                        .UNSTABLE_addTemporalMarkerOffset(1, () -> robot.intake.set(0))
+                        .UNSTABLE_addTemporalMarkerOffset(0.2, () -> robot.intake.set(0))
                         .waitSeconds(0.5);
             else
                 builder.addTemporalMarker(() -> robot.intake.set(0.30))
-                        .UNSTABLE_addTemporalMarkerOffset(1, () -> robot.intake.set(0))
+                        .UNSTABLE_addTemporalMarkerOffset(0.2, () -> robot.intake.set(0))
                         .back(11);
         }
     }
