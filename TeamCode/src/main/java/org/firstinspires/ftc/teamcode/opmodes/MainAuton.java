@@ -50,7 +50,7 @@ public final class MainAuton extends LinearOpMode {
     public static EditablePose
             // Bottom
             botStartRed = new EditablePose(BOTTOM_START_X, -61.788975, FORWARD),
-            botLeftSpikeRed = new EditablePose(-50, -36.5, FORWARD),
+            botLeftSpikeRed = new EditablePose(-51, -36.5, FORWARD),
             botCenterSpikeRed = new EditablePose(-41, -32, FORWARD),
             botRightSpikeRed = new EditablePose(-37, -35.5, FORWARD),
             botLeftPixelDodgeRed = new EditablePose(-36.5, -50, FORWARD),
@@ -58,9 +58,9 @@ public final class MainAuton extends LinearOpMode {
             botCenterPixelDodgeRed2 = new EditablePose(-53, -10, FORWARD),
             botStageDoorRed = new EditablePose(-36.5, -7, RIGHT),
             botTransitionRed = new EditablePose(40, -7, LEFT),
-            botLeftBackdropRed = new EditablePose(BACKBOARD_X - 2, -27, LEFT),
-            botCenterBackdropRed = new EditablePose(BACKBOARD_X, -35.5, LEFT),
-            botRightBackdropRed = new EditablePose(BACKBOARD_X - 2.75, -52, LEFT),
+            botLeftBackdropRed = new EditablePose(BACKBOARD_X - 2, -26, LEFT),
+            botCenterBackdropRed = new EditablePose(BACKBOARD_X + 2, -32, LEFT),
+            botRightBackdropRed = new EditablePose(BACKBOARD_X - 3.5, -51, LEFT),
             // Top
             topLeftBackdropRed = new EditablePose(BACKBOARD_X - 7, -27, LEFT),
             topCenterBackdropRed = new EditablePose(BACKBOARD_X - 6, -31, LEFT),
