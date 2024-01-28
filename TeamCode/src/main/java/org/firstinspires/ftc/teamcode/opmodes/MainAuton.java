@@ -65,7 +65,15 @@ public final class MainAuton extends LinearOpMode {
             topLeftBackdropRed = new EditablePose(BACKBOARD_X - 7, -27, LEFT),
             topCenterBackdropRed = new EditablePose(BACKBOARD_X - 6, -31, LEFT),
             topRightBackdropRed = new EditablePose(BACKBOARD_X - 7, -38, LEFT),
-            topParkingRed = new EditablePose(47.5, -60, LEFT);
+            topParkingRed = new EditablePose(47.5, -60, LEFT),
+            // Test RED
+            testLeftBackdrop = new EditablePose(BACKBOARD_X + 4, -31, LEFT),
+            testCenterBackdrop = new EditablePose(BACKBOARD_X + 4, -35, LEFT), // done
+            testRightBackdrop = new EditablePose(BACKBOARD_X + 4, -44, LEFT),
+
+            testLeftBackdropTop = new EditablePose(BACKBOARD_X - 5.5, -27, LEFT),
+            testCenterBackdropTop = new EditablePose(BACKBOARD_X - 6, -31, LEFT),
+            testRightBackdropTop = new EditablePose(BACKBOARD_X - 3, -38, LEFT);
 
     private static EditablePose prop, dodge, yellowPixel;
 
@@ -141,24 +149,24 @@ public final class MainAuton extends LinearOpMode {
             case 0:
                 prop = isTop ? (isRed ? botRightSpikeRed : botLeftSpikeRed) : (isRed ? botLeftSpikeRed : botRightSpikeRed);
                 dodge = botLeftPixelDodgeRed;
-                yellowPixel = isTop ? (isRed ? topLeftBackdropRed : topRightBackdropRed) : (isRed ? botLeftBackdropRed : botRightBackdropRed);
+                yellowPixel = isTop ? (isRed ? testLeftBackdropTop : topRightBackdropRed) : (isRed ? testLeftBackdrop : botRightBackdropRed);
                 break;
             case 1:
                 prop = botCenterSpikeRed;
                 dodge = botCenterPixelDodgeRed;
-                yellowPixel = isTop ? topCenterBackdropRed : botCenterBackdropRed;
+                yellowPixel = isTop ? (isRed ? testCenterBackdropTop : topCenterBackdropRed) : (isRed ? testCenterBackdrop : botCenterBackdropRed);
                 break;
             case 2:
                 prop = isTop ? (isRed ? botLeftSpikeRed : botRightSpikeRed) : (isRed ? botRightSpikeRed : botLeftSpikeRed);
                 dodge = botLeftPixelDodgeRed;
-                yellowPixel = isTop ? (isRed ? topRightBackdropRed : topLeftBackdropRed) : (isRed ? botRightBackdropRed : botLeftBackdropRed);
+                yellowPixel = isTop ? (isRed ? testRightBackdropTop : topLeftBackdropRed) : (isRed ? testRightBackdrop : botLeftBackdropRed);
                 break;
         }
 
         Pose2d start = botStartRed.bySide().byAlliancePose2d();
         robot.drivetrain.setPoseEstimate(start);
 
-        TrajectorySequenceBuilder builder = robot.drivetrain.trajectorySequenceBuilder(start);
+        TrajectorySequenceBuilder builder = robot.drivetrain.trajectorySequenceBuilder(start).waitSeconds(5);
 
         addPurplePixel(builder);
         addYellowPixel(builder);

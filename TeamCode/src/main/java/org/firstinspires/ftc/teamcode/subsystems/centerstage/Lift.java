@@ -78,6 +78,9 @@ public final class Lift {
         MotorEx leader = new MotorEx(hardwareMap, "leader", RPM_435);
         MotorEx follower = new MotorEx(hardwareMap, "follower", RPM_435);
 
+        leader.encoder.reset();
+        follower.encoder.reset();
+
         motors = new MotorEx[]{leader, follower};
         batteryVoltageSensor = hardwareMap.voltageSensor.iterator().next();
     }

@@ -20,7 +20,7 @@ public final class Arm {
 
     // TODO Measure TIME_RETRACT_ARM
     public static double
-            ANGLE_COLLECTING = 160,
+            ANGLE_COLLECTING = 152,
             ANGLE_DEPOSITING = 75,
             ANGLE_OPEN_FLAP = 90,
             ANGLE_CLOSED_FLAP = 0,
