@@ -40,7 +40,7 @@ public final class TestLift extends LinearOpMode {
                 getReversedServo(getGoBildaServo(hardwareMap, "arm2"))
         );
 
-        MotorEx[] motors = new MotorEx[]{leader, follower};
+        MotorEx[] motors = {leader, follower};
         waitForStart();
 
         while (opModeIsActive()) {
@@ -49,10 +49,7 @@ public final class TestLift extends LinearOpMode {
 
             gamepadEx1.readButtons();
 
-
-            if (keyPressed(1, Y)) {
-                arm.toggle();
-            }
+            if (keyPressed(1, Y)) arm.toggle();
             for (MotorEx motor : motors) motor.set(gamepadEx1.getLeftY());
 
             arm.run();

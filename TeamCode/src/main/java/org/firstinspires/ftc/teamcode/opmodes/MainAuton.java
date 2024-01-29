@@ -68,7 +68,7 @@ public final class MainAuton extends LinearOpMode {
             topParkingRed = new EditablePose(47.5, -60, LEFT),
             // Test RED
             testLeftBackdrop = new EditablePose(BACKBOARD_X + 4, -31, LEFT),
-            testCenterBackdrop = new EditablePose(BACKBOARD_X + 4, -35, LEFT), // done
+            testCenterBackdrop = new EditablePose(BACKBOARD_X + 4, -35, LEFT),
             testRightBackdrop = new EditablePose(BACKBOARD_X + 4, -44, LEFT),
 
             testLeftBackdropTop = new EditablePose(BACKBOARD_X - 5.5, -27, LEFT),
@@ -166,7 +166,7 @@ public final class MainAuton extends LinearOpMode {
         Pose2d start = botStartRed.bySide().byAlliancePose2d();
         robot.drivetrain.setPoseEstimate(start);
 
-        TrajectorySequenceBuilder builder = robot.drivetrain.trajectorySequenceBuilder(start).waitSeconds(5);
+        TrajectorySequenceBuilder builder = robot.drivetrain.trajectorySequenceBuilder(start);
 
         addPurplePixel(builder);
         addYellowPixel(builder);

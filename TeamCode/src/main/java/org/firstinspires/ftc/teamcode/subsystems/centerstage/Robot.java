@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.subsystems.centerstage;
 
 import static com.arcrobotics.ftclib.hardware.motors.Motor.GoBILDA.RPM_117;
 import static org.firstinspires.ftc.teamcode.opmodes.MainAuton.mTelemetry;
+import static org.firstinspires.ftc.teamcode.subsystems.centerstage.Arm.TIME_DEPOSIT_1_PIXEL;
 import static org.firstinspires.ftc.teamcode.subsystems.centerstage.Arm.TIME_RETRACT_ARM;
 import static org.firstinspires.ftc.teamcode.subsystems.centerstage.Lift.TIME_EXTEND_ARM;
 import static org.firstinspires.ftc.teamcode.subsystems.utilities.SimpleServoPivot.getGoBildaServo;
@@ -53,11 +54,11 @@ public final class Robot {
     }
 
     public void run() {
-        if (!arm.hasRetracted && arm.timer.seconds() >= TIME_RETRACT_ARM) {
+        if (!arm.armActivated && arm.armTimer.seconds() >= TIME_RETRACT_ARM) {
             arm.setFlap(false);
             lift.retract();
             lift.updateTarget();
-            arm.hasRetracted = true;
+            arm.armActivated = true;
         }
 
         if (lift.hasElevated) {
@@ -70,6 +71,8 @@ public final class Robot {
 
         if (lift.getSetPoint() == -1) {
             arm.setFlap(intake.get() == 0);
+        } else {
+            arm.setFlap(arm.flapActivated && arm.flapTimer.seconds() >= TIME_DEPOSIT_1_PIXEL);
         }
 
         launcher.run();
