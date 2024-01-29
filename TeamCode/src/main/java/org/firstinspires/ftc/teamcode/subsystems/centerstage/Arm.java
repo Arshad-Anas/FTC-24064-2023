@@ -15,8 +15,8 @@ public final class Arm {
     private final SimpleServoPivot armPivot, flap;
 
     boolean
-            armActivated = true,
-            flapActivated = true;
+            armTimerCondition = false,
+            flapTimerCondition = false;
 
     final ElapsedTime
             armTimer = new ElapsedTime(),
@@ -45,8 +45,8 @@ public final class Arm {
     public void toggleArm() {
         armPivot.toggle();
 
-        armActivated = armPivot.isActivated();
-        if (armActivated) {
+        armTimerCondition = armPivot.isActivated();
+        if (armTimerCondition) {
             armTimer.reset();
         }
     }
@@ -58,8 +58,8 @@ public final class Arm {
     public void toggleFlap() {
         flap.toggle();
 
-        flapActivated = flap.isActivated();
-        if (flapActivated) {
+        flapTimerCondition = flap.isActivated();
+        if (flapTimerCondition) {
             flapTimer.reset();
         }
     }

@@ -53,7 +53,8 @@ public final class Lift {
             ROW_HEIGHT = 600,
             kG = 0.011065,
             TIME_EXTEND_ARM = 1,
-            PERCENT_OVERSHOOT = 0;
+            PERCENT_OVERSHOOT = 0,
+            JOYSTICK_MULTIPLIER = 5;
 
     private final MotorEx[] motors;
 
@@ -64,11 +65,12 @@ public final class Lift {
 
     private State currentState = new State();
 
+    private int targetTicks = 0;
     private int targetRow = -1;
     private int setPoint = -1;
 
     ElapsedTime timer = new ElapsedTime();
-    boolean hasElevated = false;
+    boolean timerCondition = false;
 
     /**
      * Constructor of Lift class; Sets variables with hw (hardwareMap)
@@ -85,6 +87,12 @@ public final class Lift {
         batteryVoltageSensor = hardwareMap.voltageSensor.iterator().next();
     }
 
+    public void setWithStick(double stick) {
+        double target = min(MAX_MOTOR_TICKS, max(0, targetTicks + stick * JOYSTICK_MULTIPLIER));
+        setPoint = target == 0 ? -1 : 0;
+        controller.setTarget(new State(target));
+    }
+
     public void setTargetRow(int targetRow) {
         this.targetRow = max(min(targetRow, 1), 0);
     }
@@ -93,30 +101,30 @@ public final class Lift {
         targetRow = -1;
     }
 
-    public int getSetPoint() {
-        return setPoint;
-    }
-
     public void increment() {
         setTargetRow(targetRow + 1);
     }
 
+    public int getSetPoint() {
+        return setPoint;
+    }
+
     public void setToAutonHeight() {
-        hasElevated = true;
+        timerCondition = true;
         timer.reset();
         setPoint = 0;
         controller.setTarget(new State(AUTON_ROW_HEIGHT));
     }
 
     public void updateTarget() {
-        hasElevated = setPoint == -1 && targetRow > setPoint;
-        if (hasElevated) {
+        timerCondition = setPoint == -1 && targetRow > setPoint;
+        if (timerCondition) {
             timer.reset();
         }
 
         setPoint = targetRow;
-        double targetTicks = min(MAX_MOTOR_TICKS, targetRow * ROW_HEIGHT + BOTTOM_ROW_HEIGHT);
-        State targetState = new State(targetRow < 0 ? 0 : targetTicks);
+        double target = min(MAX_MOTOR_TICKS, targetRow * ROW_HEIGHT + BOTTOM_ROW_HEIGHT);
+        State targetState = new State(targetRow < 0 ? 0 : target);
         controller.setTarget(targetState);
     }
 
@@ -154,8 +162,7 @@ public final class Lift {
     }
 
     public void printTelemetry() {
-        mTelemetry.addData("Target position (pixels)", targetRow < 0 ? "Retracted" : "Row " + targetRow);
-        mTelemetry.addData("Motor position", (0.5 * (motors[0].encoder.getPosition() - motors[1].encoder.getPosition())));
+        mTelemetry.addData("Target position (row)", targetRow < 0 ? "Retracted" : "Row " + targetRow);
         mTelemetry.addData("Target position (ticks)", targetRow * ROW_HEIGHT + BOTTOM_ROW_HEIGHT);
     }
 

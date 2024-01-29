@@ -54,25 +54,25 @@ public final class Robot {
     }
 
     public void run() {
-        if (!arm.armActivated && arm.armTimer.seconds() >= TIME_RETRACT_ARM) {
+        if (!arm.armTimerCondition && arm.armTimer.seconds() >= TIME_RETRACT_ARM) {
             arm.setFlap(false);
             lift.retract();
             lift.updateTarget();
-            arm.armActivated = true;
+            arm.armTimerCondition = true;
         }
 
-        if (lift.hasElevated) {
+        if (lift.timerCondition) {
             arm.setFlap(true);
             if (lift.timer.seconds() >= TIME_EXTEND_ARM) {
                 arm.setArm(true);
-                lift.hasElevated = false;
+                lift.timerCondition = false;
             }
         }
 
         if (lift.getSetPoint() == -1) {
             arm.setFlap(intake.get() == 0);
         } else {
-            arm.setFlap(arm.flapActivated && arm.flapTimer.seconds() >= TIME_DEPOSIT_1_PIXEL);
+            arm.setFlap(arm.flapTimerCondition && arm.flapTimer.seconds() >= TIME_DEPOSIT_1_PIXEL);
         }
 
         launcher.run();
