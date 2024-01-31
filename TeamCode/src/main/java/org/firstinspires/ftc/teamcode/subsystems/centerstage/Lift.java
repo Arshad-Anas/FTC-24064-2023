@@ -54,7 +54,7 @@ public final class Lift {
             kG = 0.011065,
             TIME_EXTEND_ARM = 1,
             PERCENT_OVERSHOOT = 0,
-            JOYSTICK_MULTIPLIER = 5;
+            JOYSTICK_MULTIPLIER = 30;
 
     private final MotorEx[] motors;
 
@@ -65,7 +65,7 @@ public final class Lift {
 
     private State currentState = new State();
 
-    private int targetTicks = 0;
+    private double targetTicks = 0;
     private int targetRow = -1;
     private int setPoint = -1;
 
@@ -88,9 +88,9 @@ public final class Lift {
     }
 
     public void setWithStick(double stick) {
-        double target = min(MAX_MOTOR_TICKS, max(0, targetTicks + stick * JOYSTICK_MULTIPLIER));
-        setPoint = target == 0 ? -1 : 0;
-        controller.setTarget(new State(target));
+        targetTicks = min(MAX_MOTOR_TICKS, max(0, targetTicks + stick * JOYSTICK_MULTIPLIER));
+        setPoint = targetTicks == 0 ? -1 : 0;
+        controller.setTarget(new State(targetTicks));
     }
 
     public void setTargetRow(int targetRow) {
