@@ -3,8 +3,6 @@ package org.firstinspires.ftc.teamcode.subsystems.centerstage;
 import static com.arcrobotics.ftclib.hardware.motors.Motor.GoBILDA.RPM_117;
 import static org.firstinspires.ftc.teamcode.opmodes.MainAuton.mTelemetry;
 import static org.firstinspires.ftc.teamcode.subsystems.centerstage.Arm.TIME_DEPOSIT_1_PIXEL;
-import static org.firstinspires.ftc.teamcode.subsystems.centerstage.Arm.TIME_RETRACT_ARM;
-import static org.firstinspires.ftc.teamcode.subsystems.centerstage.Lift.TIME_EXTEND_ARM;
 import static org.firstinspires.ftc.teamcode.subsystems.utilities.SimpleServoPivot.getGoBildaServo;
 
 import com.acmerobotics.dashboard.config.Config;
@@ -29,11 +27,14 @@ public final class Robot {
     public final Lift lift;
     public final MotorEx climber;
     public final SimpleServoPivot launcher;
+    public final SimpleServoPivot launcherClamp;
     private final BulkReader bulkReader;
 
     private static double
+            ANGLE_DRONE_LOAD = 180,
             ANGLE_DRONE_LAUNCH = 0,
-            ANGLE_DRONE_LOAD = 180;
+            ANGLE_CLAMP = 90,
+            ANGLE_UNCLAMPED = 0;
 
     /**
      * Constructor of Robot; Instantiates the classes with the hardwareMap
@@ -47,6 +48,7 @@ public final class Robot {
         lift = new Lift(hardwareMap);
         climber = new MotorEx(hardwareMap, "climber", RPM_117);
         launcher = new SimpleServoPivot(ANGLE_DRONE_LOAD, ANGLE_DRONE_LAUNCH, getGoBildaServo(hardwareMap, "launcher"));
+        launcherClamp = new SimpleServoPivot(ANGLE_CLAMP, ANGLE_UNCLAMPED, getGoBildaServo(hardwareMap, "launcher-clamp"));
     }
 
     public void readSensors() {
@@ -54,27 +56,16 @@ public final class Robot {
     }
 
     public void run() {
-        if (!arm.armTimerCondition && arm.armTimer.seconds() >= TIME_RETRACT_ARM) {
-            arm.setFlap(false);
-            lift.retract();
-            lift.updateTarget();
-            arm.armTimerCondition = true;
-        }
-
-        if (lift.timerCondition) {
-            arm.setFlap(true);
-            if (lift.timer.seconds() >= TIME_EXTEND_ARM) {
-                arm.setArm(true);
-                lift.timerCondition = false;
-            }
-        }
-
         if (lift.getSetPoint() == -1) {
             arm.setFlap(intake.get() == 0);
         } else {
-            arm.setFlap(arm.flapTimerCondition && arm.flapTimer.seconds() >= TIME_DEPOSIT_1_PIXEL);
+            if (arm.flapTimerCondition && arm.flapTimer.seconds() >= TIME_DEPOSIT_1_PIXEL) {
+                arm.setFlap(true);
+                arm.flapTimerCondition = false;
+            }
         }
 
+        launcherClamp.run();
         launcher.run();
         lift.run();
         arm.run();

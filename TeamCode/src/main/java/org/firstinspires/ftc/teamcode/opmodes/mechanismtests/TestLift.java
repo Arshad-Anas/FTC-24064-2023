@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.opmodes.mechanismtests;
 
 import static com.arcrobotics.ftclib.gamepad.GamepadKeys.Button.Y;
+import static com.arcrobotics.ftclib.hardware.motors.Motor.GoBILDA.RPM_435;
 import static org.firstinspires.ftc.teamcode.opmodes.MainAuton.gamepadEx1;
 import static org.firstinspires.ftc.teamcode.opmodes.MainAuton.keyPressed;
 import static org.firstinspires.ftc.teamcode.opmodes.MainAuton.mTelemetry;
@@ -11,6 +12,7 @@ import static org.firstinspires.ftc.teamcode.subsystems.utilities.SimpleServoPiv
 
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
+import com.arcrobotics.ftclib.hardware.motors.MotorEx;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -27,7 +29,10 @@ public final class TestLift extends LinearOpMode {
         BulkReader bulkReader = new BulkReader(hardwareMap);
         mTelemetry = new MultipleTelemetry(telemetry);
 
-        Lift lift = new Lift(hardwareMap);
+        MotorEx leader = new MotorEx(hardwareMap, "leader", RPM_435);
+        MotorEx follower = new MotorEx(hardwareMap, "follower", RPM_435);
+
+        MotorEx[] motors = {leader, follower};
 
         SimpleServoPivot arm = new SimpleServoPivot(
                 ANGLE_COLLECTING,
@@ -46,14 +51,11 @@ public final class TestLift extends LinearOpMode {
 
             if (keyPressed(1, Y)) arm.toggle();
 
-            double stick = -gamepadEx1.getRightY();
-            lift.setWithStick(stick < 0 && arm.isActivated() ? 0 : stick);
+            for (MotorEx motor : motors) motor.set(-gamepadEx1.getLeftY());
 
             arm.run();
-            lift.run();
 
             mTelemetry.addData("Arm is", arm.isActivated());
-            lift.printNumericalTelemetry();
             mTelemetry.update();
         }
     }

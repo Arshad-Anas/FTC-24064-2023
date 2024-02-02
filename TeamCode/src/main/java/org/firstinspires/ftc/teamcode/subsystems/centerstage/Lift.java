@@ -52,9 +52,8 @@ public final class Lift {
             MAX_MOTOR_TICKS = 1620,
             ROW_HEIGHT = 600,
             kG = 0.011065,
-            TIME_EXTEND_ARM = 1,
             PERCENT_OVERSHOOT = 0,
-            JOYSTICK_MULTIPLIER = 30;
+            JOYSTICK_MULTIPLIER = 40;
 
     private final MotorEx[] motors;
 
@@ -68,9 +67,6 @@ public final class Lift {
     private double targetTicks = 0;
     private int targetRow = -1;
     private int setPoint = -1;
-
-    ElapsedTime timer = new ElapsedTime();
-    boolean timerCondition = false;
 
     /**
      * Constructor of Lift class; Sets variables with hw (hardwareMap)
@@ -93,39 +89,13 @@ public final class Lift {
         controller.setTarget(new State(targetTicks));
     }
 
-    public void setTargetRow(int targetRow) {
-        this.targetRow = max(min(targetRow, 1), 0);
-    }
-
-    void retract() {
-        targetRow = -1;
-    }
-
-    public void increment() {
-        setTargetRow(targetRow + 1);
-    }
-
     public int getSetPoint() {
         return setPoint;
     }
 
     public void setToAutonHeight() {
-        timerCondition = true;
-        timer.reset();
         setPoint = 0;
         controller.setTarget(new State(AUTON_ROW_HEIGHT));
-    }
-
-    public void updateTarget() {
-        timerCondition = setPoint == -1 && targetRow > setPoint;
-        if (timerCondition) {
-            timer.reset();
-        }
-
-        setPoint = targetRow;
-        double target = min(MAX_MOTOR_TICKS, targetRow * ROW_HEIGHT + BOTTOM_ROW_HEIGHT);
-        State targetState = new State(targetRow < 0 ? 0 : target);
-        controller.setTarget(targetState);
     }
 
     /**

@@ -2,8 +2,6 @@ package org.firstinspires.ftc.teamcode.opmodes;
 
 import static com.arcrobotics.ftclib.gamepad.GamepadKeys.Button.A;
 import static com.arcrobotics.ftclib.gamepad.GamepadKeys.Button.B;
-import static com.arcrobotics.ftclib.gamepad.GamepadKeys.Button.DPAD_DOWN;
-import static com.arcrobotics.ftclib.gamepad.GamepadKeys.Button.DPAD_UP;
 import static com.arcrobotics.ftclib.gamepad.GamepadKeys.Button.LEFT_BUMPER;
 import static com.arcrobotics.ftclib.gamepad.GamepadKeys.Button.RIGHT_BUMPER;
 import static com.arcrobotics.ftclib.gamepad.GamepadKeys.Button.X;
@@ -86,14 +84,16 @@ public final class MainTeleOp extends LinearOpMode {
             }
 
             // Gamepad 2
-            if (keyPressed(2, DPAD_UP)) robot.lift.increment();
-            if (keyPressed(2, A)) robot.lift.updateTarget();
+            double stick = gamepadEx2.getLeftY();
+            if (stick >= 0 || !robot.arm.isArmActivated()) robot.lift.setWithStick(stick);
             if (keyPressed(2, B)) robot.arm.toggleFlap();
             if (keyPressed(2, X)) robot.launcher.toggle();
+            if (keyPressed(2, A)) robot.launcherClamp.toggle();
             if (robot.lift.getSetPoint() >= 0) {
                 if (keyPressed(2, Y)) robot.arm.toggleArm();
             }
             robot.climber.set(-gamepadEx2.getRightY());
+
 
             // Shared
             // The intake power takes precedent to the first player

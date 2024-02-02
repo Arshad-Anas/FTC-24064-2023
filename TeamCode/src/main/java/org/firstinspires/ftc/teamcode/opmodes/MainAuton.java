@@ -190,8 +190,7 @@ public final class MainAuton extends LinearOpMode {
                 .UNSTABLE_addTemporalMarkerOffset(1, () -> robot.arm.setFlap(false))
                 .waitSeconds(2)
                 .addTemporalMarker(() -> {
-                    robot.lift.setTargetRow(0);
-                    robot.lift.updateTarget();
+                    // Go up to auton 2nd height
                 })
                 .waitSeconds(2)
                 .addTemporalMarker(() -> robot.arm.toggleArm());

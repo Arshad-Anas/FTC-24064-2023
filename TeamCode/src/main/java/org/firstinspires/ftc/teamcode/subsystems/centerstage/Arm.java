@@ -14,22 +14,17 @@ import org.firstinspires.ftc.teamcode.subsystems.utilities.SimpleServoPivot;
 public final class Arm {
     private final SimpleServoPivot armPivot, flap;
 
-    boolean
-            armTimerCondition = false,
-            flapTimerCondition = false;
+    boolean flapTimerCondition = false;
 
-    final ElapsedTime
-            armTimer = new ElapsedTime(),
-            flapTimer = new ElapsedTime();
+    public final ElapsedTime flapTimer = new ElapsedTime();
 
     // TODO Measure TIME_RETRACT_ARM
     public static double
-            ANGLE_COLLECTING = 75,
-            ANGLE_DEPOSITING = 152,
+            ANGLE_COLLECTING = 80,
+            ANGLE_DEPOSITING = 167,
             ANGLE_OPEN_FLAP = 90,
             ANGLE_CLOSED_FLAP = 0,
-            TIME_RETRACT_ARM = 1,
-            TIME_DEPOSIT_1_PIXEL = 0.1;
+            TIME_DEPOSIT_1_PIXEL = 0.152;
 
     public Arm(HardwareMap hardwareMap) {
         flap = new SimpleServoPivot(ANGLE_OPEN_FLAP, ANGLE_CLOSED_FLAP, getGoBildaServo(hardwareMap, "flap"));
@@ -44,21 +39,12 @@ public final class Arm {
 
     public void toggleArm() {
         armPivot.toggle();
-
-        armTimerCondition = armPivot.isActivated();
-        if (armTimerCondition) {
-            armTimer.reset();
-        }
-    }
-
-    public void setArm(boolean isDepositing) {
-        armPivot.setActivated(isDepositing);
     }
 
     public void toggleFlap() {
         flap.toggle();
 
-        flapTimerCondition = flap.isActivated();
+        flapTimerCondition = !flap.isActivated();
         if (flapTimerCondition) {
             flapTimer.reset();
         }
@@ -66,6 +52,10 @@ public final class Arm {
 
     public void setFlap(boolean isClosed) {
         flap.setActivated(isClosed);
+    }
+
+    public boolean isArmActivated() {
+        return armPivot.isActivated();
     }
 
     public void run() {
