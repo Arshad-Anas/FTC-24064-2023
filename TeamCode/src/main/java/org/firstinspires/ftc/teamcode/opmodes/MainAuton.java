@@ -35,8 +35,6 @@ public final class MainAuton extends LinearOpMode {
             isRed = false,
             isTop = true;
 
-    public static int propPlacement = 1;
-
     public static final double
             LEFT = toRadians(180),
             FORWARD = toRadians(90),
@@ -45,7 +43,7 @@ public final class MainAuton extends LinearOpMode {
 
     public static double
             BOTTOM_START_X = -37,
-            BACKBOARD_X = 59;
+            BACKBOARD_X = 52.5;
 
     public static EditablePose
             // Bottom
@@ -62,18 +60,10 @@ public final class MainAuton extends LinearOpMode {
             botCenterBackdropRed = new EditablePose(BACKBOARD_X + 2, -32, LEFT),
             botRightBackdropRed = new EditablePose(BACKBOARD_X - 3.5, -51, LEFT),
             // Top
-            topLeftBackdropRed = new EditablePose(BACKBOARD_X - 7, -27, LEFT),
-            topCenterBackdropRed = new EditablePose(BACKBOARD_X - 6, -31, LEFT),
-            topRightBackdropRed = new EditablePose(BACKBOARD_X - 7, -38, LEFT),
-            topParkingRed = new EditablePose(47.5, -60, LEFT),
-            // Test RED
-            testLeftBackdrop = new EditablePose(BACKBOARD_X + 4, -31, LEFT),
-            testCenterBackdrop = new EditablePose(BACKBOARD_X + 4, -35, LEFT),
-            testRightBackdrop = new EditablePose(BACKBOARD_X + 4, -44, LEFT),
-
-            testLeftBackdropTop = new EditablePose(BACKBOARD_X - 5.5, -27, LEFT),
-            testCenterBackdropTop = new EditablePose(BACKBOARD_X - 6, -31, LEFT),
-            testRightBackdropTop = new EditablePose(BACKBOARD_X - 3, -38, LEFT);
+            topLeftBackdropRed = new EditablePose(BACKBOARD_X, -27, LEFT),
+            topCenterBackdropRed = new EditablePose(BACKBOARD_X, -31, LEFT),
+            topRightBackdropRed = new EditablePose(BACKBOARD_X, -41, LEFT),
+            topParkingRed = new EditablePose(47.5, -60, LEFT);
 
     private static EditablePose prop, dodge, yellowPixel;
 
@@ -110,6 +100,9 @@ public final class MainAuton extends LinearOpMode {
             mTelemetry.update();
         }
 
+        TrajectorySequence[] trajectories = {getTrajectory(0), getTrajectory(1), getTrajectory(2)};
+        TrajectorySequence trajectory = null;
+
         propSensor = new PropSensor(hardwareMap, isRed);
 
         while (!propSensor.getIsOpened()) {
@@ -119,8 +112,9 @@ public final class MainAuton extends LinearOpMode {
         }
 
         while (!isStarted() && !isStopRequested()) {
-            propPlacement = propSensor.propPosition();
-            mTelemetry.addData("Predicted Prop Placement", propPlacement);
+            int randomization = propSensor.propPosition();
+            trajectory = trajectories[randomization];
+            mTelemetry.addData("Predicted Prop Placement", randomization);
             mTelemetry.update();
             sleep(50);
         }
@@ -128,7 +122,7 @@ public final class MainAuton extends LinearOpMode {
         propSensor.getCamera().stopStreaming();
         propSensor.getCamera().closeCameraDevice();
 
-        robot.drivetrain.followTrajectorySequenceAsync(getTrajectory());
+        robot.drivetrain.followTrajectorySequenceAsync(trajectory);
 
         while (opModeIsActive()) {
             if (!opModeIsActive()) {
@@ -144,22 +138,22 @@ public final class MainAuton extends LinearOpMode {
         autonEndPose = robot.drivetrain.getPoseEstimate();
     }
 
-    private TrajectorySequence getTrajectory() {
-        switch (propPlacement) {
+    private TrajectorySequence getTrajectory(int randomization) {
+        switch (randomization) {
             case 0:
                 prop = isTop ? (isRed ? botRightSpikeRed : botLeftSpikeRed) : (isRed ? botLeftSpikeRed : botRightSpikeRed);
                 dodge = botLeftPixelDodgeRed;
-                yellowPixel = isTop ? (isRed ? testLeftBackdropTop : topRightBackdropRed) : (isRed ? testLeftBackdrop : botRightBackdropRed);
+                yellowPixel = isTop ? (isRed ? topLeftBackdropRed : topRightBackdropRed) : (isRed ? botLeftBackdropRed : botRightBackdropRed);
                 break;
             case 1:
                 prop = botCenterSpikeRed;
                 dodge = botCenterPixelDodgeRed;
-                yellowPixel = isTop ? (isRed ? testCenterBackdropTop : topCenterBackdropRed) : (isRed ? testCenterBackdrop : botCenterBackdropRed);
+                yellowPixel = isTop ? topCenterBackdropRed : botCenterBackdropRed;
                 break;
             case 2:
                 prop = isTop ? (isRed ? botLeftSpikeRed : botRightSpikeRed) : (isRed ? botRightSpikeRed : botLeftSpikeRed);
                 dodge = botLeftPixelDodgeRed;
-                yellowPixel = isTop ? (isRed ? testRightBackdropTop : topLeftBackdropRed) : (isRed ? testRightBackdrop : botLeftBackdropRed);
+                yellowPixel = isTop ? (isRed ? topRightBackdropRed : topLeftBackdropRed) : (isRed ? botRightBackdropRed : botLeftBackdropRed);
                 break;
         }
 
@@ -168,15 +162,15 @@ public final class MainAuton extends LinearOpMode {
 
         TrajectorySequenceBuilder builder = robot.drivetrain.trajectorySequenceBuilder(start);
 
-        addPurplePixel(builder);
-        addYellowPixel(builder);
+        addPurplePixel(builder, randomization);
+        addYellowPixel(builder, randomization);
 
         return builder.build();
     }
 
-    private void addYellowPixel(TrajectorySequenceBuilder builder) {
+    private void addYellowPixel(TrajectorySequenceBuilder builder, int randomization) {
         if (!isTop) {
-            if (isLeft() || isRight())
+            if (isAudienceSide(randomization) || isBackboardSide(randomization))
                 builder.lineTo(botStageDoorRed.byAllianceVec());
             else
                 builder.splineToConstantHeading(botStageDoorRed.byAllianceVec(), RIGHT);
@@ -186,36 +180,37 @@ public final class MainAuton extends LinearOpMode {
 
         // Scoring
         builder.lineToSplineHeading(yellowPixel.byAlliancePose2d())
-                .addTemporalMarker(() -> robot.lift.setToAutonHeight()) // Lift and arm extend
+                .addTemporalMarker(() -> robot.lift.setToAutonHeight(0)) // Lift and arm extend
+                .waitSeconds(1)
+                .addTemporalMarker(() -> robot.arm.toggleArm())
                 .UNSTABLE_addTemporalMarkerOffset(1, () -> robot.arm.setFlap(false))
                 .waitSeconds(2)
-                .addTemporalMarker(() -> {
-                    // Go up to auton 2nd height
-                })
+                .addTemporalMarker(() -> robot.lift.setToAutonHeight(400))
                 .waitSeconds(2)
-                .addTemporalMarker(() -> robot.arm.toggleArm());
+                .addTemporalMarker(() -> robot.arm.toggleArm())
+                .UNSTABLE_addTemporalMarkerOffset(1, () -> robot.lift.retract());
 
         // Parking for top
         if (isTop)
-            builder.forward(3)
+            builder.forward(5)
                     .lineToSplineHeading(topParkingRed.byAlliancePose2d())
                     .back(13);
     }
 
-    private void addPurplePixel(TrajectorySequenceBuilder builder) {
+    private void addPurplePixel(TrajectorySequenceBuilder builder, int randomization) {
         builder.lineToSplineHeading(prop.bySide().byAlliancePose2d());
 
         if (!isTop) {
-            if (isLeft() || isCenter())
+            if (isAudienceSide(randomization) || isCenter(randomization))
                 builder.addTemporalMarker(() -> robot.intake.set(0.30))
                         .UNSTABLE_addTemporalMarkerOffset(0.2, () -> robot.intake.set(0))
                         .back(11)
                         .lineToSplineHeading(dodge.byAlliancePose2d());
 
-            if (isCenter())
+            if (isCenter(randomization))
                 builder.lineToSplineHeading(botCenterPixelDodgeRed2.byAlliancePose2d());
 
-            if (isRight())
+            if (isBackboardSide(randomization))
                 builder.turn(toRadians(isRed ? -90 : 90))
                         .forward(3)
                         .addTemporalMarker(() -> robot.intake.set(0.30))
@@ -224,7 +219,7 @@ public final class MainAuton extends LinearOpMode {
                         .back(8)
                         .turn(toRadians(180));
         } else {
-            if (isLeft())
+            if (isAudienceSide(randomization))
                 builder.turn(toRadians(isRed ? 90 : -90))
                         .forward(3)
                         .addTemporalMarker(() -> robot.intake.set(0.30))
@@ -237,18 +232,18 @@ public final class MainAuton extends LinearOpMode {
         }
     }
 
-    private boolean isCenter() {
-        return propPlacement == 1;
+    private boolean isCenter(int randomization) {
+        return randomization == 1;
     }
 
     // Red-centric
-    private boolean isLeft() {
-        return isRed && propPlacement == 0 || !isRed && propPlacement == 2;
+    private boolean isAudienceSide(int randomization) {
+        return isRed && randomization == 0 || !isRed && randomization == 2;
     }
 
     // Red-centric
-    private boolean isRight() {
-        return isRed && propPlacement == 2 || !isRed && propPlacement == 0;
+    private boolean isBackboardSide(int randomization) {
+        return isRed && randomization == 2 || !isRed && randomization == 0;
     }
 
     private static class EditablePose {

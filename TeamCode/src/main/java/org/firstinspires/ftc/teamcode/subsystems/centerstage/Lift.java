@@ -93,9 +93,14 @@ public final class Lift {
         return setPoint;
     }
 
-    public void setToAutonHeight() {
+    public void setToAutonHeight(double offset) {
         setPoint = 0;
-        controller.setTarget(new State(AUTON_ROW_HEIGHT));
+        controller.setTarget(new State(AUTON_ROW_HEIGHT + offset));
+    }
+
+    public void retract() {
+        setPoint = -1;
+        controller.setTarget(new State(0));
     }
 
     /**
