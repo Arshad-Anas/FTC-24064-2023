@@ -43,12 +43,12 @@ public final class MainAuton extends LinearOpMode {
 
     public static double
             BOTTOM_START_X = -37,
-            BACKBOARD_X = 52.5;
+            BACKBOARD_X = 52;
 
     public static EditablePose
             // Bottom
             botStartRed = new EditablePose(BOTTOM_START_X, -61.788975, FORWARD),
-            botLeftSpikeRed = new EditablePose(-51, -36.5, FORWARD),
+            botLeftSpikeRed = new EditablePose(-46, -40, FORWARD),
             botCenterSpikeRed = new EditablePose(-41, -32, FORWARD),
             botRightSpikeRed = new EditablePose(-37, -35.5, FORWARD),
             botLeftPixelDodgeRed = new EditablePose(-36.5, -50, FORWARD),
@@ -61,7 +61,7 @@ public final class MainAuton extends LinearOpMode {
             botRightBackdropRed = new EditablePose(BACKBOARD_X - 3.5, -51, LEFT),
             // Top
             topLeftBackdropRed = new EditablePose(BACKBOARD_X, -27, LEFT),
-            topCenterBackdropRed = new EditablePose(BACKBOARD_X, -31, LEFT),
+            topCenterBackdropRed = new EditablePose(BACKBOARD_X, -36, LEFT),
             topRightBackdropRed = new EditablePose(BACKBOARD_X, -41, LEFT),
             topParkingRed = new EditablePose(47.5, -60, LEFT);
 
@@ -212,7 +212,7 @@ public final class MainAuton extends LinearOpMode {
 
             if (isBackboardSide(randomization))
                 builder.turn(toRadians(isRed ? -90 : 90))
-                        .forward(3)
+                        .forward(3.5)
                         .addTemporalMarker(() -> robot.intake.set(0.30))
                         .UNSTABLE_addTemporalMarkerOffset(0.2, () -> robot.intake.set(0))
                         .waitSeconds(0.5)
@@ -221,7 +221,7 @@ public final class MainAuton extends LinearOpMode {
         } else {
             if (isAudienceSide(randomization))
                 builder.turn(toRadians(isRed ? 90 : -90))
-                        .forward(3)
+                        .forward(3.5)
                         .addTemporalMarker(() -> robot.intake.set(0.30))
                         .UNSTABLE_addTemporalMarkerOffset(0.2, () -> robot.intake.set(0))
                         .waitSeconds(0.5);
@@ -257,11 +257,12 @@ public final class MainAuton extends LinearOpMode {
 
         // Switches *red* alliance coordinates to blue alliance
         private EditablePose byAlliance() {
+            EditablePose pose = new EditablePose(x, y, heading);
             if (!isRed) {
-                y *= -1;
-                heading *= -1;
+                pose.y *= -1;
+                pose.heading *= -1;
             }
-            return this;
+            return pose;
         }
 
         private Pose2d byAlliancePose2d() {
@@ -277,8 +278,9 @@ public final class MainAuton extends LinearOpMode {
         }
 
         private EditablePose bySide() {
-            if (isTop) x = x * -1 - 23.5;
-            return this;
+            EditablePose pose = new EditablePose(x, y, heading);
+            if (isTop) pose.x = -x - 23.5;
+            return pose;
         }
 //
 //        private EditablePose byBoth() {
