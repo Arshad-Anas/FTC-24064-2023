@@ -15,7 +15,7 @@ public class MeepMeepTesting {
 
     static boolean isRed = true, isParkedMiddle = false;
 
-    static final boolean isTop = true;
+    static final boolean isTop = false;
 
     public static double
             X_START_BOTTOM = -37,
@@ -87,6 +87,7 @@ public class MeepMeepTesting {
                                 .lineToSplineHeading(prop.bySide().byAlliancePose2d())
                                 .back(11)
                                 .lineToSplineHeading(dodge.byAlliancePose2d())
+                                .lineToSplineHeading(new Pose2d(-58,-34,LEFT))
                                 .lineToSplineHeading(botCenterPixelDodgeRed2.byAlliancePose2d())
                                 .splineToConstantHeading(botStageDoorRed.byAllianceVec(), RIGHT)
                                 .lineToSplineHeading(botTransitionRed.byAlliancePose2d())
