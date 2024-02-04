@@ -22,6 +22,7 @@ import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySe
 import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySequenceBuilder;
 import org.firstinspires.ftc.teamcode.subsystems.centerstage.Robot;
 import org.firstinspires.ftc.teamcode.subsystems.centerstage.vision.PropSensor;
+import org.openftc.easyopencv.OpenCvCamera;
 
 @Config
 @Autonomous(group = "24064 Main", preselectTeleOp = "MainTeleOp")
@@ -51,14 +52,15 @@ public final class MainAuton extends LinearOpMode {
             botLeftSpikeRed = new EditablePose(-46, -40, FORWARD),
             botCenterSpikeRed = new EditablePose(-41, -32, FORWARD),
             botRightSpikeRed = new EditablePose(-37, -35.5, FORWARD),
-            botLeftPixelDodgeRed = new EditablePose(-36.5, -50, FORWARD),
-            botCenterPixelDodgeRed = new EditablePose (-53, -38, FORWARD),
-            botCenterPixelDodgeRed2 = new EditablePose(-53, -10, FORWARD),
-            botStageDoorRed = new EditablePose(-36.5, -7, RIGHT),
-            botTransitionRed = new EditablePose(40, -7, LEFT),
-            botLeftBackdropRed = new EditablePose(BACKBOARD_X - 2, -26, LEFT),
-            botCenterBackdropRed = new EditablePose(BACKBOARD_X + 2, -32, LEFT),
-            botRightBackdropRed = new EditablePose(BACKBOARD_X - 3.5, -51, LEFT),
+            botLeftPixelDodgeRed = new EditablePose(-34, -50, FORWARD),
+            botCenterPixelDodgeRed = new EditablePose (-55, -38, FORWARD),
+            botCenterPixelDodgeRed2 = new EditablePose(-55, -10, LEFT),
+            botStageDoorRed = new EditablePose(-34, -10, LEFT),
+            botTransitionRed = new EditablePose(35.5, -10, LEFT),
+            botTransitionRed2 = new EditablePose(35.5, -35.5, LEFT),
+            botLeftBackdropRed = new EditablePose(BACKBOARD_X, -27, LEFT),
+            botCenterBackdropRed = new EditablePose(BACKBOARD_X, -36, LEFT),
+            botRightBackdropRed = new EditablePose(BACKBOARD_X, -41, LEFT),
             // Top
             topLeftBackdropRed = new EditablePose(BACKBOARD_X, -27, LEFT),
             topCenterBackdropRed = new EditablePose(BACKBOARD_X, -36, LEFT),
@@ -119,8 +121,11 @@ public final class MainAuton extends LinearOpMode {
             sleep(50);
         }
 
-        propSensor.getCamera().stopStreaming();
-        propSensor.getCamera().closeCameraDevice();
+//        propSensor.getCamera().stopStreaming();
+        propSensor.getCamera().closeCameraDeviceAsync(() -> {
+            mTelemetry.addLine("Camera closed");
+            mTelemetry.update();
+        });
 
         robot.drivetrain.followTrajectorySequenceAsync(trajectory);
 
@@ -173,21 +178,22 @@ public final class MainAuton extends LinearOpMode {
             if (isAudienceSide(randomization) || isBackboardSide(randomization))
                 builder.lineTo(botStageDoorRed.byAllianceVec());
             else
-                builder.splineToConstantHeading(botStageDoorRed.byAllianceVec(), RIGHT);
+                builder.lineToSplineHeading(botStageDoorRed.byAlliancePose2d());
 
-            builder.lineToSplineHeading(botTransitionRed.byAlliancePose2d());
+            builder.lineToConstantHeading(botTransitionRed.byAllianceVec())
+                    .lineToSplineHeading(botTransitionRed2.byAlliancePose2d());
         }
 
         // Scoring
         builder.lineToSplineHeading(yellowPixel.byAlliancePose2d())
                 .addTemporalMarker(() -> robot.lift.setToAutonHeight(0)) // Lift and arm extend
                 .waitSeconds(1)
-                .addTemporalMarker(() -> robot.arm.toggleArm())
+                .addTemporalMarker(() -> robot.arm.setArm(true))
                 .UNSTABLE_addTemporalMarkerOffset(1, () -> robot.arm.setFlap(false))
                 .waitSeconds(2)
                 .addTemporalMarker(() -> robot.lift.setToAutonHeight(400))
                 .waitSeconds(2)
-                .addTemporalMarker(() -> robot.arm.toggleArm())
+                .addTemporalMarker(() -> robot.arm.setArm(false))
                 .UNSTABLE_addTemporalMarkerOffset(1, () -> robot.lift.retract());
 
         // Parking for top
@@ -195,6 +201,8 @@ public final class MainAuton extends LinearOpMode {
             builder.forward(5)
                     .lineToSplineHeading(topParkingRed.byAlliancePose2d())
                     .back(13);
+        else
+            builder.waitSeconds(1);
     }
 
     private void addPurplePixel(TrajectorySequenceBuilder builder, int randomization) {

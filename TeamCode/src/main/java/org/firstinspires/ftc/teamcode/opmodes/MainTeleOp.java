@@ -20,6 +20,7 @@ import static org.firstinspires.ftc.teamcode.opmodes.MainAuton.robot;
 import static java.lang.Math.atan2;
 import static java.lang.Math.hypot;
 import static java.lang.Math.max;
+import static java.lang.Math.pow;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
@@ -82,13 +83,13 @@ public final class MainTeleOp extends LinearOpMode {
                         x
                 );
             }
+            if (keyPressed(1, X) && robot.launcherClamp.isActivated()) robot.launcher.toggle();
+            if (keyPressed(1, A)) robot.launcherClamp.toggle();
 
             // Gamepad 2
-            double stick = gamepadEx2.getLeftY();
+            double stick = pow(gamepadEx2.getLeftY(), 3);
             if (stick != 0) robot.lift.setWithStick(stick);
             if (keyPressed(2, B)) robot.arm.toggleFlap();
-            if (keyPressed(2, X)) robot.launcher.toggle();
-            if (keyPressed(2, A)) robot.launcherClamp.toggle();
             if (robot.lift.getSetPoint() >= 0) {
                 if (keyPressed(2, Y)) robot.arm.toggleArm();
             }

@@ -15,7 +15,7 @@ public class MeepMeepTesting {
 
     static boolean isRed = true, isParkedMiddle = false;
 
-    static final boolean isTop = true;
+    static final boolean isTop = false;
 
     public static double
             X_START_BOTTOM = -37,
@@ -27,10 +27,10 @@ public class MeepMeepTesting {
             RIGHT = toRadians(0),
             BACKWARD = toRadians(270);
 
-    public static int propPlacement = 1;
+    public static int propPlacement = 2;
 
     public static double
-            BACKBOARD_X = 52;
+            BACKBOARD_X = 51;
 
     public static EditablePose
             // Bottom
@@ -38,14 +38,15 @@ public class MeepMeepTesting {
             botLeftSpikeRed = new EditablePose(-46, -40, FORWARD),
             botCenterSpikeRed = new EditablePose(-41, -32, FORWARD),
             botRightSpikeRed = new EditablePose(-37, -35.5, FORWARD),
-            botLeftPixelDodgeRed = new EditablePose(-36.5, -50, FORWARD),
-            botCenterPixelDodgeRed = new EditablePose (-53, -38, FORWARD),
-            botCenterPixelDodgeRed2 = new EditablePose(-53, -10, FORWARD),
-            botStageDoorRed = new EditablePose(-36.5, -7, RIGHT),
-            botTransitionRed = new EditablePose(40, -7, LEFT),
-            botLeftBackdropRed = new EditablePose(BACKBOARD_X - 2, -26, LEFT),
-            botCenterBackdropRed = new EditablePose(BACKBOARD_X + 2, -32, LEFT),
-            botRightBackdropRed = new EditablePose(BACKBOARD_X - 3.5, -51, LEFT),
+            botLeftPixelDodgeRed = new EditablePose(-34, -50, FORWARD),
+            botCenterPixelDodgeRed = new EditablePose (-55, -38, FORWARD),
+            botCenterPixelDodgeRed2 = new EditablePose(-55, -10, LEFT),
+            botStageDoorRed = new EditablePose(-34, -10, LEFT),
+            botTransitionRed = new EditablePose(35.5, -10, LEFT),
+            botTransitionRed2 = new EditablePose(35.5, -35.5, LEFT),
+            botLeftBackdropRed = new EditablePose(BACKBOARD_X, -27, LEFT),
+            botCenterBackdropRed = new EditablePose(BACKBOARD_X, -36, LEFT),
+            botRightBackdropRed = new EditablePose(BACKBOARD_X, -41, LEFT),
     // Top
     topLeftBackdropRed = new EditablePose(BACKBOARD_X, -27, LEFT),
             topCenterBackdropRed = new EditablePose(BACKBOARD_X, -36, LEFT),
@@ -85,11 +86,17 @@ public class MeepMeepTesting {
                 .followTrajectorySequence(drive ->
                         drive.trajectorySequenceBuilder(start.bySide().byAlliancePose2d())
                                 .lineToSplineHeading(prop.bySide().byAlliancePose2d())
-                                .back(11)
-                                .lineToSplineHeading(dodge.byAlliancePose2d())
-                                .lineToSplineHeading(botCenterPixelDodgeRed2.byAlliancePose2d())
-                                .splineToConstantHeading(botStageDoorRed.byAllianceVec(), RIGHT)
-                                .lineToSplineHeading(botTransitionRed.byAlliancePose2d())
+                                .turn(toRadians(isRed ? -90 : 90))
+                                .forward(3.5)
+
+                                .waitSeconds(0.5)
+                                .back(3.5)
+//                                .lineToSplineHeading(dodge.byAlliancePose2d()) // Left Center
+//                                .lineToSplineHeading(botCenterPixelDodgeRed2.byAlliancePose2d()) // Center
+//                                .lineToSplineHeading(botStageDoorRed.byAlliancePose2d()) // Center
+                                .lineTo(botStageDoorRed.byAllianceVec()) // Left and Right
+                                .lineToConstantHeading(botTransitionRed.byAllianceVec())
+                                .lineToSplineHeading(botTransitionRed2.byAlliancePose2d())
                                 .lineToSplineHeading(yellowPixel.byAlliancePose2d())
                                 .build()
                 );
