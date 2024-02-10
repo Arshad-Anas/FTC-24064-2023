@@ -97,6 +97,12 @@ public class MeepMeepTesting {
                                 .lineTo(botStageDoorRed.byAllianceVec()) // Left and Right
                                 .lineToConstantHeading(botTransitionRed.byAllianceVec())
                                 .lineToSplineHeading(botTransitionRed2.byAlliancePose2d())
+                                .back(11)
+                                .lineToSplineHeading(dodge.byAlliancePose2d())
+                                .lineToSplineHeading(new Pose2d(-58,-36,LEFT))
+                                .lineToSplineHeading(botCenterPixelDodgeRed2.byAlliancePose2d())
+                                .splineToConstantHeading(botStageDoorRed.byAllianceVec(), RIGHT)
+                                .lineToSplineHeading(botTransitionRed.byAlliancePose2d())
                                 .lineToSplineHeading(yellowPixel.byAlliancePose2d())
                                 .build()
                 );
