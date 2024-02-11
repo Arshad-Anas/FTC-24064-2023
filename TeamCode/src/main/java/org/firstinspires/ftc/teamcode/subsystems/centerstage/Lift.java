@@ -26,9 +26,9 @@ public final class Lift {
      * A PIDGains object being set to certain values (tweak these numbers!!)
      */
     public static PIDGains pidGains = new PIDGains(
-            0.00375,
-            0.001,
-            0.000165,
+            0.0025,
+            0.0001,
+            0.00007,
             Double.POSITIVE_INFINITY
     );
 
@@ -51,7 +51,7 @@ public final class Lift {
             AUTON_ROW_HEIGHT = 600,
             MAX_MOTOR_TICKS = 1620,
             ROW_HEIGHT = 600,
-            kG = 0.011065,
+            kG = 0.13,
             PERCENT_OVERSHOOT = 0,
             JOYSTICK_MULTIPLIER = 40;
 
@@ -65,7 +65,6 @@ public final class Lift {
     private State currentState = new State();
 
     private double targetTicks = 0;
-    private int targetRow = -1;
     private int setPoint = -1;
 
     /**
@@ -78,6 +77,9 @@ public final class Lift {
 
         leader.encoder.reset();
         follower.encoder.reset();
+
+        leader.setInverted(false);
+        follower.setInverted(false);
 
         motors = new MotorEx[]{leader, follower};
         batteryVoltageSensor = hardwareMap.voltageSensor.iterator().next();
@@ -108,7 +110,7 @@ public final class Lift {
      * Calls another run() method that calculates the motor output proportionally and doesn't compensate for power
      */
     public void run() {
-        currentState = new State(0.5 * (motors[0].encoder.getPosition() - motors[1].encoder.getPosition()));
+        currentState = new State(0.5 * (-motors[0].encoder.getPosition() + motors[1].encoder.getPosition()));
         if (lastKp != pidGains.kP) {
 //            pidGains.computeKd(feedforwardGains, PERCENT_OVERSHOOT);
             lastKp = pidGains.kP;
@@ -137,8 +139,7 @@ public final class Lift {
     }
 
     public void printTelemetry() {
-        mTelemetry.addData("Target position (row)", targetRow < 0 ? "Retracted" : "Row " + targetRow);
-        mTelemetry.addData("Target position (ticks)", targetRow * ROW_HEIGHT + BOTTOM_ROW_HEIGHT);
+        mTelemetry.addData("Target position (ticks)", targetTicks);
     }
 
     public void printNumericalTelemetry() {
