@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.opmodes.centerstage;
+package org.firstinspires.ftc.teamcode.opmodes.mechanismtests;
 
 import static com.arcrobotics.ftclib.gamepad.GamepadKeys.Button.Y;
 import static com.arcrobotics.ftclib.hardware.motors.Motor.GoBILDA.RPM_435;

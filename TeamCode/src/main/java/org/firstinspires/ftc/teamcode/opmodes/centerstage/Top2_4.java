@@ -13,6 +13,7 @@ import static org.firstinspires.ftc.teamcode.opmodes.centerstage.MainAuton.LEFT;
 import static org.firstinspires.ftc.teamcode.opmodes.centerstage.MainAuton.RIGHT;
 import static org.firstinspires.ftc.teamcode.opmodes.centerstage.MainAuton.autonEndPose;
 import static org.firstinspires.ftc.teamcode.opmodes.centerstage.MainAuton.gamepadEx1;
+import static org.firstinspires.ftc.teamcode.opmodes.centerstage.MainAuton.isRed;
 import static org.firstinspires.ftc.teamcode.opmodes.centerstage.MainAuton.keyPressed;
 import static org.firstinspires.ftc.teamcode.opmodes.centerstage.MainAuton.mTelemetry;
 import static org.firstinspires.ftc.teamcode.opmodes.centerstage.MainAuton.propSensor;
@@ -36,7 +37,6 @@ import org.firstinspires.ftc.teamcode.subsystems.centerstage.vision.PropSensor;
 @Autonomous(group = "24064 Main", preselectTeleOp = "MainTeleOp")
 public final class Top2_4 extends LinearOpMode {
     static boolean
-            isRed = false,
             isParkedMiddle = true,
             isUnderTruss = false;
 

@@ -8,7 +8,10 @@ import static com.arcrobotics.ftclib.gamepad.GamepadKeys.Button.RIGHT_BUMPER;
 import static com.arcrobotics.ftclib.gamepad.GamepadKeys.Button.X;
 
 import static org.firstinspires.ftc.teamcode.opmodes.centerstage.MainAuton.FORWARD;
+import static org.firstinspires.ftc.teamcode.opmodes.centerstage.MainAuton.autonEndPose;
 import static org.firstinspires.ftc.teamcode.opmodes.centerstage.MainAuton.gamepadEx1;
+import static org.firstinspires.ftc.teamcode.opmodes.centerstage.MainAuton.isRed;
+import static org.firstinspires.ftc.teamcode.opmodes.centerstage.MainAuton.isTop;
 import static org.firstinspires.ftc.teamcode.opmodes.centerstage.MainAuton.keyPressed;
 import static org.firstinspires.ftc.teamcode.opmodes.centerstage.MainAuton.mTelemetry;
 import static org.firstinspires.ftc.teamcode.opmodes.centerstage.MainAuton.propSensor;
@@ -31,10 +34,6 @@ import org.firstinspires.ftc.teamcode.subsystems.centerstage.vision.PropSensor;
 @Config
 @Autonomous(group = "24064 Main", preselectTeleOp = "MainTeleOp")
 public final class PurplePark extends LinearOpMode {
-    static boolean
-            isRed = false,
-            isTop = true;
-
     public static double
             BOTTOM_START_X = -37;
 
@@ -45,9 +44,7 @@ public final class PurplePark extends LinearOpMode {
             centerSpikeBottom = new EditablePose(-41, -32, FORWARD),
             rightSpikeBottom = new EditablePose(-37, -35.5, FORWARD);
 
-    private static EditablePose prop;
-
-    public static Pose2d autonEndPose = null;
+    private EditablePose prop;
 
     @Override
     public void runOpMode() throws InterruptedException {

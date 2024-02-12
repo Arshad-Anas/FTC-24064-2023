@@ -22,7 +22,6 @@ import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySe
 import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySequenceBuilder;
 import org.firstinspires.ftc.teamcode.subsystems.centerstage.Robot;
 import org.firstinspires.ftc.teamcode.subsystems.centerstage.vision.PropSensor;
-import org.openftc.easyopencv.OpenCvCamera;
 
 @Config
 @Autonomous(group = "24064 Main", preselectTeleOp = "MainTeleOp")
@@ -67,7 +66,7 @@ public final class MainAuton extends LinearOpMode {
             topRightBackdropRed = new EditablePose(BACKBOARD_X, -41, LEFT),
             topParkingRed = new EditablePose(47.5, -60, LEFT);
 
-    private static EditablePose prop, dodge, yellowPixel;
+    private EditablePose prop, dodge, yellowPixel;
 
     public static Pose2d autonEndPose = null;
 
