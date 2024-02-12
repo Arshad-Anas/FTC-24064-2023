@@ -4,6 +4,7 @@ import static com.arcrobotics.ftclib.hardware.motors.Motor.GoBILDA.RPM_117;
 import static org.firstinspires.ftc.teamcode.opmodes.MainAuton.mTelemetry;
 import static org.firstinspires.ftc.teamcode.subsystems.centerstage.Arm.TIME_DEPOSIT_1_PIXEL;
 import static org.firstinspires.ftc.teamcode.subsystems.utilities.SimpleServoPivot.getGoBildaServo;
+import static org.firstinspires.ftc.teamcode.subsystems.utilities.SimpleServoPivot.getReversedServo;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
@@ -25,16 +26,21 @@ public final class Robot {
     public final Arm arm;
     public final MotorEx intake;
     public final Lift lift;
-    public final MotorEx climber;
     public final SimpleServoPivot launcher;
     public final SimpleServoPivot launcherClamp;
+    public final SimpleServoPivot deployableRoller;
+    public final SimpleServoPivot wrist;
     private final BulkReader bulkReader;
 
     private static double
             ANGLE_DRONE_LOAD = 180,
             ANGLE_DRONE_LAUNCH = 0,
-            ANGLE_CLAMP = 90,
-            ANGLE_UNCLAMPED = 0;
+            ANGLE_DRONE_CLAMP = 90,
+            ANGLE_DRONE_UNCLAMPED = 0,
+            ANGLE_UNDEPLOYED = 90,
+            ANGLE_DEPLOYED = 0,
+            ANGLE_WRIST_UNDEPLOYED = 0,
+            ANGLE_WRIST_DEPLOYED = 15;
 
     /**
      * Constructor of Robot; Instantiates the classes with the hardwareMap
@@ -46,9 +52,22 @@ public final class Robot {
         arm = new Arm(hardwareMap);
         intake = new MotorEx(hardwareMap, "intake", Motor.GoBILDA.RPM_1620);
         lift = new Lift(hardwareMap);
-        climber = new MotorEx(hardwareMap, "climber", RPM_117);
         launcher = new SimpleServoPivot(ANGLE_DRONE_LOAD, ANGLE_DRONE_LAUNCH, getGoBildaServo(hardwareMap, "launcher"));
-        launcherClamp = new SimpleServoPivot(ANGLE_CLAMP, ANGLE_UNCLAMPED, getGoBildaServo(hardwareMap, "launcher-clamp"));
+        launcherClamp = new SimpleServoPivot(ANGLE_DRONE_CLAMP, ANGLE_DRONE_UNCLAMPED, getGoBildaServo(hardwareMap, "launcher-clamp"));
+
+        deployableRoller = new SimpleServoPivot(
+                ANGLE_UNDEPLOYED,
+                ANGLE_DEPLOYED,
+                getGoBildaServo(hardwareMap, "roller1"),
+                getReversedServo(getGoBildaServo(hardwareMap, "roller2"))
+        );
+
+        wrist = new SimpleServoPivot(
+                ANGLE_WRIST_UNDEPLOYED,
+                ANGLE_WRIST_DEPLOYED,
+                getGoBildaServo(hardwareMap, "wrist1"),
+                getReversedServo(getGoBildaServo(hardwareMap, "wrist2"))
+        );
     }
 
     public void readSensors() {
@@ -65,6 +84,8 @@ public final class Robot {
             }
         }
 
+        wrist.run();
+        deployableRoller.run();
         launcherClamp.run();
         launcher.run();
         lift.run();
