@@ -55,7 +55,7 @@ public class ThreeWheelTrackingLocalizer extends com.acmerobotics.roadrunner.loc
 
         leftEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "right front"));
         rightEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "intake"));
-        frontEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "left front"));
+        frontEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "right back"));
 
         // TODO: reverse any encoders using Encoder.setDirection(Encoder.Direction.REVERSE)
         leftEncoder.setDirection(Encoder.Direction.REVERSE);
