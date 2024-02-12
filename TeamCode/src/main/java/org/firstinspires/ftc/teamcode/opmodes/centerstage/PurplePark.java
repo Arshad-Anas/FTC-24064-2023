@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.opmodes;
+package org.firstinspires.ftc.teamcode.opmodes.centerstage;
 
 import static com.arcrobotics.ftclib.gamepad.GamepadKeys.Button.B;
 import static com.arcrobotics.ftclib.gamepad.GamepadKeys.Button.DPAD_DOWN;
@@ -7,6 +7,12 @@ import static com.arcrobotics.ftclib.gamepad.GamepadKeys.Button.LEFT_BUMPER;
 import static com.arcrobotics.ftclib.gamepad.GamepadKeys.Button.RIGHT_BUMPER;
 import static com.arcrobotics.ftclib.gamepad.GamepadKeys.Button.X;
 
+import static org.firstinspires.ftc.teamcode.opmodes.centerstage.MainAuton.FORWARD;
+import static org.firstinspires.ftc.teamcode.opmodes.centerstage.MainAuton.gamepadEx1;
+import static org.firstinspires.ftc.teamcode.opmodes.centerstage.MainAuton.keyPressed;
+import static org.firstinspires.ftc.teamcode.opmodes.centerstage.MainAuton.mTelemetry;
+import static org.firstinspires.ftc.teamcode.opmodes.centerstage.MainAuton.propSensor;
+import static org.firstinspires.ftc.teamcode.opmodes.centerstage.MainAuton.robot;
 import static java.lang.Math.toRadians;
 
 import com.acmerobotics.dashboard.config.Config;
@@ -14,7 +20,6 @@ import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
-import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
@@ -22,62 +27,30 @@ import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySe
 import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySequenceBuilder;
 import org.firstinspires.ftc.teamcode.subsystems.centerstage.Robot;
 import org.firstinspires.ftc.teamcode.subsystems.centerstage.vision.PropSensor;
-import org.openftc.easyopencv.OpenCvCamera;
 
 @Config
 @Autonomous(group = "24064 Main", preselectTeleOp = "MainTeleOp")
 public final class PurplePark extends LinearOpMode {
-    static Robot robot;
-    static PropSensor propSensor;
-    public static MultipleTelemetry mTelemetry;
-    public static GamepadEx gamepadEx1, gamepadEx2;
-
     static boolean
             isRed = false,
             isTop = true;
 
-    public static final double
-            LEFT = toRadians(180),
-            FORWARD = toRadians(90),
-            RIGHT = toRadians(0),
-            BACKWARD = toRadians(270);
-
     public static double
-            BOTTOM_START_X = -37,
-            BACKBOARD_X = 52;
+            BOTTOM_START_X = -37;
 
     public static EditablePose
             // Bottom
-            botStartRed = new EditablePose(BOTTOM_START_X, -61.788975, FORWARD),
-            botLeftSpikeRed = new EditablePose(-46, -40, FORWARD),
-            botCenterSpikeRed = new EditablePose(-41, -32, FORWARD),
-            botRightSpikeRed = new EditablePose(-37, -35.5, FORWARD),
-            botLeftPixelDodgeRed = new EditablePose(-34, -50, FORWARD),
-            botCenterPixelDodgeRed = new EditablePose (-55, -38, FORWARD),
-            botCenterPixelDodgeRed2 = new EditablePose(-55, -10, LEFT),
-            botStageDoorRed = new EditablePose(-34, -10, LEFT),
-            botTransitionRed = new EditablePose(35.5, -10, LEFT),
-            botTransitionRed2 = new EditablePose(35.5, -35.5, LEFT),
-            botLeftBackdropRed = new EditablePose(BACKBOARD_X, -27, LEFT),
-            botCenterBackdropRed = new EditablePose(BACKBOARD_X, -36, LEFT),
-            botRightBackdropRed = new EditablePose(BACKBOARD_X, -41, LEFT),
-    // Top
-    topLeftBackdropRed = new EditablePose(BACKBOARD_X, -27, LEFT),
-            topCenterBackdropRed = new EditablePose(BACKBOARD_X, -36, LEFT),
-            topRightBackdropRed = new EditablePose(BACKBOARD_X, -41, LEFT),
-            topParkingRed = new EditablePose(47.5, -60, LEFT);
+            startBottom = new EditablePose(BOTTOM_START_X, -61.788975, FORWARD),
+            leftSpikeBottom = new EditablePose(-46, -40, FORWARD),
+            centerSpikeBottom = new EditablePose(-41, -32, FORWARD),
+            rightSpikeBottom = new EditablePose(-37, -35.5, FORWARD);
 
-    private static EditablePose prop, dodge, yellowPixel;
+    private static EditablePose prop;
 
     public static Pose2d autonEndPose = null;
 
-    public static boolean keyPressed(int gamepad, GamepadKeys.Button button) {
-        return (gamepad == 2 ? gamepadEx2 : gamepadEx1).wasJustPressed(button);
-    }
-
     @Override
     public void runOpMode() throws InterruptedException {
-
         // Initialize multiple telemetry outputs:
         mTelemetry = new MultipleTelemetry(telemetry);
 
@@ -85,7 +58,6 @@ public final class PurplePark extends LinearOpMode {
         gamepadEx1 = new GamepadEx(gamepad1);
 
         robot = new Robot(hardwareMap);
-        //propSensor = new PropSensor(hardwareMap, isRed);
 
         // Get gamepad 1 button input and save "right" and "red" booleans for autonomous configuration:
         while (opModeInInit() && !(gamepadEx1.isDown(RIGHT_BUMPER) && gamepadEx1.isDown(LEFT_BUMPER))) {
@@ -146,23 +118,17 @@ public final class PurplePark extends LinearOpMode {
     private TrajectorySequence getTrajectory(int randomization) {
         switch (randomization) {
             case 0:
-                prop = isTop ? (isRed ? botRightSpikeRed : botLeftSpikeRed) : (isRed ? botLeftSpikeRed : botRightSpikeRed);
-                dodge = botLeftPixelDodgeRed;
-                yellowPixel = isTop ? (isRed ? topLeftBackdropRed : topRightBackdropRed) : (isRed ? botLeftBackdropRed : botRightBackdropRed);
+                prop = isTop ? (isRed ? rightSpikeBottom : leftSpikeBottom) : (isRed ? leftSpikeBottom : rightSpikeBottom);
                 break;
             case 1:
-                prop = botCenterSpikeRed;
-                dodge = botCenterPixelDodgeRed;
-                yellowPixel = isTop ? topCenterBackdropRed : botCenterBackdropRed;
+                prop = centerSpikeBottom;
                 break;
             case 2:
-                prop = isTop ? (isRed ? botLeftSpikeRed : botRightSpikeRed) : (isRed ? botRightSpikeRed : botLeftSpikeRed);
-                dodge = botLeftPixelDodgeRed;
-                yellowPixel = isTop ? (isRed ? topRightBackdropRed : topLeftBackdropRed) : (isRed ? botRightBackdropRed : botLeftBackdropRed);
+                prop = isTop ? (isRed ? leftSpikeBottom : rightSpikeBottom) : (isRed ? rightSpikeBottom : leftSpikeBottom);
                 break;
         }
 
-        Pose2d start = botStartRed.bySide().byAlliancePose2d();
+        Pose2d start = startBottom.bySide().byAlliancePose2d();
         robot.drivetrain.setPoseEstimate(start);
 
         TrajectorySequenceBuilder builder = robot.drivetrain.trajectorySequenceBuilder(start);

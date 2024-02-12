@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.teamcode.subsystems.centerstage;
 
-import static com.arcrobotics.ftclib.hardware.motors.Motor.GoBILDA.RPM_117;
-import static org.firstinspires.ftc.teamcode.opmodes.MainAuton.mTelemetry;
+import static org.firstinspires.ftc.teamcode.opmodes.centerstage.MainAuton.mTelemetry;
 import static org.firstinspires.ftc.teamcode.subsystems.centerstage.Arm.TIME_DEPOSIT_1_PIXEL;
 import static org.firstinspires.ftc.teamcode.subsystems.utilities.SimpleServoPivot.getGoBildaServo;
 import static org.firstinspires.ftc.teamcode.subsystems.utilities.SimpleServoPivot.getReversedServo;

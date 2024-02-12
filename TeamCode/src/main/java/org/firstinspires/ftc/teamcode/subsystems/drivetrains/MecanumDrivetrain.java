@@ -4,7 +4,7 @@ import static com.qualcomm.robotcore.hardware.DcMotor.RunMode.RUN_USING_ENCODER;
 import static com.qualcomm.robotcore.hardware.DcMotor.RunMode.RUN_WITHOUT_ENCODER;
 import static org.firstinspires.ftc.robotcore.external.navigation.AngleUnit.normalizeRadians;
 import static org.firstinspires.ftc.teamcode.control.gainmatrices.PIDGainsKt.computeKd;
-import static org.firstinspires.ftc.teamcode.opmodes.MainAuton.mTelemetry;
+import static org.firstinspires.ftc.teamcode.opmodes.centerstage.MainAuton.mTelemetry;
 import static org.firstinspires.ftc.teamcode.roadrunner.DriveConstants.MOTOR_VELO_PID;
 import static org.firstinspires.ftc.teamcode.roadrunner.DriveConstants.USE_VELO_PID;
 import static org.firstinspires.ftc.teamcode.subsystems.centerstage.Robot.maxVoltage;

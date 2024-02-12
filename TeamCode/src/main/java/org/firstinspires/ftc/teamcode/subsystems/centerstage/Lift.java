@@ -1,7 +1,7 @@
 package org.firstinspires.ftc.teamcode.subsystems.centerstage;
 
 import static com.arcrobotics.ftclib.hardware.motors.Motor.GoBILDA.RPM_435;
-import static org.firstinspires.ftc.teamcode.opmodes.MainAuton.mTelemetry;
+import static org.firstinspires.ftc.teamcode.opmodes.centerstage.MainAuton.mTelemetry;
 import static org.firstinspires.ftc.teamcode.subsystems.centerstage.Robot.maxVoltage;
 import static java.lang.Math.max;
 import static java.lang.Math.min;
@@ -10,7 +10,6 @@ import com.acmerobotics.dashboard.config.Config;
 import com.arcrobotics.ftclib.hardware.motors.MotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
-import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.control.controllers.PIDController;
 import org.firstinspires.ftc.teamcode.control.filters.FIRLowPassFilter;

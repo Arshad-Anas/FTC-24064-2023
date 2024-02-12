@@ -1,10 +1,10 @@
-package org.firstinspires.ftc.teamcode.opmodes.mechanismtests;
+package org.firstinspires.ftc.teamcode.opmodes.centerstage;
 
 import static com.arcrobotics.ftclib.gamepad.GamepadKeys.Button.Y;
 import static com.arcrobotics.ftclib.hardware.motors.Motor.GoBILDA.RPM_435;
-import static org.firstinspires.ftc.teamcode.opmodes.MainAuton.gamepadEx1;
-import static org.firstinspires.ftc.teamcode.opmodes.MainAuton.keyPressed;
-import static org.firstinspires.ftc.teamcode.opmodes.MainAuton.mTelemetry;
+import static org.firstinspires.ftc.teamcode.opmodes.centerstage.MainAuton.gamepadEx1;
+import static org.firstinspires.ftc.teamcode.opmodes.centerstage.MainAuton.keyPressed;
+import static org.firstinspires.ftc.teamcode.opmodes.centerstage.MainAuton.mTelemetry;
 import static org.firstinspires.ftc.teamcode.subsystems.centerstage.Arm.ANGLE_COLLECTING;
 import static org.firstinspires.ftc.teamcode.subsystems.centerstage.Arm.ANGLE_DEPOSITING;
 import static org.firstinspires.ftc.teamcode.subsystems.utilities.SimpleServoPivot.getGoBildaServo;
@@ -16,7 +16,6 @@ import com.arcrobotics.ftclib.hardware.motors.MotorEx;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-import org.firstinspires.ftc.teamcode.subsystems.centerstage.Lift;
 import org.firstinspires.ftc.teamcode.subsystems.utilities.BulkReader;
 import org.firstinspires.ftc.teamcode.subsystems.utilities.SimpleServoPivot;
 

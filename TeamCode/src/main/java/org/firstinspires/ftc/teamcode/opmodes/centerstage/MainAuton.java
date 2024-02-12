@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.opmodes;
+package org.firstinspires.ftc.teamcode.opmodes.centerstage;
 
 import static com.arcrobotics.ftclib.gamepad.GamepadKeys.Button.B;
 import static com.arcrobotics.ftclib.gamepad.GamepadKeys.Button.DPAD_DOWN;
@@ -32,7 +32,7 @@ public final class MainAuton extends LinearOpMode {
     public static MultipleTelemetry mTelemetry;
     public static GamepadEx gamepadEx1, gamepadEx2;
 
-    static boolean
+    public static boolean
             isRed = false,
             isTop = true;
 
