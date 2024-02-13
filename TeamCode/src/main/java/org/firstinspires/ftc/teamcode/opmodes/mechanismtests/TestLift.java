@@ -25,8 +25,9 @@ public final class TestLift extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         gamepadEx1 = new GamepadEx(gamepad1);
-        BulkReader bulkReader = new BulkReader(hardwareMap);
         mTelemetry = new MultipleTelemetry(telemetry);
+
+        BulkReader bulkReader = new BulkReader(hardwareMap);
 
         MotorEx leader = new MotorEx(hardwareMap, "leader", RPM_435);
         MotorEx follower = new MotorEx(hardwareMap, "follower", RPM_435);
@@ -43,7 +44,6 @@ public final class TestLift extends LinearOpMode {
         waitForStart();
 
         while (opModeIsActive()) {
-            // Read stuff
             bulkReader.bulkRead();
 
             gamepadEx1.readButtons();

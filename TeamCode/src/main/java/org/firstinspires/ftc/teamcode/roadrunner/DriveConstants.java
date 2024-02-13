@@ -1,9 +1,6 @@
 package org.firstinspires.ftc.teamcode.roadrunner;
 
-import static com.qualcomm.hardware.rev.RevHubOrientationOnRobot.LogoFacingDirection.LEFT;
 import static com.qualcomm.hardware.rev.RevHubOrientationOnRobot.LogoFacingDirection.RIGHT;
-import static com.qualcomm.hardware.rev.RevHubOrientationOnRobot.LogoFacingDirection.UP;
-import static com.qualcomm.hardware.rev.RevHubOrientationOnRobot.UsbFacingDirection.BACKWARD;
 import static com.qualcomm.hardware.rev.RevHubOrientationOnRobot.UsbFacingDirection.FORWARD;
 
 import com.acmerobotics.dashboard.config.Config;
@@ -82,6 +79,11 @@ public class DriveConstants {
     public static RevHubOrientationOnRobot.LogoFacingDirection LOGO_FACING_DIR = RIGHT;
     public static RevHubOrientationOnRobot.UsbFacingDirection USB_FACING_DIR = FORWARD;
 
+    /*
+     * Distance from camera lens to the middle of the drivetrain (inches)
+     */
+    public static double CAMERA_FORWARD_OFFSET = -6.5;
+    public static double CAMERA_LATERAL_OFFSET = 0.5;
 
     public static double encoderTicksToInches(double ticks) {
         return WHEEL_RADIUS * 2 * Math.PI * GEAR_RATIO * ticks / TICKS_PER_REV;

@@ -17,7 +17,7 @@ public class PropSensor {
     public PropSensor(HardwareMap hardwareMap, boolean isRed) {
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
 
-        WebcamName name = hardwareMap.get(WebcamName.class, "webcam");
+        WebcamName name = hardwareMap.get(WebcamName.class, "Webcam 1");
         camera = OpenCvCameraFactory.getInstance().createWebcam(name, cameraMonitorViewId);
   
         pipeline = new PropSensorPipeline(isRed);
@@ -49,13 +49,5 @@ public class PropSensor {
 
     public boolean getIsOpened() {
         return isOpened;
-    }
-
-    public void printTelemetry() {
-        mTelemetry.addData("Predicted prop position", propPosition());
-    }
-
-    public void printNumericalTelemetry() {
-        mTelemetry.addData("FPS", camera.getFps());
     }
 }

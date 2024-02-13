@@ -24,11 +24,9 @@ public final class TestIndicators extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
-
-        // Initialize gamepads:
         gamepadEx1 = new GamepadEx(gamepad1);
-        BulkReader bulkReader = new BulkReader(hardwareMap);
 
+        BulkReader bulkReader = new BulkReader(hardwareMap);
         LEDIndicator[] indicators = {
                 new LEDIndicator(hardwareMap, "led left green", "led left red"),
                 new LEDIndicator(hardwareMap, "led right green", "led right red")
@@ -37,7 +35,6 @@ public final class TestIndicators extends LinearOpMode {
         waitForStart();
 
         while (opModeIsActive()) {
-            // Read stuff
             bulkReader.bulkRead();
 
             gamepadEx1.readButtons();

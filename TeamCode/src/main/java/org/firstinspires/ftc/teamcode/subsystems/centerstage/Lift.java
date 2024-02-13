@@ -46,10 +46,8 @@ public final class Lift {
      * Remember to set these constants correctly! (in ticks)
      */
     public static double
-            BOTTOM_ROW_HEIGHT = 950,
             AUTON_ROW_HEIGHT = 600,
             MAX_MOTOR_TICKS = 1620,
-            ROW_HEIGHT = 600,
             kG = 0.13,
             PERCENT_OVERSHOOT = 0,
             JOYSTICK_MULTIPLIER = 40;

@@ -77,14 +77,11 @@ public final class MainAuton extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
 
-        // Initialize multiple telemetry outputs:
         mTelemetry = new MultipleTelemetry(telemetry);
 
-        // Initialize gamepad (ONLY FOR INIT, DON'T CALL DURING WHILE LOOP)
         gamepadEx1 = new GamepadEx(gamepad1);
 
         robot = new Robot(hardwareMap);
-        //propSensor = new PropSensor(hardwareMap, isRed);
 
         // Get gamepad 1 button input and save "right" and "red" booleans for autonomous configuration:
         while (opModeInInit() && !(gamepadEx1.isDown(RIGHT_BUMPER) && gamepadEx1.isDown(LEFT_BUMPER))) {
