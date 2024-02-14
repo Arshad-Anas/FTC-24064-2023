@@ -20,7 +20,7 @@ import java.util.List;
 
 @Config
 public class AprilTagLocalization {
-    public static double
+    public static final double
             fx = 578.272,
             fy = 578.272,
             cx = 402.145,
@@ -56,13 +56,10 @@ public class AprilTagLocalization {
         Pose2d estimate = null;
         for (AprilTagDetection detection : getRawDetections()) {
             if (detection.metadata != null) {
-                // Is tag one of the large tags on the audience side?
                 boolean isLargeTag = detection.metadata.id >= 7;
                 int multiplier = isLargeTag ? 1 : -1;
-                // Index 1: x, index 2: y
                 VectorF tagVec = detection.metadata.fieldPosition;
                 estimate = new Pose2d(
-                        // See attached picture
                         tagVec.get(0) + (detection.ftcPose.y - DriveConstants.CAMERA_FORWARD_OFFSET /* For us: around -6 */) * multiplier,
                         tagVec.get(1) + (detection.ftcPose.x - DriveConstants.CAMERA_LATERAL_OFFSET /* Around 1 (?) */) * -multiplier,
                         Math.toRadians((isLargeTag ? 180 : 0) - detection.ftcPose.yaw)

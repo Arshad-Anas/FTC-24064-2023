@@ -38,14 +38,11 @@ public final class MainTeleOp extends LinearOpMode {
      */
     @Override
     public void runOpMode() throws InterruptedException {
-        // Initialize telemetry
         mTelemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
 
-        // Initialize gamepads
         gamepadEx1 = new GamepadEx(gamepad1);
         gamepadEx2 = new GamepadEx(gamepad2);
 
-        // Instantiate robot
         robot = new Robot(hardwareMap);
 
         if (autonEndPose != null)
@@ -53,7 +50,6 @@ public final class MainTeleOp extends LinearOpMode {
 
         waitForStart();
 
-        // Control loop:
         while (opModeIsActive()) {
             // Read sensors + gamepads:
             robot.readSensors();
@@ -69,7 +65,6 @@ public final class MainTeleOp extends LinearOpMode {
                 x = 0;
             }
 
-            // Control drivetrain with control stick inputs:
             if (gamepadEx1.isDown(RIGHT_BUMPER)) {
                 robot.drivetrain.run(
                         gamepadEx1.getLeftX() * 0.2,

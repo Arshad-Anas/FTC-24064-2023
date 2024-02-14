@@ -31,6 +31,8 @@ public final class MainAuton extends LinearOpMode {
     public static MultipleTelemetry mTelemetry;
     public static GamepadEx gamepadEx1, gamepadEx2;
 
+    public static Pose2d autonEndPose = null;
+
     public static boolean
             isRed = false,
             isTop = true;
@@ -67,8 +69,6 @@ public final class MainAuton extends LinearOpMode {
             topParkingRed = new EditablePose(47.5, -60, LEFT);
 
     private EditablePose prop, dodge, yellowPixel;
-
-    public static Pose2d autonEndPose = null;
 
     public static boolean keyPressed(int gamepad, GamepadKeys.Button button) {
         return (gamepad == 2 ? gamepadEx2 : gamepadEx1).wasJustPressed(button);
