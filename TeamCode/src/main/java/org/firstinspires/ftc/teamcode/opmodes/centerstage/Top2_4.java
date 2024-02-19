@@ -2,6 +2,10 @@ package org.firstinspires.ftc.teamcode.opmodes.centerstage;
 
 import static com.arcrobotics.ftclib.gamepad.GamepadKeys.Button.A;
 import static com.arcrobotics.ftclib.gamepad.GamepadKeys.Button.B;
+import static com.arcrobotics.ftclib.gamepad.GamepadKeys.Button.DPAD_DOWN;
+import static com.arcrobotics.ftclib.gamepad.GamepadKeys.Button.DPAD_LEFT;
+import static com.arcrobotics.ftclib.gamepad.GamepadKeys.Button.DPAD_RIGHT;
+import static com.arcrobotics.ftclib.gamepad.GamepadKeys.Button.DPAD_UP;
 import static com.arcrobotics.ftclib.gamepad.GamepadKeys.Button.LEFT_BUMPER;
 import static com.arcrobotics.ftclib.gamepad.GamepadKeys.Button.RIGHT_BUMPER;
 import static com.arcrobotics.ftclib.gamepad.GamepadKeys.Button.X;
@@ -11,6 +15,7 @@ import static org.firstinspires.ftc.teamcode.opmodes.centerstage.MainAuton.BACKW
 import static org.firstinspires.ftc.teamcode.opmodes.centerstage.MainAuton.FORWARD;
 import static org.firstinspires.ftc.teamcode.opmodes.centerstage.MainAuton.LEFT;
 import static org.firstinspires.ftc.teamcode.opmodes.centerstage.MainAuton.RIGHT;
+import static org.firstinspires.ftc.teamcode.opmodes.centerstage.MainAuton.aprilTag;
 import static org.firstinspires.ftc.teamcode.opmodes.centerstage.MainAuton.autonEndPose;
 import static org.firstinspires.ftc.teamcode.opmodes.centerstage.MainAuton.gamepadEx1;
 import static org.firstinspires.ftc.teamcode.opmodes.centerstage.MainAuton.isRed;
@@ -31,26 +36,35 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySequence;
 import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySequenceBuilder;
 import org.firstinspires.ftc.teamcode.subsystems.centerstage.Robot;
+import org.firstinspires.ftc.teamcode.subsystems.centerstage.vision.AprilTagLocalization;
 import org.firstinspires.ftc.teamcode.subsystems.centerstage.vision.PropSensor;
+import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
+
+import java.util.List;
 
 @Config
 @Autonomous(group = "24064 Main", preselectTeleOp = "MainTeleOp")
 public final class Top2_4 extends LinearOpMode {
     static boolean
             isParkedMiddle = true,
-            isUnderTruss = false;
+            isUnderTruss = false,
+            doAprilTag = false;
 
     public static double
-            START_X = 13.5;
+            START_X = 12;
 
     public static double
-            BACKBOARD_X = 50;
+            BACKBOARD_X = 52.15,
+            ANGLE_1 = 38.6,
+            ANGLE_2 = 33.45,
+            ANGLE_3 = 24.5,
+            ANGLE_4 = 16;
 
     public static EditablePose
             start = new EditablePose(START_X, -61.788975, BACKWARD),
             spikeLeft = new EditablePose((START_X - 6), -34.5, toRadians(135)),
-            spikeCenter = new EditablePose((START_X + 6), -30, toRadians(120)),
-            spikeRight = new EditablePose(START_X + 15, -40, toRadians(135)),
+            spikeCenter = new EditablePose((START_X + 6), -26, toRadians(315)),
+            spikeRight = new EditablePose(START_X + 14, -34.5, toRadians(315)),
             backboardLeft = new EditablePose(BACKBOARD_X, -30.5, LEFT),
             backboardCenter = new EditablePose(BACKBOARD_X, -34.5, LEFT),
             backboardRight = new EditablePose(BACKBOARD_X, -41, LEFT),
@@ -60,8 +74,8 @@ public final class Top2_4 extends LinearOpMode {
             innerTruss = new EditablePose(-8, -34.5, LEFT),
             outerTruss = new EditablePose(23.5, -58, LEFT),
             outerTruss2 = new EditablePose(-23.5, -58, LEFT),
-            pixelStack1 = new EditablePose(-58, -12, LEFT),
-            pixelStack3 = new EditablePose(-58, -35, LEFT);
+            pixelStack1 = new EditablePose(-56, -12, LEFT),
+            pixelStack3 = new EditablePose(-56, -35, LEFT);
 
     private EditablePose mainSpike, pixelStack, whiteScoring, yellowScoring, transition;
 
@@ -82,10 +96,16 @@ public final class Top2_4 extends LinearOpMode {
             if (keyPressed(1, X)) isRed = false;
             if (keyPressed(1, A)) isParkedMiddle = true;
             if (keyPressed(1, Y)) isParkedMiddle = false;
-            mTelemetry.addLine("| B - RED | X - BLUE |");
-            mTelemetry.addLine("| A - PARK MIDDLE | Y - PARK CORNER");
+            if (keyPressed(1, DPAD_UP)) isUnderTruss = true;
+            if (keyPressed(1, DPAD_DOWN)) isUnderTruss = false;
+            if (keyPressed(1, DPAD_RIGHT)) doAprilTag = false;
+            if (keyPressed(1, DPAD_LEFT)) doAprilTag = true;
+            mTelemetry.addLine("B - RED | X - BLUE |");
+            mTelemetry.addLine("A - PARK MIDDLE | Y - PARK CORNER");
+            mTelemetry.addLine("D-pad up - UNDER TRUSS | D-pad down - UNDER DOOR");
+            mTelemetry.addLine("D-pad right - NO APRIL TAG | D-pad left - APRIL TAG");
             mTelemetry.addLine();
-            mTelemetry.addLine("Selected " + (isRed ? "RED" : "BLUE") + " " + (isParkedMiddle ? "PARK MIDDLE" : "PARK CORNER"));
+            mTelemetry.addLine("Selected " + (isRed ? "RED" : "BLUE") + " " + (isParkedMiddle ? "PARK MIDDLE" : "PARK CORNER") + " " + (isUnderTruss ? "UNDER TRUSS" : "UNDER DOOR") + " " + (doAprilTag ? "APRIL TAG" : "NO APRIL TAG"));
             mTelemetry.addLine("Press both shoulder buttons to confirm!");
             mTelemetry.update();
         }
@@ -96,7 +116,7 @@ public final class Top2_4 extends LinearOpMode {
         propSensor = new PropSensor(hardwareMap, isRed);
 
         while (!propSensor.getIsOpened()) {
-            mTelemetry.addLine("Confirmed " + (isRed ? "RED" : "BLUE") + " " + (isParkedMiddle ? "PARK MIDDLE" : "PARK CORNER"));
+            mTelemetry.addLine("Confirmed " + (isRed ? "RED" : "BLUE") + " " + (isParkedMiddle ? "PARK MIDDLE" : "PARK CORNER") + " " + (isUnderTruss ? "UNDER TRUSS" : "UNDER DOOR") + " " + (doAprilTag ? "APRIL TAG" : "NO APRIL TAG"));
             mTelemetry.addLine("Camera is not open");
             mTelemetry.update();
         }
@@ -115,6 +135,9 @@ public final class Top2_4 extends LinearOpMode {
             mTelemetry.update();
         });
 
+        aprilTag = new AprilTagLocalization(hardwareMap);
+        Pose2d aprilTagPose = null;
+
         robot.drivetrain.followTrajectorySequenceAsync(trajectory);
 
         while (opModeIsActive()) {
@@ -122,7 +145,19 @@ public final class Top2_4 extends LinearOpMode {
                 return;
             }
 
+            if (doAprilTag) {
+                aprilTagPose = aprilTag.getPoseEstimate();
+                if (aprilTagPose != null) {
+                    robot.drivetrain.getLocalizer().setPoseEstimate(aprilTagPose);
+                }
+            }
+
             robot.readSensors();
+
+            if (doAprilTag) {
+                mTelemetry.addData("April Tag pose", aprilTagPose);
+                mTelemetry.update();
+            }
 
             robot.drivetrain.update();
             robot.run();
@@ -138,21 +173,21 @@ public final class Top2_4 extends LinearOpMode {
                 yellowScoring = isRed ? backboardLeft : backboardRight;
                 transition = isUnderTruss ? outerTruss : stageDoor;
                 pixelStack = isUnderTruss ? pixelStack3 : pixelStack1;
-                whiteScoring = isRed ? backboardRight : backboardLeft;
+                whiteScoring = backboardCenter;
                 break;
             case 1:
                 mainSpike = spikeCenter;
                 yellowScoring = backboardCenter;
-                transition = innerTruss;
-                pixelStack = pixelStack3;
-                whiteScoring = backboardRight;
+                transition = isUnderTruss ? innerTruss : stageDoor;
+                pixelStack = isUnderTruss ? pixelStack3 : pixelStack1;
+                whiteScoring = isRed ? backboardLeft : backboardRight;
                 break;
             case 2:
                 mainSpike = isRed ? spikeRight : spikeLeft;
                 yellowScoring = isRed ? backboardRight : backboardLeft;
                 transition = isUnderTruss ? outerTruss : stageDoor;
                 pixelStack = isUnderTruss ? pixelStack3 : pixelStack1;
-                whiteScoring = isRed ? backboardLeft : backboardRight;
+                whiteScoring = backboardCenter;
                 break;
         }
 
@@ -160,11 +195,11 @@ public final class Top2_4 extends LinearOpMode {
         robot.drivetrain.setPoseEstimate(startPose);
         TrajectorySequenceBuilder builder = robot.drivetrain.trajectorySequenceBuilder(startPose);
 
-        scorePurplePixel(builder);
+        scorePurplePixel(builder, randomization);
         scoreYellowPixel(builder);
-        getWhitePixels(builder, randomization);
+        getWhitePixels(builder, randomization, 1);
         scoreWhitePixels(builder, randomization);
-        getWhitePixels(builder, randomization);
+        getWhitePixels(builder, randomization, 2);
         scoreWhitePixels(builder, randomization);
 
         builder.lineToSplineHeading((isParkedMiddle ? parkingLeft : parkingRight).byAlliancePose2d());
@@ -172,24 +207,31 @@ public final class Top2_4 extends LinearOpMode {
         return builder.build();
     }
 
-    private void scorePurplePixel(TrajectorySequenceBuilder builder) {
-        builder.setTangent(isRed ? FORWARD : BACKWARD)
-                .splineTo(mainSpike.byAllianceVec(), mainSpike.heading);
-        //.addTemporalMarker(() -> robot.purplePixel.setActivated(true));
+    private void scorePurplePixel(TrajectorySequenceBuilder builder, int randomization) {
+
+        if (isBackboardSide(randomization) || randomization == 1) {
+            builder.lineToSplineHeading(mainSpike.byAlliancePose2d());
+        } else {
+            builder.setTangent(isRed ? FORWARD : BACKWARD)
+                    .splineTo(mainSpike.byAllianceVec(), mainSpike.byAlliance().heading);
+        }
+
+        builder.addTemporalMarker(() -> robot.purplePixel.setActivated(true));
     }
 
     private void scoreYellowPixel(TrajectorySequenceBuilder builder) {
         builder.lineToSplineHeading(yellowScoring.byAlliancePose2d());
-        score(builder);
+        score(builder, false);
     }
 
-    private void getWhitePixels(TrajectorySequenceBuilder builder, int randomization) {
+    private void getWhitePixels(TrajectorySequenceBuilder builder, int randomization, int cycle) {
         builder.setTangent(LEFT)
                 .splineTo(transition.byAllianceVec(), transition.heading);
 
         if (isUnderTruss && randomization != 1) builder.splineTo(outerTruss2.byAllianceVec(), outerTruss2.heading);
 
         builder.splineTo(pixelStack.byAllianceVec(), pixelStack.heading);
+        intakePixels(builder, cycle);
     }
 
     private void scoreWhitePixels(TrajectorySequenceBuilder builder, int randomization) {
@@ -200,19 +242,44 @@ public final class Top2_4 extends LinearOpMode {
         builder.splineTo(transition.byAllianceVec(), RIGHT)
                 .splineTo(whiteScoring.byAllianceVec(), RIGHT);
 
-        score(builder);
+        score(builder, true);
     }
 
-    private void score(TrajectorySequenceBuilder builder) {
-        builder.addTemporalMarker(() -> robot.lift.setToAutonHeight(0))
-                .waitSeconds(1)
-                .addTemporalMarker(() -> robot.arm.setArm(true))
-                .UNSTABLE_addTemporalMarkerOffset(1, () -> robot.arm.setFlap(false))
-                .waitSeconds(2)
-                .addTemporalMarker(() -> robot.lift.setToAutonHeight(400))
-                .waitSeconds(2)
-                .addTemporalMarker(() -> robot.arm.setArm(false))
-                .UNSTABLE_addTemporalMarkerOffset(1, () -> robot.lift.retract());
+    private void intakePixels(TrajectorySequenceBuilder builder, int cycle) {
+        builder.addTemporalMarker(() -> {
+            robot.rollers.setDeployable(cycle == 1 ? ANGLE_1 : ANGLE_3);
+            robot.rollers.intake(-1);
+        })
+                .waitSeconds(0.8)
+                .addTemporalMarker(() -> robot.rollers.setDeployable(cycle == 1 ? ANGLE_2 : ANGLE_4))
+                .waitSeconds(0.8)
+                .UNSTABLE_addTemporalMarkerOffset(1, () -> {
+                    robot.rollers.intake(1);
+                    robot.rollers.setDeployable(0);
+                })
+                .UNSTABLE_addTemporalMarkerOffset(2, () -> robot.rollers.intake(0));
+    }
+
+    private void score(TrajectorySequenceBuilder builder, boolean isWhite) {
+        builder.addTemporalMarker(() -> robot.lift.setToAutonHeight(isWhite ? 300 : 0))
+                .waitSeconds(0.5)
+                .addTemporalMarker(() -> {
+                    robot.arm.setArm(true);
+                    robot.wrist.setActivated(true);
+                })
+                .UNSTABLE_addTemporalMarkerOffset(0.15, () -> robot.arm.setFlap(false))
+                .waitSeconds(0.8)
+                .addTemporalMarker(() -> robot.lift.setToAutonHeight(isWhite ? 700 : 400))
+                .waitSeconds(0.5)
+                .addTemporalMarker(() -> {
+                    robot.arm.setArm(false);
+                    robot.wrist.setActivated(false);
+                })
+                .UNSTABLE_addTemporalMarkerOffset(0.3, () -> robot.lift.retract());
+    }
+
+    private boolean isBackboardSide(int randomization) {
+        return isRed && randomization == 2 || !isRed && randomization == 0;
     }
 
     private static class EditablePose {

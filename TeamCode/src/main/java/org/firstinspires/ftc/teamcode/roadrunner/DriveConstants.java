@@ -36,7 +36,7 @@ public class DriveConstants {
      * from DriveVelocityPIDTuner.
      */
     public static final boolean USE_VELO_PID = false;
-    public static PIDFCoefficients MOTOR_VELO_PID = new PIDFCoefficients(0.0125, 0, 0,
+    public static PIDFCoefficients MOTOR_VELO_PID = new PIDFCoefficients(0.01, 0, 0,
             getMotorVelocityF(MAX_RPM / 60 * TICKS_PER_REV));
 
     /*
@@ -48,8 +48,8 @@ public class DriveConstants {
      * convenience. Make sure to exclude any gear ratio included in MOTOR_CONFIG from GEAR_RATIO.
      */
     public static double WHEEL_RADIUS = 1.88976; // in
-    public static double GEAR_RATIO = 1; // output (wheel) speed / input (motor) speed
-    public static double TRACK_WIDTH = 15.83; // in
+    public static double GEAR_RATIO = 1.5; // output (wheel) speed / input (motor) speed
+    public static double TRACK_WIDTH = 16.08; // in
 
     /*
      * These are the feedforward parameters used to model the drive motor behavior. If you are using
@@ -57,8 +57,8 @@ public class DriveConstants {
      * motor encoders or have elected not to use them for velocity control, these values should be
      * empirically tuned.
      */
-    public static double kV = 0.01805;
-    public static double kA = 0.003;
+    public static double kV = 0.012;
+    public static double kA = 0.0033;
     public static double kStatic = 0.05;
 
     /*
@@ -68,10 +68,15 @@ public class DriveConstants {
      * small and gradually increase them later after everything is working. All distance units are
      * inches.
      */
-    public static double MAX_VEL = 44.00108751604634;
-    public static double MAX_ACCEL = 54.00108751604634;
-    public static double MAX_ANG_VEL = Math.toRadians(166.3619565179156);
-    public static double MAX_ANG_ACCEL = Math.toRadians(60);
+    public static double MAX_VEL = 66.10439359219907;
+    public static double MAX_ACCEL = 82.63049199024884;
+    public static double MAX_ANG_VEL = 5;
+    public static double MAX_ANG_ACCEL = Math.toRadians(180);
+
+//    public static double MAX_VEL = 10;
+//    public static double MAX_ACCEL = 20;
+//    public static double MAX_ANG_VEL = Math.toRadians(166);
+//    public static double MAX_ANG_ACCEL = Math.toRadians(60);
 
     /*
      * Adjust the orientations here to match your robot. See the FTC SDK documentation for details.
@@ -82,8 +87,8 @@ public class DriveConstants {
     /*
      * Distance from camera lens to the middle of the drivetrain (inches)
      */
-    public static double CAMERA_FORWARD_OFFSET = -6.5;
-    public static double CAMERA_LATERAL_OFFSET = 0.5;
+    public static double CAMERA_FORWARD_OFFSET = -7.5;
+    public static double CAMERA_LATERAL_OFFSET = 0;
 
     public static double encoderTicksToInches(double ticks) {
         return WHEEL_RADIUS * 2 * Math.PI * GEAR_RATIO * ticks / TICKS_PER_REV;

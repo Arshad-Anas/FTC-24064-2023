@@ -21,6 +21,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySequence;
 import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySequenceBuilder;
 import org.firstinspires.ftc.teamcode.subsystems.centerstage.Robot;
+import org.firstinspires.ftc.teamcode.subsystems.centerstage.vision.AprilTagLocalization;
 import org.firstinspires.ftc.teamcode.subsystems.centerstage.vision.PropSensor;
 
 @Config
@@ -28,6 +29,7 @@ import org.firstinspires.ftc.teamcode.subsystems.centerstage.vision.PropSensor;
 public final class MainAuton extends LinearOpMode {
     static Robot robot;
     static PropSensor propSensor;
+    static AprilTagLocalization aprilTag;
     public static MultipleTelemetry mTelemetry;
     public static GamepadEx gamepadEx1, gamepadEx2;
 
@@ -206,8 +208,8 @@ public final class MainAuton extends LinearOpMode {
 
         if (!isTop) {
             if (isAudienceSide(randomization) || isCenter(randomization))
-                builder.addTemporalMarker(() -> robot.intake.set(0.30))
-                        .UNSTABLE_addTemporalMarkerOffset(0.2, () -> robot.intake.set(0))
+                builder.addTemporalMarker(() -> robot.rollers.intake(0.30))
+                        .UNSTABLE_addTemporalMarkerOffset(0.2, () -> robot.rollers.intake(0))
                         .back(11)
                         .lineToSplineHeading(dodge.byAlliancePose2d());
 
@@ -217,8 +219,8 @@ public final class MainAuton extends LinearOpMode {
             if (isBackboardSide(randomization))
                 builder.turn(toRadians(isRed ? -90 : 90))
                         .forward(3.5)
-                        .addTemporalMarker(() -> robot.intake.set(0.30))
-                        .UNSTABLE_addTemporalMarkerOffset(0.2, () -> robot.intake.set(0))
+                        .addTemporalMarker(() -> robot.rollers.intake(0.30))
+                        .UNSTABLE_addTemporalMarkerOffset(0.2, () -> robot.rollers.intake(0))
                         .waitSeconds(0.5)
                         .back(8)
                         .turn(toRadians(180));
@@ -226,12 +228,12 @@ public final class MainAuton extends LinearOpMode {
             if (isAudienceSide(randomization))
                 builder.turn(toRadians(isRed ? 90 : -90))
                         .forward(3.5)
-                        .addTemporalMarker(() -> robot.intake.set(0.30))
-                        .UNSTABLE_addTemporalMarkerOffset(0.2, () -> robot.intake.set(0))
+                        .addTemporalMarker(() -> robot.rollers.intake(0.30))
+                        .UNSTABLE_addTemporalMarkerOffset(0.2, () -> robot.rollers.intake(0))
                         .waitSeconds(0.5);
             else
-                builder.addTemporalMarker(() -> robot.intake.set(0.30))
-                        .UNSTABLE_addTemporalMarkerOffset(0.2, () -> robot.intake.set(0))
+                builder.addTemporalMarker(() -> robot.rollers.intake(0.30))
+                        .UNSTABLE_addTemporalMarkerOffset(0.2, () -> robot.rollers.intake(0))
                         .back(11);
         }
     }
@@ -240,12 +242,10 @@ public final class MainAuton extends LinearOpMode {
         return randomization == 1;
     }
 
-    // Red-centric
     private boolean isAudienceSide(int randomization) {
         return isRed && randomization == 0 || !isRed && randomization == 2;
     }
 
-    // Red-centric
     private boolean isBackboardSide(int randomization) {
         return isRed && randomization == 2 || !isRed && randomization == 0;
     }

@@ -56,12 +56,13 @@ import java.util.List;
  */
 @Config
 public class MecanumDrivetrain extends MecanumDrive {
-    public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(8, 0, 0);
-    public static PIDCoefficients HEADING_PID = new PIDCoefficients(8.1, 0, 0);
+
+    public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(7.5, 0.4, 0.8);
+    public static PIDCoefficients HEADING_PID = new PIDCoefficients(8.5, .15, .75);
     private double lastTranslationKp = TRANSLATIONAL_PID.kP;
     private double lastHeadingKp = HEADING_PID.kP;
 
-    public static double LATERAL_MULTIPLIER = 0.9836065574;
+    public static double LATERAL_MULTIPLIER = 0.97130762391;
 
     public static double VX_WEIGHT = 1;
     public static double VY_WEIGHT = 1;

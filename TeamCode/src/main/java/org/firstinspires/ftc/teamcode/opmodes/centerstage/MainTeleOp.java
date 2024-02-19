@@ -48,6 +48,8 @@ public final class MainTeleOp extends LinearOpMode {
         if (autonEndPose != null)
             robot.drivetrain.setCurrentHeading(autonEndPose.getHeading() - (isRed ? FORWARD : BACKWARD));
 
+        robot.purplePixel.setActivated(true);
+
         waitForStart();
 
         while (opModeIsActive()) {
@@ -80,11 +82,11 @@ public final class MainTeleOp extends LinearOpMode {
             }
             if (keyPressed(1, X) && robot.launcherClamp.isActivated()) robot.launcher.toggle();
             if (keyPressed(1, A)) robot.launcherClamp.toggle();
-            if (keyPressed(1, B)) robot.deployableRoller.toggle();
+//            if (keyPressed(1, B)) robot.deployableRoller.toggle();
 
             // Gamepad 2
-            double stick = pow(gamepadEx2.getLeftY(), 3);
-            if (stick != 0) robot.lift.setWithStick(stick);
+            double leftStick = pow(gamepadEx2.getLeftY(), 3);
+            if (leftStick != 0) robot.lift.setWithStick(leftStick);
             if (keyPressed(2, B)) robot.arm.toggleFlap();
             if (robot.lift.getSetPoint() >= 0) {
                 if (keyPressed(2, Y)) {
@@ -97,7 +99,9 @@ public final class MainTeleOp extends LinearOpMode {
             // The intake power takes precedent to the first player
             double trigger1 = gamepadEx1.getTrigger(RIGHT_TRIGGER) - gamepadEx1.getTrigger(LEFT_TRIGGER);
             double trigger2 = gamepadEx2.getTrigger(RIGHT_TRIGGER) - gamepadEx2.getTrigger(LEFT_TRIGGER);
-            robot.intake.set(trigger1 != 0 ? trigger1 : trigger2);
+            double intake = trigger1 != 0 ? trigger1 : trigger2;
+            robot.rollers.intake(intake);
+            robot.rollers.setDeployableWithTrigger(intake);
 
             robot.drivetrain.update();
             robot.run();

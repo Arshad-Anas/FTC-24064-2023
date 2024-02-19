@@ -34,8 +34,8 @@ public class ThreeWheelTrackingLocalizer extends com.acmerobotics.roadrunner.loc
     public static double WHEEL_RADIUS = 0.748031; // in
     public static double GEAR_RATIO = 1; // output (wheel) speed / input (encoder) speed
 
-    public static double LATERAL_DISTANCE = 12.7617894835597; // in; distance between the left and right wheels
-    public static double FORWARD_OFFSET = -6.45; // in; offset of the lateral wheel
+    public static double LATERAL_DISTANCE = 12.701; // in; distance between the left and right wheels
+    public static double FORWARD_OFFSET = -6.75; // in; offset of the lateral wheel
 
     public static double X_MULTIPLIER = 0.989726594979, Y_MULTIPLIER = 0.983250556137;
 
@@ -53,9 +53,9 @@ public class ThreeWheelTrackingLocalizer extends com.acmerobotics.roadrunner.loc
         lastEncPositions = lastTrackingEncPositions;
         lastEncVels = lastTrackingEncVels;
 
-        leftEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "right front"));
+        leftEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "left front"));
         rightEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "intake"));
-        frontEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "right back"));
+        frontEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "left back"));
 
         // TODO: reverse any encoders using Encoder.setDirection(Encoder.Direction.REVERSE)
         leftEncoder.setDirection(Encoder.Direction.REVERSE);

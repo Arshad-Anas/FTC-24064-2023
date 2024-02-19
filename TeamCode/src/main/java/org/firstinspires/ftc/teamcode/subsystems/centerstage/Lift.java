@@ -25,9 +25,9 @@ public final class Lift {
      * A PIDGains object being set to certain values (tweak these numbers!!)
      */
     public static PIDGains pidGains = new PIDGains(
-            0.0025,
+            0.005,
+            0.002,
             0.0001,
-            0.00007,
             Double.POSITIVE_INFINITY
     );
 
@@ -47,8 +47,9 @@ public final class Lift {
      */
     public static double
             AUTON_ROW_HEIGHT = 600,
-            MAX_MOTOR_TICKS = 1620,
-            kG = 0.13,
+            MAX_MOTOR_TICKS = 2350,
+            MIN_MOTOR_TICKS = -10,
+            kG = 0.011065,
             PERCENT_OVERSHOOT = 0,
             JOYSTICK_MULTIPLIER = 40;
 
@@ -83,8 +84,8 @@ public final class Lift {
     }
 
     public void setWithStick(double stick) {
-        targetTicks = min(MAX_MOTOR_TICKS, max(0, targetTicks + stick * JOYSTICK_MULTIPLIER));
-        setPoint = targetTicks == 0 ? -1 : 0;
+        targetTicks = min(MAX_MOTOR_TICKS, max(MIN_MOTOR_TICKS, targetTicks + stick * JOYSTICK_MULTIPLIER));
+        setPoint = targetTicks == MIN_MOTOR_TICKS ? -1 : 0;
         controller.setTarget(new State(targetTicks));
     }
 
@@ -99,7 +100,7 @@ public final class Lift {
 
     public void retract() {
         setPoint = -1;
-        controller.setTarget(new State(0));
+        controller.setTarget(new State(MIN_MOTOR_TICKS));
     }
 
     /**

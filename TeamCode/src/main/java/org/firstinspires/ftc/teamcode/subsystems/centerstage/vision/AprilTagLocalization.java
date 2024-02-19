@@ -1,7 +1,5 @@
 package org.firstinspires.ftc.teamcode.subsystems.centerstage.vision;
 
-import android.util.Size;
-
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -42,7 +40,6 @@ public class AprilTagLocalization {
 
         visionPortal = new VisionPortal.Builder()
                 .setCamera(hardwareMap.get(WebcamName.class, "Webcam 1"))
-                .setCameraResolution(new Size(320, 240))
                 .enableLiveView(true)
                 .addProcessor(aprilTagProcessor)
                 .build();
@@ -62,7 +59,7 @@ public class AprilTagLocalization {
                 estimate = new Pose2d(
                         tagVec.get(0) + (detection.ftcPose.y - DriveConstants.CAMERA_FORWARD_OFFSET /* For us: around -6 */) * multiplier,
                         tagVec.get(1) + (detection.ftcPose.x - DriveConstants.CAMERA_LATERAL_OFFSET /* Around 1 (?) */) * -multiplier,
-                        Math.toRadians((isLargeTag ? 180 : 0) - detection.ftcPose.yaw)
+                        Math.toRadians((isLargeTag ? 0 : 180) + detection.ftcPose.yaw)
                 );
             }
         }

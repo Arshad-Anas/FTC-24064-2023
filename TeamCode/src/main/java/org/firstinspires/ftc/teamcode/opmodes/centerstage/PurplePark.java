@@ -140,26 +140,26 @@ public final class PurplePark extends LinearOpMode {
 
         if (!isTop) {
             if (isAudienceSide(randomization) || isCenter(randomization))
-                builder.addTemporalMarker(() -> robot.intake.set(0.30))
-                        .UNSTABLE_addTemporalMarkerOffset(0.2, () -> robot.intake.set(0))
+                builder.addTemporalMarker(() -> robot.rollers.intake(0.30))
+                        .UNSTABLE_addTemporalMarkerOffset(0.2, () -> robot.rollers.intake(0))
                         .back(11);
 
             if (isBackboardSide(randomization))
                 builder.turn(toRadians(isRed ? -90 : 90))
                         .forward(3.5)
-                        .addTemporalMarker(() -> robot.intake.set(0.30))
-                        .UNSTABLE_addTemporalMarkerOffset(0.2, () -> robot.intake.set(0))
+                        .addTemporalMarker(() -> robot.rollers.intake(0.30))
+                        .UNSTABLE_addTemporalMarkerOffset(0.2, () -> robot.rollers.intake(0))
                         .waitSeconds(0.5);
         } else {
             if (isAudienceSide(randomization))
                 builder.turn(toRadians(isRed ? 90 : -90))
                         .forward(3.5)
-                        .addTemporalMarker(() -> robot.intake.set(0.30))
-                        .UNSTABLE_addTemporalMarkerOffset(0.2, () -> robot.intake.set(0))
+                        .addTemporalMarker(() -> robot.rollers.intake(0.30))
+                        .UNSTABLE_addTemporalMarkerOffset(0.2, () -> robot.rollers.intake(0))
                         .waitSeconds(0.5);
             else
-                builder.addTemporalMarker(() -> robot.intake.set(0.30))
-                        .UNSTABLE_addTemporalMarkerOffset(0.2, () -> robot.intake.set(0))
+                builder.addTemporalMarker(() -> robot.rollers.intake(0.30))
+                        .UNSTABLE_addTemporalMarkerOffset(0.2, () -> robot.rollers.intake(0))
                         .back(11);
         }
     }
