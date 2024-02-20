@@ -38,9 +38,6 @@ import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySe
 import org.firstinspires.ftc.teamcode.subsystems.centerstage.Robot;
 import org.firstinspires.ftc.teamcode.subsystems.centerstage.vision.AprilTagLocalization;
 import org.firstinspires.ftc.teamcode.subsystems.centerstage.vision.PropSensor;
-import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
-
-import java.util.List;
 
 @Config
 @Autonomous(group = "24064 Main", preselectTeleOp = "MainTeleOp")
@@ -54,17 +51,20 @@ public final class Top2_4 extends LinearOpMode {
             START_X = 12;
 
     public static double
-            BACKBOARD_X = 52.15,
-            ANGLE_1 = 38.6,
+            BACKBOARD_X = 51.95,
+            ANGLE_1 = 41.9,
             ANGLE_2 = 33.45,
-            ANGLE_3 = 24.5,
-            ANGLE_4 = 16;
+            ANGLE_3 = 22,
+            ANGLE_4 = 13.8;
 
     public static EditablePose
             start = new EditablePose(START_X, -61.788975, BACKWARD),
-            spikeLeft = new EditablePose((START_X - 6), -34.5, toRadians(135)),
-            spikeCenter = new EditablePose((START_X + 6), -26, toRadians(315)),
-            spikeRight = new EditablePose(START_X + 14, -34.5, toRadians(315)),
+            spikeLeftBlue = new EditablePose((START_X - 6), -34.5, toRadians(135)),
+            spikeCenterBlue = new EditablePose((START_X + 6), -26, toRadians(315)),
+            spikeRightBlue = new EditablePose(START_X + 14, -34.5, toRadians(315)),
+            spikeLeftRed = new EditablePose(3, -35, toRadians(135)),
+            spikeCenterRed = new EditablePose(25, -25, RIGHT),
+            spikeRightRed = new EditablePose(START_X + 14, -34.5, toRadians(315)),
             backboardLeft = new EditablePose(BACKBOARD_X, -30.5, LEFT),
             backboardCenter = new EditablePose(BACKBOARD_X, -34.5, LEFT),
             backboardRight = new EditablePose(BACKBOARD_X, -41, LEFT),
@@ -74,8 +74,8 @@ public final class Top2_4 extends LinearOpMode {
             innerTruss = new EditablePose(-8, -34.5, LEFT),
             outerTruss = new EditablePose(23.5, -58, LEFT),
             outerTruss2 = new EditablePose(-23.5, -58, LEFT),
-            pixelStack1 = new EditablePose(-56, -12, LEFT),
-            pixelStack3 = new EditablePose(-56, -35, LEFT);
+            pixelStack1 = new EditablePose(-56.6, -12, LEFT),
+            pixelStack3 = new EditablePose(-56.6, -35, LEFT);
 
     private EditablePose mainSpike, pixelStack, whiteScoring, yellowScoring, transition;
 
@@ -169,21 +169,21 @@ public final class Top2_4 extends LinearOpMode {
     private TrajectorySequence getTrajectory(int randomization) {
         switch (randomization) {
             case 0:
-                mainSpike = isRed ? spikeLeft : spikeRight;
+                mainSpike = isRed ? spikeLeftRed : spikeRightBlue;
                 yellowScoring = isRed ? backboardLeft : backboardRight;
                 transition = isUnderTruss ? outerTruss : stageDoor;
                 pixelStack = isUnderTruss ? pixelStack3 : pixelStack1;
                 whiteScoring = backboardCenter;
                 break;
             case 1:
-                mainSpike = spikeCenter;
+                mainSpike = isRed ? spikeCenterRed : spikeCenterBlue;
                 yellowScoring = backboardCenter;
                 transition = isUnderTruss ? innerTruss : stageDoor;
                 pixelStack = isUnderTruss ? pixelStack3 : pixelStack1;
                 whiteScoring = isRed ? backboardLeft : backboardRight;
                 break;
             case 2:
-                mainSpike = isRed ? spikeRight : spikeLeft;
+                mainSpike = isRed ? spikeRightRed : spikeLeftBlue;
                 yellowScoring = isRed ? backboardRight : backboardLeft;
                 transition = isUnderTruss ? outerTruss : stageDoor;
                 pixelStack = isUnderTruss ? pixelStack3 : pixelStack1;
@@ -253,10 +253,7 @@ public final class Top2_4 extends LinearOpMode {
                 .waitSeconds(0.8)
                 .addTemporalMarker(() -> robot.rollers.setDeployable(cycle == 1 ? ANGLE_2 : ANGLE_4))
                 .waitSeconds(0.8)
-                .UNSTABLE_addTemporalMarkerOffset(1, () -> {
-                    robot.rollers.intake(1);
-                    robot.rollers.setDeployable(0);
-                })
+                .UNSTABLE_addTemporalMarkerOffset(1, () -> robot.rollers.resetDeployable())
                 .UNSTABLE_addTemporalMarkerOffset(2, () -> robot.rollers.intake(0));
     }
 
@@ -267,10 +264,10 @@ public final class Top2_4 extends LinearOpMode {
                     robot.arm.setArm(true);
                     robot.wrist.setActivated(true);
                 })
-                .UNSTABLE_addTemporalMarkerOffset(0.15, () -> robot.arm.setFlap(false))
+                .UNSTABLE_addTemporalMarkerOffset(0.4, () -> robot.arm.setFlap(false))
                 .waitSeconds(0.8)
                 .addTemporalMarker(() -> robot.lift.setToAutonHeight(isWhite ? 700 : 400))
-                .waitSeconds(0.5)
+                .waitSeconds(0.7)
                 .addTemporalMarker(() -> {
                     robot.arm.setArm(false);
                     robot.wrist.setActivated(false);

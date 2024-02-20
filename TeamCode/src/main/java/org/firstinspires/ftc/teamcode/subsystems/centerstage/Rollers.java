@@ -15,7 +15,7 @@ public final class Rollers {
     private final SimpleServo deployableRoller;
 
 
-    public static double ANGLE_DEPLOYABLE_ROLLER = 108;
+    public static double ANGLE_DEPLOYABLE_ROLLER = 90;
     public double setPoint = ANGLE_DEPLOYABLE_ROLLER;
 
     public Rollers(HardwareMap hardwareMap) {
@@ -33,6 +33,10 @@ public final class Rollers {
 
     public void setDeployableWithTrigger(double trigger) {
         setDeployable(trigger < 0 ? ANGLE_DEPLOYABLE_ROLLER + ANGLE_DEPLOYABLE_ROLLER * trigger : ANGLE_DEPLOYABLE_ROLLER);
+    }
+
+    public void resetDeployable() {
+        setDeployable(ANGLE_DEPLOYABLE_ROLLER);
     }
 
     public void setDeployable(double angle) {

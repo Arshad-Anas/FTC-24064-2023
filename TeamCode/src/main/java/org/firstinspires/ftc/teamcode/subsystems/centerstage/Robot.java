@@ -34,7 +34,7 @@ public final class Robot {
             ANGLE_DRONE_LAUNCH = 0,
             ANGLE_DRONE_CLAMP = 90,
             ANGLE_DRONE_UNCLAMPED = 0,
-            ANGLE_WRIST_UNDEPLOYED = 65,
+            ANGLE_WRIST_UNDEPLOYED = 60,
             ANGLE_WRIST_DEPLOYED = 45,
             ANGLE_PURPLE_PIXEL_UNDEPLOYED = 0,
             ANGLE_PURPLE_PIXEL_DEPLOYED = 90;

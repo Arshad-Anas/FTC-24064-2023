@@ -48,7 +48,7 @@ public final class Lift {
     public static double
             AUTON_ROW_HEIGHT = 600,
             MAX_MOTOR_TICKS = 2350,
-            MIN_MOTOR_TICKS = -10,
+            MIN_MOTOR_TICKS = -5,
             kG = 0.011065,
             PERCENT_OVERSHOOT = 0,
             JOYSTICK_MULTIPLIER = 40;
