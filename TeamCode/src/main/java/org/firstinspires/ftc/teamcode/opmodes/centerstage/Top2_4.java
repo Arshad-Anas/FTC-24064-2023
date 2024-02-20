@@ -40,7 +40,7 @@ import org.firstinspires.ftc.teamcode.subsystems.centerstage.vision.AprilTagLoca
 import org.firstinspires.ftc.teamcode.subsystems.centerstage.vision.PropSensor;
 
 @Config
-@Autonomous(group = "24064 Main", preselectTeleOp = "MainTeleOp")
+@Autonomous(name = "Top 2+4", group = "24064 Main", preselectTeleOp = "MainTeleOp")
 public final class Top2_4 extends LinearOpMode {
     static boolean
             isParkedMiddle = true,

@@ -35,7 +35,7 @@ import org.firstinspires.ftc.teamcode.subsystems.centerstage.auton.EditablePose;
 import org.firstinspires.ftc.teamcode.subsystems.centerstage.vision.PropSensor;
 
 @Config
-@Autonomous(group = "24064 Main", preselectTeleOp = "MainTeleOp")
+@Autonomous(name = "Bottom 2+5", group = "24064 Main", preselectTeleOp = "MainTeleOp")
 public final class Bot2_5 extends LinearOpMode {
     static boolean
             isParkedMiddle = true,
