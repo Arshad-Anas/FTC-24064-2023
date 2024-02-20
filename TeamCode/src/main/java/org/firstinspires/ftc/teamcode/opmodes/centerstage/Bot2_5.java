@@ -197,11 +197,11 @@ public final class Bot2_5 extends LinearOpMode {
         TrajectorySequenceBuilder builder = robot.drivetrain.trajectorySequenceBuilder(startPose);
 
         scorePurplePixel(builder, randomization); // good
-        getWhitePixels(builder, randomization); // good
+        getFirstWhitePixel(builder, randomization); // good
         scoreYellowPixel(builder); // good
-        getWhitePixels2(builder, randomization ,1);
+        getWhitePixels(builder, randomization ,1);
         scoreWhitePixels(builder, randomization);
-        getWhitePixels2(builder, randomization, 2);
+        getWhitePixels(builder, randomization, 2);
         scoreWhitePixels(builder, randomization);
 
 
@@ -225,7 +225,7 @@ public final class Bot2_5 extends LinearOpMode {
         //.addTemporalMarker(() -> robot.purplePixel.setActivated(true));
     }
 
-    private void getWhitePixels(TrajectorySequenceBuilder builder, int randomization) {
+    private void getFirstWhitePixel(TrajectorySequenceBuilder builder, int randomization) {
         builder
                 .lineToSplineHeading(pixelStack.byAlliancePose2d());
                 intakePixels(builder, 0);
@@ -241,7 +241,7 @@ public final class Bot2_5 extends LinearOpMode {
 
         score(builder,false);
     }
-    private void getWhitePixels2(TrajectorySequenceBuilder builder, int randomization, int cycle) {
+    private void getWhitePixels(TrajectorySequenceBuilder builder, int randomization, int cycle) {
         builder.setTangent(LEFT)
                 .splineToConstantHeading(transition.byAllianceVec(), LEFT);
 

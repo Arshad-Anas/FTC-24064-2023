@@ -15,7 +15,7 @@ public class MeepMeepTesting {
 
     static boolean isRed = true,
             isParkedMiddle = true,
-            isUnderTruss = false;
+            isUnderTruss = true;
 
     public static double
             X_START_BOTTOM = -37;
@@ -37,6 +37,7 @@ public class MeepMeepTesting {
     public static EditablePose
             botStartRed = new EditablePose(X_START_BOTTOM, -61.788975, BACKWARD),
             botLeftSpikeRed = new EditablePose(-49 , -16, LEFT),
+            botLeftSpikeRed2 = new EditablePose(-56,-36, toRadians(210)),
             botCenterSpikeRed = new EditablePose(-50, -22, LEFT),
             botRightSpikeRed = new EditablePose(-33, -35, toRadians(210)),
             botRightSpikeBlue = new EditablePose(-33,-36, toRadians(170)),
@@ -80,7 +81,7 @@ public class MeepMeepTesting {
                             yellowScoring = botCenterBackdropRed;
                             transition = isUnderTruss ? botTrussInner : botStageDoor;
                             pixelStack = isUnderTruss ? thirdWhitePixelStackRed : firstWhitePixelStackRed;
-                            whiteScoring = botRightBackdropRed;
+                            whiteScoring = isRed ? botLeftBackdropRed : botRightBackdropRed;
                             break;
                         case 2:
                             mainSpike = isRed ? botRightSpikeRed : botLeftSpikeRed;
@@ -122,7 +123,8 @@ public class MeepMeepTesting {
                     .setTangent(LEFT);
         } else if (isAudienceSide(randomization) && isUnderTruss) {
             builder
-                    .strafeRight(6);
+                    .strafeRight(6)
+                    .lineToSplineHeading(botLeftSpikeRed2.byAlliancePose2d());
         } else if (isCenter(randomization) || isBackboardSide(randomization)) {
             builder.lineToSplineHeading(mainSpike.byAlliancePose2d());
         }
@@ -141,17 +143,25 @@ public class MeepMeepTesting {
                 .splineToConstantHeading(yellowScoring.byAllianceVec(), RIGHT);
     }
     private static void getWhitePixels(TrajectorySequenceBuilder builder, int randomization, int cycle) {
-//        builder
-//                .splineToConstantHeading(transition.byAllianceVec(), LEFT);
+        builder.setTangent(LEFT)
+                .splineToConstantHeading(transition.byAllianceVec(), LEFT);
 
-//        if (isUnderTruss && randomization != 1)
-//            builder.splineToConstantHeading(trussTransition.byAllianceVec(),LEFT)
-//                    .splineTo(pixelStack.byAllianceVec(), LEFT);
+        if (isUnderTruss && randomization != 1)
+            builder.splineToConstantHeading(trussTransition.byAllianceVec(),LEFT)
+                    .lineToConstantHeading(pixelStack.byAllianceVec());
+        else builder.splineTo(pixelStack.byAllianceVec(), pixelStack.heading);
 
     }
-
     private static void scoreWhitePixels(TrajectorySequenceBuilder builder, int randomization) {
-    }
+    if (isUnderTruss && randomization != 1)
+        builder.lineToConstantHeading(trussTransition.byAllianceVec());
+    builder.setTangent(RIGHT);
+
+//        if (isUnderTruss && randomization != 1) builder.splineTo(outerTruss2.byAllianceVec(), RIGHT);
+
+    builder.splineTo(transition.byAllianceVec(), RIGHT)
+            .splineToConstantHeading(whiteScoring.byAllianceVec(), RIGHT);
+}
 
     private static boolean isCenter(int randomization) {
         return randomization == 1;
