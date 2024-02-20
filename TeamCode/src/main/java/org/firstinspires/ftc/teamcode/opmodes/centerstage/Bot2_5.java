@@ -61,6 +61,7 @@ public final class Bot2_5 extends LinearOpMode {
     public static EditablePose
             botStartRed = new EditablePose(X_START_BOTTOM, -61.788975, BACKWARD),
             botLeftSpikeRed = new EditablePose(-49 , -16, LEFT),
+            botLeftSpikeRed2 = new EditablePose(-56,-36, toRadians(210)),
             botCenterSpikeRed = new EditablePose(-50, -22, LEFT),
             botCenterSpikeBlue = new EditablePose(-50 , -25, LEFT),
             botRightSpikeRed = new EditablePose(-33, -35, toRadians(210)),
@@ -247,19 +248,17 @@ public final class Bot2_5 extends LinearOpMode {
 
         if (isUnderTruss && randomization != 1)
             builder.splineToConstantHeading(trussTransition.byAllianceVec(),LEFT)
-                    .splineTo(pixelStack.byAllianceVec(), LEFT);
-
+                    .lineToConstantHeading(pixelStack.byAllianceVec());
+        else builder.splineTo(pixelStack.byAllianceVec(), pixelStack.heading);
     }
 
     private void scoreWhitePixels(TrajectorySequenceBuilder builder, int randomization) {
-        if (isUnderTruss && randomization != 1) builder.splineToConstantHeading(trussTransition.byAllianceVec(),LEFT);
+        if (isUnderTruss && randomization != 1)
+            builder.lineToConstantHeading(trussTransition.byAllianceVec());
         builder.setTangent(RIGHT);
-
-//        if (isUnderTruss && randomization != 1) builder.splineTo(outerTruss2.byAllianceVec(), RIGHT);
 
         builder.splineTo(transition.byAllianceVec(), RIGHT)
                 .splineToConstantHeading(whiteScoring.byAllianceVec(), RIGHT);
-
         score(builder, true);
     }
 
