@@ -62,7 +62,9 @@ public final class Bot2_5 extends LinearOpMode {
             botStartRed = new EditablePose(X_START_BOTTOM, -61.788975, BACKWARD),
             botLeftSpikeRed = new EditablePose(-49 , -16, LEFT),
             botCenterSpikeRed = new EditablePose(-50, -22, LEFT),
+            botCenterSpikeBlue = new EditablePose(-49 , -21, LEFT),
             botRightSpikeRed = new EditablePose(-33, -35, toRadians(210)),
+            botRightSpikeBlue = new EditablePose(-33,-36, toRadians(170)),
             botCenterBackdropRed = new EditablePose(BACKBOARD_X, -34.5, LEFT),
             botLeftBackdropRed = new EditablePose(BACKBOARD_X, -30.5, LEFT),
             botRightBackdropRed = new EditablePose(BACKBOARD_X, -41, LEFT),
@@ -168,18 +170,18 @@ public final class Bot2_5 extends LinearOpMode {
     private TrajectorySequence getTrajectory(int randomization) {
         switch (randomization) {
             case 0:
-                mainSpike = isRed ?  botLeftSpikeRed : botRightSpikeRed;
+                mainSpike = isRed ?  botLeftSpikeRed : botRightSpikeBlue;
                 yellowScoring = isRed ? botLeftBackdropRed : botRightBackdropRed;
                 transition = isUnderTruss ? botTrussOuter : botStageDoor;
                 pixelStack = isUnderTruss ? thirdWhitePixelStackRed : firstWhitePixelStackRed;
-                whiteScoring = isRed ? botRightBackdropRed : botLeftBackdropRed;
+                whiteScoring = isRed ? botLeftBackdropRed : botRightBackdropRed;
                 break;
             case 1:
-                mainSpike = botCenterSpikeRed;
+                mainSpike = isRed ? botCenterSpikeRed: botCenterSpikeBlue;
                 yellowScoring = botCenterBackdropRed;
-                transition = botTrussInner;
-                pixelStack = thirdWhitePixelStackRed;
-                whiteScoring = botRightBackdropRed;
+                transition = isUnderTruss ? botTrussInner : botStageDoor;
+                pixelStack = isUnderTruss ? thirdWhitePixelStackRed : firstWhitePixelStackRed;
+                whiteScoring = isRed ? botLeftBackdropRed : botRightBackdropRed;
                 break;
             case 2:
                 mainSpike = isRed ? botRightSpikeRed : botLeftSpikeRed;
@@ -235,7 +237,7 @@ public final class Bot2_5 extends LinearOpMode {
         builder
                 .setTangent(RIGHT)
                 .splineTo(transition.byAllianceVec(), RIGHT)
-                .splineToConstantHeading(yellowScoring.byAllianceVec(), LEFT);
+                .splineToConstantHeading(yellowScoring.byAllianceVec(), Math.toRadians(LEFT));
 
         score(builder,false);
     }

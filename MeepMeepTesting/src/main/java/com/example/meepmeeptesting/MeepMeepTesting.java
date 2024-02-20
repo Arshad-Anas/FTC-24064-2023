@@ -38,6 +38,8 @@ public class MeepMeepTesting {
             botLeftSpikeRed = new EditablePose(-49 , -16, LEFT),
             botCenterSpikeRed = new EditablePose(-50, -22, LEFT),
             botRightSpikeRed = new EditablePose(-33, -35, toRadians(210)),
+            botRightSpikeBlue = new EditablePose(-33,-36, toRadians(170)),
+            botCenterSpikeBlue = new EditablePose(-49 , -21, LEFT),
             botCenterBackdropRed = new EditablePose(BACKBOARD_X, -34.5, LEFT),
             botLeftBackdropRed = new EditablePose(BACKBOARD_X, -30.5, LEFT),
             botRightBackdropRed = new EditablePose(BACKBOARD_X, -41, LEFT),
@@ -53,7 +55,7 @@ public class MeepMeepTesting {
 
     private static EditablePose mainSpike, pixelStack, whiteScoring, yellowScoring, transition;
 
-    public static int randomization = 2;
+    public static int randomization = 0;
 
 
     public static void main(String[] args) {
@@ -61,22 +63,22 @@ public class MeepMeepTesting {
 
         RoadRunnerBotEntity myBot = new DefaultBotBuilder(meepMeep)
                 // Set bot constraints: maxVel, maxAccel, maxAngVel, maxAngAccel, track width
-                .setConstraints(50.2765, 60.3457, toRadians(174.5386897712936), toRadians(60), 17.38)
+                .setConstraints(66.10439359219907, 82.63049199024884, 5, toRadians(180),16.08 )
                 .setDimensions(16.2981681102, 17.0079)
                 .followTrajectorySequence(drive -> {
                     switch (randomization) {
                         case 0:
-                            mainSpike = isRed ?  botLeftSpikeRed : botRightSpikeRed;
+                            mainSpike = isRed ?  botLeftSpikeRed : botRightSpikeBlue;
                             yellowScoring = isRed ? botLeftBackdropRed : botRightBackdropRed;
                             transition = isUnderTruss ? botTrussOuter : botStageDoor;
                             pixelStack = isUnderTruss ? thirdWhitePixelStackRed : firstWhitePixelStackRed;
-                            whiteScoring = isRed ? botRightBackdropRed : botLeftBackdropRed;
+                            whiteScoring = isRed ? botLeftBackdropRed : botRightBackdropRed;
                             break;
                         case 1:
-                            mainSpike = botCenterSpikeRed;
+                            mainSpike = isRed ? botCenterSpikeRed: botCenterSpikeBlue;
                             yellowScoring = botCenterBackdropRed;
-                            transition = botTrussInner;
-                            pixelStack = thirdWhitePixelStackRed;
+                            transition = isUnderTruss ? botTrussInner : botStageDoor;
+                            pixelStack = isUnderTruss ? thirdWhitePixelStackRed : firstWhitePixelStackRed;
                             whiteScoring = botRightBackdropRed;
                             break;
                         case 2:
@@ -135,9 +137,16 @@ public class MeepMeepTesting {
         builder
                 .setTangent(RIGHT)
                 .splineTo(transition.byAllianceVec(), RIGHT)
-                .splineToConstantHeading(yellowScoring.byAllianceVec(), LEFT);
+                .splineToConstantHeading(yellowScoring.byAllianceVec(), RIGHT);
     }
     private static void getWhitePixels(TrajectorySequenceBuilder builder, int randomization, int cycle) {
+//        builder
+//                .splineToConstantHeading(transition.byAllianceVec(), LEFT);
+
+//        if (isUnderTruss && randomization != 1)
+//            builder.splineToConstantHeading(trussTransition.byAllianceVec(),LEFT)
+//                    .splineTo(pixelStack.byAllianceVec(), LEFT);
+
     }
 
     private static void scoreWhitePixels(TrajectorySequenceBuilder builder, int randomization) {
