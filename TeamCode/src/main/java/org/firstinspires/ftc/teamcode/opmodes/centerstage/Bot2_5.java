@@ -55,7 +55,8 @@ public final class Bot2_5 extends LinearOpMode {
             ANGLE_1 = 41.9,
             ANGLE_2 = 33.45,
             ANGLE_3 = 22,
-            ANGLE_4 = 13.8;
+            ANGLE_4 = 13.8,
+            ANGLE_5 = 0;
 
     public static EditablePose
             botStartRed = new EditablePose(X_START_BOTTOM, -61.788975, BACKWARD),
@@ -225,7 +226,7 @@ public final class Bot2_5 extends LinearOpMode {
     private void getWhitePixels(TrajectorySequenceBuilder builder, int randomization) {
         builder
                 .lineToSplineHeading(pixelStack.byAlliancePose2d());
-                intakePixels(builder);
+                intakePixels(builder, 0);
 
         if (isUnderTruss && !isCenter(randomization)) builder.lineToConstantHeading(trussTransition.byAllianceVec());
 
@@ -262,13 +263,16 @@ public final class Bot2_5 extends LinearOpMode {
 
     private void intakePixels(TrajectorySequenceBuilder builder, int cycle) {
         builder.addTemporalMarker(() -> {
-                    robot.rollers.setDeployable(cycle == 1 ? ANGLE_1 : ANGLE_3);
-                    robot.rollers.intake(-1);
-                })
-                .waitSeconds(0.8)
-                .addTemporalMarker(() -> robot.rollers.setDeployable(cycle == 1 ? ANGLE_2 : ANGLE_4))
-                .waitSeconds(0.8)
-                .UNSTABLE_addTemporalMarkerOffset(1, () -> robot.rollers.resetDeployable())
+            robot.rollers.setDeployable(cycle == 0 ? ANGLE_1 : cycle == 1 ? ANGLE_2 : ANGLE_4);
+            robot.rollers.intake(-1);
+        });
+
+        if (cycle != 0)
+            builder.waitSeconds(0.8)
+                    .addTemporalMarker(() -> robot.rollers.setDeployable(cycle == 1 ? ANGLE_3 : ANGLE_5))
+                    .waitSeconds(0.8);
+
+        builder.UNSTABLE_addTemporalMarkerOffset(1, () -> robot.rollers.resetDeployable())
                 .UNSTABLE_addTemporalMarkerOffset(2, () -> robot.rollers.intake(0));
     }
 
