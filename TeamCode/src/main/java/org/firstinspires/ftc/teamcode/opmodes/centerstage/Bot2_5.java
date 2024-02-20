@@ -62,7 +62,7 @@ public final class Bot2_5 extends LinearOpMode {
             botStartRed = new EditablePose(X_START_BOTTOM, -61.788975, BACKWARD),
             botLeftSpikeRed = new EditablePose(-49 , -16, LEFT),
             botCenterSpikeRed = new EditablePose(-50, -22, LEFT),
-            botCenterSpikeBlue = new EditablePose(-49 , -21, LEFT),
+            botCenterSpikeBlue = new EditablePose(-50 , -25, LEFT),
             botRightSpikeRed = new EditablePose(-33, -35, toRadians(210)),
             botRightSpikeBlue = new EditablePose(-33,-36, toRadians(170)),
             botCenterBackdropRed = new EditablePose(BACKBOARD_X, -34.5, LEFT),

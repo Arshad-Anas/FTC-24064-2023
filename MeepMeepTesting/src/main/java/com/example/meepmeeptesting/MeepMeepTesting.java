@@ -1,5 +1,6 @@
 package com.example.meepmeeptesting;
 
+import static java.lang.Math.nextUp;
 import static java.lang.Math.toRadians;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
@@ -39,7 +40,7 @@ public class MeepMeepTesting {
             botCenterSpikeRed = new EditablePose(-50, -22, LEFT),
             botRightSpikeRed = new EditablePose(-33, -35, toRadians(210)),
             botRightSpikeBlue = new EditablePose(-33,-36, toRadians(170)),
-            botCenterSpikeBlue = new EditablePose(-49 , -21, LEFT),
+            botCenterSpikeBlue = new EditablePose(-50 , -25, LEFT),
             botCenterBackdropRed = new EditablePose(BACKBOARD_X, -34.5, LEFT),
             botLeftBackdropRed = new EditablePose(BACKBOARD_X, -30.5, LEFT),
             botRightBackdropRed = new EditablePose(BACKBOARD_X, -41, LEFT),
