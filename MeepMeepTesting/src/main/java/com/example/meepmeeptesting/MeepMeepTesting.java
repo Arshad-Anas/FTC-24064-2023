@@ -7,19 +7,25 @@ import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.noahbres.meepmeep.MeepMeep;
 import com.noahbres.meepmeep.roadrunner.DefaultBotBuilder;
 import com.noahbres.meepmeep.roadrunner.entity.RoadRunnerBotEntity;
-import com.noahbres.meepmeep.roadrunner.trajectorysequence.TrajectorySequence;
 import com.noahbres.meepmeep.roadrunner.trajectorysequence.TrajectorySequenceBuilder;
 
 
 public class MeepMeepTesting {
 
-    static boolean isRed = true, isParkedMiddle = false;
-
-    static final boolean isTop = false;
+    static boolean isRed = true,
+            isParkedMiddle = true,
+            isUnderTruss = false;
 
     public static double
-            X_START_BOTTOM = -37,
-            X_START_RIGHT = 12;
+            X_START_BOTTOM = -37;
+
+    public static double
+            BACKBOARD_X = 51.95,
+            ANGLE_1 = 41.9,
+            ANGLE_2 = 33.45,
+            ANGLE_3 = 22,
+            ANGLE_4 = 13.8,
+            ANGLE_5 = 0;
 
     public static final double
             LEFT = toRadians(180),
@@ -27,85 +33,74 @@ public class MeepMeepTesting {
             RIGHT = toRadians(0),
             BACKWARD = toRadians(270);
 
-    public static int propPlacement = 2;
-
-    public static double
-            BACKBOARD_X = 51;
-
     public static EditablePose
-            // Bottom
-            botStartRed = new EditablePose(X_START_BOTTOM, -61.788975, FORWARD),
-            botLeftSpikeRed = new EditablePose(-46, -40, FORWARD),
-            botCenterSpikeRed = new EditablePose(-41, -32, FORWARD),
-            botRightSpikeRed = new EditablePose(-37, -35.5, FORWARD),
-            botLeftPixelDodgeRed = new EditablePose(-34, -50, FORWARD),
-            botCenterPixelDodgeRed = new EditablePose (-55, -38, FORWARD),
-            botCenterPixelDodgeRed2 = new EditablePose(-55, -10, LEFT),
-            botStageDoorRed = new EditablePose(-34, -10, LEFT),
-            botTransitionRed = new EditablePose(35.5, -10, LEFT),
-            botTransitionRed2 = new EditablePose(35.5, -35.5, LEFT),
-            botLeftBackdropRed = new EditablePose(BACKBOARD_X, -27, LEFT),
-            botCenterBackdropRed = new EditablePose(BACKBOARD_X, -36, LEFT),
+            botStartRed = new EditablePose(X_START_BOTTOM, -61.788975, BACKWARD),
+            botLeftSpikeRed = new EditablePose(-49 , -16, LEFT),
+            botCenterSpikeRed = new EditablePose(-50, -22, LEFT),
+            botRightSpikeRed = new EditablePose(-33, -35, toRadians(210)),
+            botCenterBackdropRed = new EditablePose(BACKBOARD_X, -34.5, LEFT),
+            botLeftBackdropRed = new EditablePose(BACKBOARD_X, -30.5, LEFT),
             botRightBackdropRed = new EditablePose(BACKBOARD_X, -41, LEFT),
-    // Top
-    topLeftBackdropRed = new EditablePose(BACKBOARD_X, -27, LEFT),
-            topCenterBackdropRed = new EditablePose(BACKBOARD_X, -36, LEFT),
-            topRightBackdropRed = new EditablePose(BACKBOARD_X, -41, LEFT),
-            topParkingRed = new EditablePose(47.5, -60, LEFT);
+            botParkingLeftRed = new EditablePose(48, -10, LEFT),
+            botParkingRightRed = new EditablePose(48, -60, LEFT),
+            botAudienceSpikeTransitionRed = new EditablePose(-34,-18,toRadians(110)),
+            botStageDoor = new EditablePose(25,-10,LEFT),
+            botTrussInner = new EditablePose(20,-36,LEFT),
+            botTrussOuter = new EditablePose(20,-58,LEFT),
+            firstWhitePixelStackRed = new EditablePose(-56.6,-12, LEFT),
+            trussTransition = new EditablePose(-53,-58,LEFT),
+            thirdWhitePixelStackRed = new EditablePose(-56.6, -35,LEFT);
 
-    private static EditablePose start, prop, dodge, yellowPixel;
+    private static EditablePose mainSpike, pixelStack, whiteScoring, yellowScoring, transition;
+
+    public static int randomization = 2;
+
 
     public static void main(String[] args) {
         MeepMeep meepMeep = new MeepMeep(700);
-
-        switch (propPlacement) {
-            case 0:
-                prop = isTop ? (isRed ? botRightSpikeRed : botLeftSpikeRed) : (isRed ? botLeftSpikeRed : botRightSpikeRed);
-                dodge = botLeftPixelDodgeRed;
-                yellowPixel = isTop ? (isRed ? topLeftBackdropRed : topRightBackdropRed) : (isRed ? botLeftBackdropRed : botRightBackdropRed);
-                break;
-            case 1:
-                prop = botCenterSpikeRed;
-                dodge = botCenterPixelDodgeRed;
-                yellowPixel = isTop? topCenterBackdropRed : botCenterBackdropRed;
-                break;
-            case 2:
-                prop = isTop ? (isRed ? botLeftSpikeRed : botRightSpikeRed) : (isRed ? botRightSpikeRed : botLeftSpikeRed);
-                dodge = botLeftPixelDodgeRed;
-                yellowPixel = isTop ? (isRed ? topRightBackdropRed : topLeftBackdropRed) : (isRed ? botRightBackdropRed : botLeftBackdropRed);
-                break;
-        }
-
-        start = botStartRed;
-        //robot.drivetrain.setPoseEstimate(start);
 
         RoadRunnerBotEntity myBot = new DefaultBotBuilder(meepMeep)
                 // Set bot constraints: maxVel, maxAccel, maxAngVel, maxAngAccel, track width
                 .setConstraints(50.2765, 60.3457, toRadians(174.5386897712936), toRadians(60), 17.38)
                 .setDimensions(16.2981681102, 17.0079)
-                .followTrajectorySequence(drive ->
-                        drive.trajectorySequenceBuilder(start.bySide().byAlliancePose2d())
-                                .lineToSplineHeading(prop.bySide().byAlliancePose2d())
-                                .turn(toRadians(isRed ? -90 : 90))
-                                .forward(3.5)
+                .followTrajectorySequence(drive -> {
+                    switch (randomization) {
+                        case 0:
+                            mainSpike = isRed ?  botLeftSpikeRed : botRightSpikeRed;
+                            yellowScoring = isRed ? botLeftBackdropRed : botRightBackdropRed;
+                            transition = isUnderTruss ? botTrussOuter : botStageDoor;
+                            pixelStack = isUnderTruss ? thirdWhitePixelStackRed : firstWhitePixelStackRed;
+                            whiteScoring = isRed ? botRightBackdropRed : botLeftBackdropRed;
+                            break;
+                        case 1:
+                            mainSpike = botCenterSpikeRed;
+                            yellowScoring = botCenterBackdropRed;
+                            transition = botTrussInner;
+                            pixelStack = thirdWhitePixelStackRed;
+                            whiteScoring = botRightBackdropRed;
+                            break;
+                        case 2:
+                            mainSpike = isRed ? botRightSpikeRed : botLeftSpikeRed;
+                            yellowScoring = isRed ? botRightBackdropRed : botLeftBackdropRed;
+                            transition = isUnderTruss ? botTrussOuter : botStageDoor;
+                            pixelStack = isUnderTruss ? thirdWhitePixelStackRed : firstWhitePixelStackRed;
+                            whiteScoring = isRed ? botLeftBackdropRed : botRightBackdropRed;
+                            break;
+                    }
 
-                                .waitSeconds(0.5)
-                                .back(3.5)
-//                                .lineToSplineHeading(dodge.byAlliancePose2d()) // Left Center
-//                                .lineToSplineHeading(botCenterPixelDodgeRed2.byAlliancePose2d()) // Center
-//                                .lineToSplineHeading(botStageDoorRed.byAlliancePose2d()) // Center
-                                .lineTo(botStageDoorRed.byAllianceVec()) // Left and Right
-                                .lineToConstantHeading(botTransitionRed.byAllianceVec())
-                                .lineToSplineHeading(botTransitionRed2.byAlliancePose2d())
-                                .back(11)
-                                .lineToSplineHeading(dodge.byAlliancePose2d())
-                                .lineToSplineHeading(new Pose2d(-58,-36,LEFT))
-                                .lineToSplineHeading(botCenterPixelDodgeRed2.byAlliancePose2d())
-                                .splineToConstantHeading(botStageDoorRed.byAllianceVec(), RIGHT)
-                                .lineToSplineHeading(botTransitionRed.byAlliancePose2d())
-                                .lineToSplineHeading(yellowPixel.byAlliancePose2d())
-                                .build()
-                );
+                    Pose2d startPose = botStartRed.byAlliancePose2d();
+                    TrajectorySequenceBuilder builder = drive.trajectorySequenceBuilder(startPose);
+
+                    scorePurplePixel(builder, randomization); // good
+                    getFirstWhitePixel(builder, randomization); // good
+                    scoreYellowPixel(builder); // good
+                    getWhitePixels(builder, randomization ,1);
+                    scoreWhitePixels(builder, randomization);
+                    getWhitePixels(builder, randomization, 2);
+                    scoreWhitePixels(builder, randomization);
+
+                    return builder.build();
+                });
 
         meepMeep.setBackground(MeepMeep.Background.FIELD_CENTERSTAGE_JUICE_DARK)
                 .setDarkMode(true)
@@ -114,40 +109,52 @@ public class MeepMeepTesting {
                 .start();
     }
 
-    private void addPurplePixel(TrajectorySequenceBuilder builder) {
-        builder.lineToSplineHeading(prop.bySide().byAlliancePose2d());
-
-        if (!isTop) {
-            if (isLeft() || isCenter()) {
-                builder.back(11)
-                        .lineToSplineHeading(dodge.byAlliancePose2d());
-            }
-
-            if (isCenter())
-                builder.lineToSplineHeading(botCenterPixelDodgeRed2.byAlliancePose2d());
-
-            if (isRight()) {
-                builder.turn(toRadians(isRed ? -90 : 90))
-                        .turn(toRadians(isRed ? 90 : -90));
-            }
+    private static void scorePurplePixel(TrajectorySequenceBuilder builder, int randomization) {
+        builder.setTangent(isRed ? BACKWARD : FORWARD);
+        if (isAudienceSide(randomization) && !isUnderTruss) {
+            builder
+                    .lineToSplineHeading(botAudienceSpikeTransitionRed.byAlliancePose2d())
+                    .setTangent(botAudienceSpikeTransitionRed.heading)
+                    .lineTo(mainSpike.byAllianceVec())
+                    .setTangent(LEFT);
+        } else if (isAudienceSide(randomization) && isUnderTruss) {
+            builder
+                    .strafeRight(6);
+        } else if (isCenter(randomization) || isBackboardSide(randomization)) {
+            builder.lineToSplineHeading(mainSpike.byAlliancePose2d());
         }
-
-//        builder.addTemporalMarker(() -> robot.intake.set(0.25))
-//                .UNSTABLE_addTemporalMarkerOffset(1, () -> robot.intake.set(0));
     }
 
-    private boolean isCenter() {
-        return propPlacement == 1;
+    private static void getFirstWhitePixel(TrajectorySequenceBuilder builder, int randomization) {
+        builder.lineToSplineHeading(pixelStack.byAlliancePose2d());
+
+        if (isUnderTruss && !isCenter(randomization)) builder.lineToConstantHeading(trussTransition.byAllianceVec());
+
+    }
+    private static void scoreYellowPixel(TrajectorySequenceBuilder builder) {
+        builder
+                .setTangent(RIGHT)
+                .splineTo(transition.byAllianceVec(), RIGHT)
+                .splineToConstantHeading(yellowScoring.byAllianceVec(), LEFT);
+    }
+    private static void getWhitePixels(TrajectorySequenceBuilder builder, int randomization, int cycle) {
     }
 
-    private boolean isLeft() {
-        return isRed && propPlacement == 0 || !isRed && propPlacement == 2;
+    private static void scoreWhitePixels(TrajectorySequenceBuilder builder, int randomization) {
     }
 
-    private boolean isRight() {
-        return isRed && propPlacement == 2 || !isRed && propPlacement == 0;
+    private static boolean isCenter(int randomization) {
+        return randomization == 1;
     }
 
+    private static boolean isAudienceSide(int randomization) {
+        return isRed && randomization == 0 || !isRed && randomization == 2;
+    }
+
+    private static boolean isBackboardSide(int randomization) {
+        return isRed && randomization == 2 || !isRed && randomization == 0;
+    }
+    
     private static class EditablePose {
         public double x, y, heading;
 
@@ -176,13 +183,6 @@ public class MeepMeepTesting {
 
         private Pose2d toPose2d() {
             return new Pose2d(x, y, heading);
-        }
-
-        private EditablePose bySide() {
-            if (isTop) {
-                x = x * -1 - 23.5;
-            }
-            return this;
         }
 
 //        private EditablePose bySide() {
