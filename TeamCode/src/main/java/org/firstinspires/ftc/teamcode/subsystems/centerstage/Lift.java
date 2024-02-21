@@ -128,7 +128,7 @@ public final class Lift {
      * @param motorPower; The power that is set to be used to set the motor's power
      * @param voltageCompensate; Boolean that is used if battery is low, and if it needs to compensate (save)
      */
-    private void run(double motorPower, boolean voltageCompensate) {
+    public void run(double motorPower, boolean voltageCompensate) {
         double scalar = maxVoltage / batteryVoltageSensor.getVoltage();
 
         if (voltageCompensate) motorPower *= scalar;

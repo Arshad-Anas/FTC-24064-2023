@@ -6,6 +6,7 @@ import static org.firstinspires.ftc.teamcode.subsystems.utilities.SimpleServoPiv
 import static org.firstinspires.ftc.teamcode.subsystems.utilities.SimpleServoPivot.getReversedServo;
 
 import com.acmerobotics.dashboard.config.Config;
+import com.arcrobotics.ftclib.hardware.SimpleServo;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.subsystems.drivetrains.MecanumDrivetrain;
@@ -69,6 +70,11 @@ public final class Robot {
 
     public void readSensors() {
         bulkReader.bulkRead();
+    }
+
+    public void hang(double motorPower) {
+        arm.run();
+        lift.run(motorPower, false);
     }
 
     public void run() {

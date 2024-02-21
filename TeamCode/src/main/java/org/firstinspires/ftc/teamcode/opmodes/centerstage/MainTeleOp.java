@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.opmodes.centerstage;
 
 import static com.arcrobotics.ftclib.gamepad.GamepadKeys.Button.A;
 import static com.arcrobotics.ftclib.gamepad.GamepadKeys.Button.B;
+import static com.arcrobotics.ftclib.gamepad.GamepadKeys.Button.DPAD_UP;
 import static com.arcrobotics.ftclib.gamepad.GamepadKeys.Button.LEFT_BUMPER;
 import static com.arcrobotics.ftclib.gamepad.GamepadKeys.Button.RIGHT_BUMPER;
 import static com.arcrobotics.ftclib.gamepad.GamepadKeys.Button.X;
@@ -38,6 +39,8 @@ public final class MainTeleOp extends LinearOpMode {
      */
     @Override
     public void runOpMode() throws InterruptedException {
+        boolean isHanging = false;
+
         mTelemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
 
         gamepadEx1 = new GamepadEx(gamepad1);
@@ -82,11 +85,12 @@ public final class MainTeleOp extends LinearOpMode {
             }
             if (keyPressed(1, X) && robot.launcherClamp.isActivated()) robot.launcher.toggle();
             if (keyPressed(1, A)) robot.launcherClamp.toggle();
+            if (keyPressed(1, DPAD_UP)) isHanging = !isHanging;
 //            if (keyPressed(1, B)) robot.deployableRoller.toggle();
 
             // Gamepad 2
-            double leftStick = pow(gamepadEx2.getLeftY(), 3);
-            if (leftStick != 0) robot.lift.setWithStick(leftStick);
+            double stick = pow(gamepadEx2.getLeftY(), 3);
+            if (stick != 0) robot.lift.setWithStick(stick);
             if (keyPressed(2, B)) robot.arm.toggleFlap();
             if (robot.lift.getSetPoint() >= 0) {
                 if (keyPressed(2, Y)) {
@@ -100,11 +104,14 @@ public final class MainTeleOp extends LinearOpMode {
             double trigger1 = gamepadEx1.getTrigger(RIGHT_TRIGGER) - gamepadEx1.getTrigger(LEFT_TRIGGER);
             double trigger2 = gamepadEx2.getTrigger(RIGHT_TRIGGER) - gamepadEx2.getTrigger(LEFT_TRIGGER);
             double intake = trigger1 != 0 ? trigger1 : trigger2;
-            robot.rollers.intake(intake);
+            if (!isHanging) robot.rollers.intake(intake);
             robot.rollers.setDeployableWithTrigger(intake);
 
             robot.drivetrain.update();
-            robot.run();
+
+            if (!isHanging) robot.run();
+            else robot.hang(trigger1);
+
             robot.printTelemetry();
             mTelemetry.update();
         }

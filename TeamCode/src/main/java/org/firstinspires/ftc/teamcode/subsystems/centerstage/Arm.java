@@ -12,7 +12,7 @@ import org.firstinspires.ftc.teamcode.subsystems.utilities.SimpleServoPivot;
 
 @Config
 public final class Arm {
-    private final SimpleServoPivot armPivot, flap;
+    final SimpleServoPivot armPivot, flap;
 
     boolean flapTimerCondition = false;
 
@@ -24,7 +24,7 @@ public final class Arm {
             ANGLE_DEPOSITING = 190,
             ANGLE_OPEN_FLAP = 90,
             ANGLE_CLOSED_FLAP = 0,
-            TIME_DEPOSIT_1_PIXEL = 0.17;
+            TIME_DEPOSIT_1_PIXEL = 0.18;
 
     public Arm(HardwareMap hardwareMap) {
         flap = new SimpleServoPivot(ANGLE_OPEN_FLAP, ANGLE_CLOSED_FLAP, getGoBildaServo(hardwareMap, "flap"));

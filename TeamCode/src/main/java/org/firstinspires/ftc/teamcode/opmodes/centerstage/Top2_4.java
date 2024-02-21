@@ -51,25 +51,26 @@ public final class Top2_4 extends LinearOpMode {
             START_X = 12;
 
     public static double
-            BACKBOARD_X = 51.95,
-            ANGLE_1 = 41.9,
-            ANGLE_2 = 33.45,
-            ANGLE_3 = 22,
-            ANGLE_4 = 13.8;
+            BACKBOARD_X = 51.6,
+            ANGLE_1 = 52,
+            ANGLE_2 = 46,
+            ANGLE_3 = 32.5,
+            ANGLE_4 = 20;
 
     public static EditablePose
             start = new EditablePose(START_X, -61.788975, BACKWARD),
             spikeLeftBlue = new EditablePose((START_X - 6), -34.5, toRadians(135)),
             spikeCenterBlue = new EditablePose((START_X + 6), -26, toRadians(315)),
-            spikeRightBlue = new EditablePose(START_X + 14, -34.5, toRadians(315)),
+            spikeRightBlue = new EditablePose(30, -36, toRadians(315)),
             spikeLeftRed = new EditablePose(3, -35, toRadians(135)),
-            spikeCenterRed = new EditablePose(25, -25, RIGHT),
+            spikeCenterRed = new EditablePose(24, -27, RIGHT),
             spikeRightRed = new EditablePose(START_X + 14, -34.5, toRadians(315)),
             backboardLeft = new EditablePose(BACKBOARD_X, -30.5, LEFT),
             backboardCenter = new EditablePose(BACKBOARD_X, -34.5, LEFT),
             backboardRight = new EditablePose(BACKBOARD_X, -41, LEFT),
             parkingLeft = new EditablePose(48.5, -10, toRadians(165)),
             parkingRight = new EditablePose(48.5, -56, toRadians(200)),
+            spikeDodgeStageDoor = new EditablePose(19, -10, LEFT),
             stageDoor = new EditablePose(13, -10, LEFT),
             innerTruss = new EditablePose(-8, -34.5, LEFT),
             outerTruss = new EditablePose(23.5, -58, LEFT),
@@ -171,21 +172,20 @@ public final class Top2_4 extends LinearOpMode {
             case 0:
                 mainSpike = isRed ? spikeLeftRed : spikeRightBlue;
                 yellowScoring = isRed ? backboardLeft : backboardRight;
-                transition = isUnderTruss ? outerTruss : stageDoor;
-                pixelStack = isUnderTruss ? pixelStack3 : pixelStack1;
+                transition = isRed ? (isUnderTruss ? outerTruss : stageDoor) : (isUnderTruss ? outerTruss : spikeDodgeStageDoor);                pixelStack = isUnderTruss ? pixelStack3 : pixelStack1;
                 whiteScoring = backboardCenter;
                 break;
             case 1:
                 mainSpike = isRed ? spikeCenterRed : spikeCenterBlue;
                 yellowScoring = backboardCenter;
-                transition = isUnderTruss ? innerTruss : stageDoor;
+                transition = isRed ? (isUnderTruss ? innerTruss : stageDoor) : (isUnderTruss ? innerTruss : spikeDodgeStageDoor);
                 pixelStack = isUnderTruss ? pixelStack3 : pixelStack1;
                 whiteScoring = isRed ? backboardLeft : backboardRight;
                 break;
             case 2:
                 mainSpike = isRed ? spikeRightRed : spikeLeftBlue;
                 yellowScoring = isRed ? backboardRight : backboardLeft;
-                transition = isUnderTruss ? outerTruss : stageDoor;
+                transition = isRed ? (isUnderTruss ? outerTruss : spikeDodgeStageDoor) : (isUnderTruss ? outerTruss : stageDoor);
                 pixelStack = isUnderTruss ? pixelStack3 : pixelStack1;
                 whiteScoring = backboardCenter;
                 break;

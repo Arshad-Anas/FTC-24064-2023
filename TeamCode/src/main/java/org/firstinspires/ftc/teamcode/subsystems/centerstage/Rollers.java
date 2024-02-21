@@ -3,6 +3,8 @@ package org.firstinspires.ftc.teamcode.subsystems.centerstage;
 import static org.firstinspires.ftc.teamcode.opmodes.centerstage.MainAuton.mTelemetry;
 import static org.firstinspires.ftc.teamcode.subsystems.utilities.SimpleServoPivot.getGoBildaServo;
 
+import static java.lang.Math.max;
+
 import com.acmerobotics.dashboard.config.Config;
 import com.arcrobotics.ftclib.hardware.SimpleServo;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
@@ -15,8 +17,9 @@ public final class Rollers {
     private final SimpleServo deployableRoller;
 
 
-    public static double ANGLE_DEPLOYABLE_ROLLER = 90;
-    public double setPoint = ANGLE_DEPLOYABLE_ROLLER;
+    public static double ANGLE_DEPLOYABLE = 90;
+    public static double ANGLE_MIN_DEPLOYABLE = 2;
+    public double setPoint = ANGLE_DEPLOYABLE;
 
     public Rollers(HardwareMap hardwareMap) {
         deployableRoller = getGoBildaServo(hardwareMap, "roller1");
@@ -32,11 +35,11 @@ public final class Rollers {
     }
 
     public void setDeployableWithTrigger(double trigger) {
-        setDeployable(trigger < 0 ? ANGLE_DEPLOYABLE_ROLLER + ANGLE_DEPLOYABLE_ROLLER * trigger : ANGLE_DEPLOYABLE_ROLLER);
+        setDeployable(trigger < 0 ? max(ANGLE_MIN_DEPLOYABLE, ANGLE_DEPLOYABLE + ANGLE_DEPLOYABLE * trigger) : ANGLE_DEPLOYABLE);
     }
 
     public void resetDeployable() {
-        setDeployable(ANGLE_DEPLOYABLE_ROLLER);
+        setDeployable(ANGLE_DEPLOYABLE);
     }
 
     public void setDeployable(double angle) {
