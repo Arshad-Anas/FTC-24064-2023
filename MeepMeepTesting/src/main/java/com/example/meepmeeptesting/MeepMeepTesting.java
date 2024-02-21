@@ -26,7 +26,7 @@ public class MeepMeepTesting {
             ANGLE_2 = 33.45,
             ANGLE_3 = 22,
             ANGLE_4 = 13.8,
-            ANGLE_5 = 0;
+            ANGLE_5 = 2;
 
     public static final double
             LEFT = toRadians(180),
@@ -57,7 +57,7 @@ public class MeepMeepTesting {
 
     private static EditablePose mainSpike, pixelStack, whiteScoring, yellowScoring, transition;
 
-    public static int randomization = 0;
+    public static int randomization = 1;
 
 
     public static void main(String[] args) {
@@ -74,21 +74,21 @@ public class MeepMeepTesting {
                             yellowScoring = isRed ? botLeftBackdropRed : botRightBackdropRed;
                             transition = isUnderTruss ? botTrussOuter : botStageDoor;
                             pixelStack = isUnderTruss ? thirdWhitePixelStackRed : firstWhitePixelStackRed;
-                            whiteScoring = isRed ? botLeftBackdropRed : botRightBackdropRed;
+                            whiteScoring = isUnderTruss ? botRightBackdropRed : botLeftBackdropRed;
                             break;
                         case 1:
                             mainSpike = isRed ? botCenterSpikeRed: botCenterSpikeBlue;
                             yellowScoring = botCenterBackdropRed;
                             transition = isUnderTruss ? botTrussInner : botStageDoor;
                             pixelStack = isUnderTruss ? thirdWhitePixelStackRed : firstWhitePixelStackRed;
-                            whiteScoring = isRed ? botLeftBackdropRed : botRightBackdropRed;
+                            whiteScoring = isUnderTruss ? botCenterBackdropRed : botLeftBackdropRed;
                             break;
                         case 2:
                             mainSpike = isRed ? botRightSpikeRed : botLeftSpikeRed;
                             yellowScoring = isRed ? botRightBackdropRed : botLeftBackdropRed;
                             transition = isUnderTruss ? botTrussOuter : botStageDoor;
                             pixelStack = isUnderTruss ? thirdWhitePixelStackRed : firstWhitePixelStackRed;
-                            whiteScoring = isRed ? botLeftBackdropRed : botRightBackdropRed;
+                            whiteScoring = isUnderTruss ? botRightBackdropRed : botLeftBackdropRed;
                             break;
                     }
 

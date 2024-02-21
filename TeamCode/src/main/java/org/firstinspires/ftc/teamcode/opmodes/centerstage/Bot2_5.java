@@ -51,12 +51,12 @@ public final class Bot2_5 extends LinearOpMode {
             X_START_BOTTOM = -37;
 
     public static double
-            BACKBOARD_X = 51.95,
-            ANGLE_1 = 41.9,
-            ANGLE_2 = 33.45,
-            ANGLE_3 = 22,
-            ANGLE_4 = 13.8,
-            ANGLE_5 = 0;
+            BACKBOARD_X = 51.6,
+            ANGLE_1 = 52,
+            ANGLE_2 = 46,
+            ANGLE_3 = 32.5,
+            ANGLE_4 = 20,
+            ANGLE_5 = 2;
 
     public static EditablePose
             botStartRed = new EditablePose(X_START_BOTTOM, -61.788975, BACKWARD),
@@ -69,8 +69,6 @@ public final class Bot2_5 extends LinearOpMode {
             botCenterBackdropRed = new EditablePose(BACKBOARD_X, -34.5, LEFT),
             botLeftBackdropRed = new EditablePose(BACKBOARD_X, -30.5, LEFT),
             botRightBackdropRed = new EditablePose(BACKBOARD_X, -41, LEFT),
-            botParkingLeftRed = new EditablePose(48, -10, LEFT),
-            botParkingRightRed = new EditablePose(48, -60, LEFT),
             botAudienceSpikeTransitionRed = new EditablePose(-34,-18,toRadians(110)),
             botStageDoor = new EditablePose(25,-10,LEFT),
             botTrussInner = new EditablePose(20,-36,LEFT),
@@ -175,21 +173,21 @@ public final class Bot2_5 extends LinearOpMode {
                 yellowScoring = isRed ? botLeftBackdropRed : botRightBackdropRed;
                 transition = isUnderTruss ? botTrussOuter : botStageDoor;
                 pixelStack = isUnderTruss ? thirdWhitePixelStackRed : firstWhitePixelStackRed;
-                whiteScoring = isRed ? botLeftBackdropRed : botRightBackdropRed;
+                whiteScoring = isUnderTruss ? botRightBackdropRed : botLeftBackdropRed;
                 break;
             case 1:
                 mainSpike = isRed ? botCenterSpikeRed: botCenterSpikeBlue;
                 yellowScoring = botCenterBackdropRed;
                 transition = isUnderTruss ? botTrussInner : botStageDoor;
                 pixelStack = isUnderTruss ? thirdWhitePixelStackRed : firstWhitePixelStackRed;
-                whiteScoring = isRed ? botLeftBackdropRed : botRightBackdropRed;
+                whiteScoring = isUnderTruss ? botCenterBackdropRed : botLeftBackdropRed;
                 break;
             case 2:
                 mainSpike = isRed ? botRightSpikeRed : botLeftSpikeRed;
                 yellowScoring = isRed ? botRightBackdropRed : botLeftBackdropRed;
                 transition = isUnderTruss ? botTrussOuter : botStageDoor;
                 pixelStack = isUnderTruss ? thirdWhitePixelStackRed : firstWhitePixelStackRed;
-                whiteScoring = isRed ? botLeftBackdropRed : botRightBackdropRed;
+                whiteScoring = isUnderTruss ? botRightBackdropRed : botLeftBackdropRed;
                 break;
         }
 
@@ -197,9 +195,9 @@ public final class Bot2_5 extends LinearOpMode {
         robot.drivetrain.setPoseEstimate(startPose);
         TrajectorySequenceBuilder builder = robot.drivetrain.trajectorySequenceBuilder(startPose);
 
-        scorePurplePixel(builder, randomization); // good
-        getFirstWhitePixel(builder, randomization); // good
-        scoreYellowPixel(builder); // good
+        scorePurplePixel(builder, randomization);
+        getFirstWhitePixel(builder, randomization);
+        scoreYellowPixel(builder);
         getWhitePixels(builder, randomization ,1);
         scoreWhitePixels(builder, randomization);
         getWhitePixels(builder, randomization, 2);
@@ -218,30 +216,29 @@ public final class Bot2_5 extends LinearOpMode {
                     .lineTo(mainSpike.byAllianceVec())
                     .setTangent(LEFT);
         } else if (isAudienceSide(randomization) && isUnderTruss) {
-            builder
-                    .strafeRight(6);
+            builder.strafeRight(6)
+                    .lineToSplineHeading(botLeftSpikeRed2.byAlliancePose2d());
         } else if (isCenter(randomization) || isBackboardSide(randomization)) {
             builder.lineToSplineHeading(mainSpike.byAlliancePose2d());
         }
-        //.addTemporalMarker(() -> robot.purplePixel.setActivated(true));
     }
 
     private void getFirstWhitePixel(TrajectorySequenceBuilder builder, int randomization) {
-        builder
-                .lineToSplineHeading(pixelStack.byAlliancePose2d());
-                intakePixels(builder, 0);
+        builder.lineToSplineHeading(pixelStack.byAlliancePose2d());
+
+        intakePixels(builder, 0);
 
         if (isUnderTruss && !isCenter(randomization)) builder.lineToConstantHeading(trussTransition.byAllianceVec());
-
     }
+
     private void scoreYellowPixel(TrajectorySequenceBuilder builder) {
-        builder
-                .setTangent(RIGHT)
+        builder.setTangent(RIGHT)
                 .splineTo(transition.byAllianceVec(), RIGHT)
-                .splineToConstantHeading(yellowScoring.byAllianceVec(), Math.toRadians(LEFT));
+                .splineToConstantHeading(yellowScoring.byAllianceVec(), RIGHT);
 
-        score(builder,false);
+        //score(builder, true);
     }
+
     private void getWhitePixels(TrajectorySequenceBuilder builder, int randomization, int cycle) {
         builder.setTangent(LEFT)
                 .splineToConstantHeading(transition.byAllianceVec(), LEFT);
@@ -250,6 +247,8 @@ public final class Bot2_5 extends LinearOpMode {
             builder.splineToConstantHeading(trussTransition.byAllianceVec(),LEFT)
                     .lineToConstantHeading(pixelStack.byAllianceVec());
         else builder.splineTo(pixelStack.byAllianceVec(), pixelStack.heading);
+
+        intakePixels(builder, cycle);
     }
 
     private void scoreWhitePixels(TrajectorySequenceBuilder builder, int randomization) {
@@ -259,7 +258,8 @@ public final class Bot2_5 extends LinearOpMode {
 
         builder.splineTo(transition.byAllianceVec(), RIGHT)
                 .splineToConstantHeading(whiteScoring.byAllianceVec(), RIGHT);
-        score(builder, true);
+
+        //score(builder, true);
     }
 
     private void intakePixels(TrajectorySequenceBuilder builder, int cycle) {
