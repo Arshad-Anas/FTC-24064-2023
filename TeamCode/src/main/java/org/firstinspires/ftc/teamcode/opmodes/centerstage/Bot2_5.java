@@ -236,10 +236,14 @@ public final class Bot2_5 extends LinearOpMode {
                 .splineTo(transition.byAllianceVec(), RIGHT)
                 .splineToConstantHeading(yellowScoring.byAllianceVec(), RIGHT);
 
-        //score(builder, true);
+        setSlides(builder, false);
+        score(builder);
     }
 
     private void getWhitePixels(TrajectorySequenceBuilder builder, int randomization, int cycle) {
+
+        retractSlides(builder);
+
         builder.setTangent(LEFT)
                 .splineToConstantHeading(transition.byAllianceVec(), LEFT);
 
@@ -256,10 +260,15 @@ public final class Bot2_5 extends LinearOpMode {
             builder.lineToConstantHeading(trussTransition.byAllianceVec());
         builder.setTangent(RIGHT);
 
-        builder.splineTo(transition.byAllianceVec(), RIGHT)
+        builder
+                .splineTo(transition.byAllianceVec(), RIGHT);
+
+        setSlides(builder, true);
+
+        builder
                 .splineToConstantHeading(whiteScoring.byAllianceVec(), RIGHT);
 
-        //score(builder, true);
+        score(builder);
     }
 
     private void intakePixels(TrajectorySequenceBuilder builder, int cycle) {
@@ -277,22 +286,27 @@ public final class Bot2_5 extends LinearOpMode {
                 .UNSTABLE_addTemporalMarkerOffset(2, () -> robot.rollers.intake(0));
     }
 
-    private void score(TrajectorySequenceBuilder builder, boolean isWhite) {
-        builder.addTemporalMarker(() -> robot.lift.setToAutonHeight(isWhite ? 300 : 0))
-                .waitSeconds(0.5)
+    private void score(TrajectorySequenceBuilder builder) {
+        builder
                 .addTemporalMarker(() -> {
                     robot.arm.setArm(true);
                     robot.wrist.setActivated(true);
                 })
                 .UNSTABLE_addTemporalMarkerOffset(0.4, () -> robot.arm.setFlap(false))
-                .waitSeconds(0.8)
-                .addTemporalMarker(() -> robot.lift.setToAutonHeight(isWhite ? 700 : 400))
-                .waitSeconds(0.7)
+                .waitSeconds(0.4)
                 .addTemporalMarker(() -> {
                     robot.arm.setArm(false);
                     robot.wrist.setActivated(false);
                 })
                 .UNSTABLE_addTemporalMarkerOffset(0.3, () -> robot.lift.retract());
+    }
+
+    private void setSlides(TrajectorySequenceBuilder builder, boolean isWhite) {
+        builder.UNSTABLE_addTemporalMarkerOffset(0.75, () -> robot.lift.setToAutonHeight(isWhite ? 700 : 400));
+    }
+
+    private void retractSlides(TrajectorySequenceBuilder builder) {
+        builder.UNSTABLE_addTemporalMarkerOffset(0.75, () -> robot.lift.retract());
     }
 
     private boolean isCenter(int randomization) {
