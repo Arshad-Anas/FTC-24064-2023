@@ -208,7 +208,6 @@ public final class Top2_4 extends LinearOpMode {
     }
 
     private void scorePurplePixel(TrajectorySequenceBuilder builder, int randomization) {
-
         if (isBackboardSide(randomization) || randomization == 1) {
             builder.lineToSplineHeading(mainSpike.byAlliancePose2d());
         } else {
@@ -226,7 +225,6 @@ public final class Top2_4 extends LinearOpMode {
     }
 
     private void getWhitePixels(TrajectorySequenceBuilder builder, int randomization, int cycle) {
-
         retractSlides(builder);
 
         builder.setTangent(LEFT)
@@ -244,13 +242,10 @@ public final class Top2_4 extends LinearOpMode {
         if (isUnderTruss && randomization != 1) builder.splineTo(outerTruss2.byAllianceVec(), RIGHT);
 
         builder.splineTo(transition.byAllianceVec(), RIGHT);
-
         setSlides(builder, true);
-
         builder.splineTo(whiteScoring.byAllianceVec(), RIGHT);
 
         score(builder);
-
         retractSlides(builder);
     }
 
@@ -267,7 +262,7 @@ public final class Top2_4 extends LinearOpMode {
     }
 
     private void score(TrajectorySequenceBuilder builder) {
-                builder.addTemporalMarker(() -> {
+        builder.addTemporalMarker(() -> {
                     robot.arm.setArm(true);
                     robot.wrist.setActivated(true);
                 })
