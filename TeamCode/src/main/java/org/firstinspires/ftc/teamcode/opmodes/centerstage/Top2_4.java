@@ -23,6 +23,13 @@ import static org.firstinspires.ftc.teamcode.opmodes.centerstage.MainAuton.keyPr
 import static org.firstinspires.ftc.teamcode.opmodes.centerstage.MainAuton.mTelemetry;
 import static org.firstinspires.ftc.teamcode.opmodes.centerstage.MainAuton.propSensor;
 import static org.firstinspires.ftc.teamcode.opmodes.centerstage.MainAuton.robot;
+import static org.firstinspires.ftc.teamcode.opmodes.centerstage.Top2_4.TrajectoryState.GETTING_WHITE;
+import static org.firstinspires.ftc.teamcode.opmodes.centerstage.Top2_4.TrajectoryState.GETTING_WHITE_2;
+import static org.firstinspires.ftc.teamcode.opmodes.centerstage.Top2_4.TrajectoryState.PARKING;
+import static org.firstinspires.ftc.teamcode.opmodes.centerstage.Top2_4.TrajectoryState.READING_APRIL_TAG;
+import static org.firstinspires.ftc.teamcode.opmodes.centerstage.Top2_4.TrajectoryState.SCORING_PURPLE;
+import static org.firstinspires.ftc.teamcode.opmodes.centerstage.Top2_4.TrajectoryState.SCORING_WHITE;
+import static org.firstinspires.ftc.teamcode.opmodes.centerstage.Top2_4.TrajectoryState.SCORING_YELLOW;
 import static java.lang.Math.toRadians;
 
 import com.acmerobotics.dashboard.config.Config;
@@ -38,6 +45,7 @@ import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySe
 import org.firstinspires.ftc.teamcode.subsystems.centerstage.Robot;
 import org.firstinspires.ftc.teamcode.subsystems.centerstage.vision.AprilTagLocalization;
 import org.firstinspires.ftc.teamcode.subsystems.centerstage.vision.PropSensor;
+import org.firstinspires.ftc.teamcode.subsystems.drivetrains.MecanumDrivetrain;
 
 @Config
 @Autonomous(name = "Top 2+4", group = "24064 Main", preselectTeleOp = "MainTeleOp")
@@ -48,9 +56,7 @@ public final class Top2_4 extends LinearOpMode {
             doAprilTag = false;
 
     public static double
-            START_X = 12;
-
-    public static double
+            START_X = 12,
             BACKBOARD_X = 51.6,
             ANGLE_1 = 52,
             ANGLE_2 = 46,
@@ -79,6 +85,7 @@ public final class Top2_4 extends LinearOpMode {
             pixelStack3 = new EditablePose(-56.6, -35, LEFT);
 
     private EditablePose mainSpike, pixelStack, whiteScoring, yellowScoring, transition;
+    private MecanumDrivetrain drive;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -89,6 +96,7 @@ public final class Top2_4 extends LinearOpMode {
         gamepadEx1 = new GamepadEx(gamepad1);
 
         robot = new Robot(hardwareMap);
+        drive = robot.drivetrain;
 
         // Get gamepad 1 button input and save "right" and "red" booleans for autonomous configuration:
         while (opModeInInit() && !(gamepadEx1.isDown(RIGHT_BUMPER) && gamepadEx1.isDown(LEFT_BUMPER))) {
@@ -110,9 +118,12 @@ public final class Top2_4 extends LinearOpMode {
             mTelemetry.addLine("Press both shoulder buttons to confirm!");
             mTelemetry.update();
         }
+        TrajectorySequence[] scorePurplePixelArr, scoreYellowPixelArr, getWhitePixelArr, scoreWhitePixelArr, getWhitePixel2Arr, parkingArr;
+        scorePurplePixelArr = scoreYellowPixelArr = getWhitePixelArr = scoreWhitePixelArr = getWhitePixel2Arr = parkingArr = new TrajectorySequence[3];
 
-        TrajectorySequence[] trajectories = {getTrajectory(0), getTrajectory(1), getTrajectory(2)};
-        TrajectorySequence trajectory = null;
+        for (int i = 1; i <= 3; i++) {
+            getTrajectory(i, scorePurplePixelArr[i], scoreYellowPixelArr[i], getWhitePixelArr[i], scoreWhitePixelArr[i], getWhitePixel2Arr[i], parkingArr[i]);
+        }
 
         propSensor = new PropSensor(hardwareMap, isRed);
 
@@ -122,9 +133,9 @@ public final class Top2_4 extends LinearOpMode {
             mTelemetry.update();
         }
 
+        int randomization = 0;
         while (!isStarted() && !isStopRequested()) {
-            int randomization = propSensor.propPosition();
-            trajectory = trajectories[randomization];
+            randomization = propSensor.propPosition();
             mTelemetry.addData("Predicted Prop Placement", randomization);
             mTelemetry.update();
             sleep(50);
@@ -136,28 +147,69 @@ public final class Top2_4 extends LinearOpMode {
             mTelemetry.update();
         });
 
-        aprilTag = new AprilTagLocalization(hardwareMap);
-        Pose2d aprilTagPose = null;
+        TrajectorySequence scorePurplePixel, scoreYellowPixel, getWhitePixel, scoreWhitePixel, getWhitePixel2, parking;
+        scorePurplePixel = scorePurplePixelArr[randomization];
+        scoreYellowPixel = scoreYellowPixelArr[randomization];
+        getWhitePixel = getWhitePixelArr[randomization];
+        scoreWhitePixel = scoreWhitePixelArr[randomization];
+        getWhitePixel2 = getWhitePixel2Arr[randomization];
+        parking = parkingArr[randomization];
 
-        robot.drivetrain.followTrajectorySequenceAsync(trajectory);
+        aprilTag = new AprilTagLocalization(hardwareMap);
+        int cycles = 0;
+
+        TrajectoryState state = SCORING_PURPLE;
 
         while (opModeIsActive()) {
             if (!opModeIsActive()) {
                 return;
             }
 
-            if (doAprilTag) {
-                aprilTagPose = aprilTag.getPoseEstimate();
-                if (aprilTagPose != null) {
-                    robot.drivetrain.getLocalizer().setPoseEstimate(aprilTagPose);
-                }
-            }
-
             robot.readSensors();
 
-            if (doAprilTag) {
-                mTelemetry.addData("April Tag pose", aprilTagPose);
-                mTelemetry.update();
+            switch (state) {
+                case SCORING_PURPLE:
+                    if (!drive.isBusy()) {
+                        drive.setPoseEstimate(start.byAlliancePose2d());
+                        drive.followTrajectorySequenceAsync(scorePurplePixel);
+                        state = SCORING_YELLOW;
+                    }
+                case SCORING_YELLOW:
+                    if (!drive.isBusy()) {
+                        drive.setPoseEstimate(scorePurplePixel.end());
+                        drive.followTrajectorySequenceAsync(scoreYellowPixel);
+                        state = READING_APRIL_TAG;
+                    }
+                case GETTING_WHITE:
+                    if (!drive.isBusy()) {
+                        drive.followTrajectorySequenceAsync(getWhitePixel);
+                        state = SCORING_WHITE;
+                    }
+                case SCORING_WHITE:
+                    if (!drive.isBusy()) {
+                        drive.setPoseEstimate(getWhitePixel.end());
+                        drive.followTrajectorySequenceAsync(scoreWhitePixel);
+                        state = READING_APRIL_TAG;
+                        cycles++;
+                    }
+                case GETTING_WHITE_2:
+                    if (!drive.isBusy()) {
+                        drive.followTrajectorySequenceAsync(getWhitePixel2);
+                        state = SCORING_WHITE;
+                    }
+                case PARKING:
+                    if (!drive.isBusy()) {
+                        drive.followTrajectorySequenceAsync(parking);
+                    }
+                case READING_APRIL_TAG:
+                    if (!drive.isBusy()) {
+                        Pose2d estimate = aprilTag.getPoseEstimate();
+                        if (estimate != null) drive.setPoseEstimate(estimate);
+
+                        if (cycles == 0) state = GETTING_WHITE;
+                        else if (cycles == 1) state = GETTING_WHITE_2;
+                        else state = PARKING;
+                    }
             }
 
             robot.drivetrain.update();
@@ -167,12 +219,13 @@ public final class Top2_4 extends LinearOpMode {
         autonEndPose = robot.drivetrain.getPoseEstimate();
     }
 
-    private TrajectorySequence getTrajectory(int randomization) {
+    private void getTrajectory(int randomization, TrajectorySequence scorePurplePixel, TrajectorySequence scoreYellowPixel, TrajectorySequence getWhitePixels, TrajectorySequence scoreWhitePixels, TrajectorySequence getWhitePixels2, TrajectorySequence parking) {
         switch (randomization) {
             case 0:
                 mainSpike = isRed ? spikeLeftRed : spikeRightBlue;
                 yellowScoring = isRed ? backboardLeft : backboardRight;
-                transition = isRed ? (isUnderTruss ? outerTruss : stageDoor) : (isUnderTruss ? outerTruss : spikeDodgeStageDoor);                pixelStack = isUnderTruss ? pixelStack3 : pixelStack1;
+                transition = isRed ? (isUnderTruss ? outerTruss : stageDoor) : (isUnderTruss ? outerTruss : spikeDodgeStageDoor);
+                pixelStack = isUnderTruss ? pixelStack3 : pixelStack1;
                 whiteScoring = isUnderTruss ? backboardRight : backboardCenter;
                 break;
             case 1:
@@ -191,23 +244,18 @@ public final class Top2_4 extends LinearOpMode {
                 break;
         }
 
-        Pose2d startPose = start.byAlliancePose2d();
-        robot.drivetrain.setPoseEstimate(startPose);
-        TrajectorySequenceBuilder builder = robot.drivetrain.trajectorySequenceBuilder(startPose);
 
-        scorePurplePixel(builder, randomization);
-        scoreYellowPixel(builder);
-        getWhitePixels(builder, randomization, 1);
-        scoreWhitePixels(builder, randomization);
-        getWhitePixels(builder, randomization, 2);
-        scoreWhitePixels(builder, randomization);
-
-        builder.lineToSplineHeading((isParkedMiddle ? parkingLeft : parkingRight).byAlliancePose2d());
-
-        return builder.build();
+        scorePurplePixel = scorePurplePixel(start.byAlliancePose2d(), randomization);
+        scoreYellowPixel = scoreYellowPixel(scorePurplePixel.end());
+        getWhitePixels = getWhitePixels(scoreYellowPixel.end(), randomization, 1);
+        scoreWhitePixels = scoreWhitePixels(getWhitePixels.end(), randomization);
+        getWhitePixels2 = getWhitePixels(scoreWhitePixels.end(), randomization, 2);
+        parking = drive.trajectorySequenceBuilder(scoreWhitePixels.end()).lineToSplineHeading((isParkedMiddle ? parkingLeft : parkingRight).byAlliancePose2d()).build();
     }
 
-    private void scorePurplePixel(TrajectorySequenceBuilder builder, int randomization) {
+    private TrajectorySequence scorePurplePixel(Pose2d start, int randomization) {
+        TrajectorySequenceBuilder builder = drive.trajectorySequenceBuilder(start);
+
         if (isBackboardSide(randomization) || randomization == 1) {
             builder.lineToSplineHeading(mainSpike.byAlliancePose2d());
         } else {
@@ -216,15 +264,21 @@ public final class Top2_4 extends LinearOpMode {
         }
 
         builder.addTemporalMarker(() -> robot.purplePixel.setActivated(true));
+        return builder.build();
     }
 
-    private void scoreYellowPixel(TrajectorySequenceBuilder builder) {
+    private TrajectorySequence scoreYellowPixel(Pose2d start) {
+        TrajectorySequenceBuilder builder = drive.trajectorySequenceBuilder(start);
+
         builder.lineToSplineHeading(yellowScoring.byAlliancePose2d());
         setSlides(builder, false);
         score(builder);
+        return builder.build();
     }
 
-    private void getWhitePixels(TrajectorySequenceBuilder builder, int randomization, int cycle) {
+    private TrajectorySequence getWhitePixels(Pose2d start, int randomization, int cycle) {
+        TrajectorySequenceBuilder builder = drive.trajectorySequenceBuilder(start);
+
         retractSlides(builder);
 
         builder.setTangent(LEFT)
@@ -234,9 +288,12 @@ public final class Top2_4 extends LinearOpMode {
 
         builder.splineTo(pixelStack.byAllianceVec(), pixelStack.heading);
         intakePixels(builder, cycle);
+        return builder.build();
     }
 
-    private void scoreWhitePixels(TrajectorySequenceBuilder builder, int randomization) {
+    private TrajectorySequence scoreWhitePixels(Pose2d start, int randomization) {
+        TrajectorySequenceBuilder builder = drive.trajectorySequenceBuilder(start);
+
         builder.setTangent(RIGHT);
 
         if (isUnderTruss && randomization != 1) builder.splineTo(outerTruss2.byAllianceVec(), RIGHT);
@@ -247,6 +304,7 @@ public final class Top2_4 extends LinearOpMode {
 
         score(builder);
         retractSlides(builder);
+        return builder.build();
     }
 
     private void intakePixels(TrajectorySequenceBuilder builder, int cycle) {
@@ -284,6 +342,16 @@ public final class Top2_4 extends LinearOpMode {
 
     private boolean isBackboardSide(int randomization) {
         return isRed && randomization == 2 || !isRed && randomization == 0;
+    }
+
+    enum TrajectoryState {
+        SCORING_PURPLE,
+        SCORING_YELLOW,
+        GETTING_WHITE,
+        SCORING_WHITE,
+        GETTING_WHITE_2,
+        PARKING,
+        READING_APRIL_TAG;
     }
 
     private static class EditablePose {

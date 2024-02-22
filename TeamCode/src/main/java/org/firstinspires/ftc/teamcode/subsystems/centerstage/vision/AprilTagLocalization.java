@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.subsystems.centerstage.vision;
 
+import android.util.Size;
+
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -19,6 +21,10 @@ import java.util.List;
 @Config
 public class AprilTagLocalization {
     public static final double
+    // Lens intrinsics
+    // UNITS ARE PIXELS
+    // NOTE: this calibration is for the C920 webcam at 800x448.
+    // You will need to do your own calibration for other configurations!
             fx = 578.272,
             fy = 578.272,
             cx = 402.145,
@@ -35,11 +41,12 @@ public class AprilTagLocalization {
                 .setTagFamily(AprilTagProcessor.TagFamily.TAG_36h11)
                 .setTagLibrary(AprilTagGameDatabase.getCenterStageTagLibrary())
                 .setOutputUnits(DistanceUnit.INCH, AngleUnit.DEGREES)
-//                .setLensIntrinsics(fx, fy, cx, cy)
+                .setLensIntrinsics(fx, fy, cx, cy)
                 .build();
 
         visionPortal = new VisionPortal.Builder()
                 .setCamera(hardwareMap.get(WebcamName.class, "Webcam 1"))
+                .setCameraResolution(new Size(800, 448))
                 .enableLiveView(true)
                 .addProcessor(aprilTagProcessor)
                 .build();
