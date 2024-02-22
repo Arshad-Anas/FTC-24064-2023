@@ -70,7 +70,7 @@ public final class Top2_4 extends LinearOpMode {
             backboardRight = new EditablePose(BACKBOARD_X, -41, LEFT),
             parkingLeft = new EditablePose(48.5, -10, toRadians(165)),
             parkingRight = new EditablePose(48.5, -56, toRadians(200)),
-            spikeDodgeStageDoor = new EditablePose(19, -10, LEFT),
+            spikeDodgeStageDoor = new EditablePose(23, -10, LEFT),
             stageDoor = new EditablePose(13, -10, LEFT),
             innerTruss = new EditablePose(-8, -34.5, LEFT),
             outerTruss = new EditablePose(23.5, -58, LEFT),
@@ -173,21 +173,21 @@ public final class Top2_4 extends LinearOpMode {
                 mainSpike = isRed ? spikeLeftRed : spikeRightBlue;
                 yellowScoring = isRed ? backboardLeft : backboardRight;
                 transition = isRed ? (isUnderTruss ? outerTruss : stageDoor) : (isUnderTruss ? outerTruss : spikeDodgeStageDoor);                pixelStack = isUnderTruss ? pixelStack3 : pixelStack1;
-                whiteScoring = backboardCenter;
+                whiteScoring = isUnderTruss ? backboardRight : backboardCenter;
                 break;
             case 1:
                 mainSpike = isRed ? spikeCenterRed : spikeCenterBlue;
                 yellowScoring = backboardCenter;
                 transition = isRed ? (isUnderTruss ? innerTruss : stageDoor) : (isUnderTruss ? innerTruss : spikeDodgeStageDoor);
                 pixelStack = isUnderTruss ? pixelStack3 : pixelStack1;
-                whiteScoring = isRed ? backboardLeft : backboardRight;
+                whiteScoring = isUnderTruss ? backboardRight : backboardLeft;
                 break;
             case 2:
                 mainSpike = isRed ? spikeRightRed : spikeLeftBlue;
                 yellowScoring = isRed ? backboardRight : backboardLeft;
                 transition = isRed ? (isUnderTruss ? outerTruss : spikeDodgeStageDoor) : (isUnderTruss ? outerTruss : stageDoor);
                 pixelStack = isUnderTruss ? pixelStack3 : pixelStack1;
-                whiteScoring = backboardCenter;
+                whiteScoring = isUnderTruss ? backboardRight : backboardLeft;
                 break;
         }
 
