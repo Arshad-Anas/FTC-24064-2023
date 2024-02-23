@@ -64,9 +64,9 @@ public final class Top2_4 extends LinearOpMode {
             spikeRightBlue = new EditablePose(30, -36, toRadians(315)),
             spikeLeftRed = new EditablePose(3, -35, toRadians(135)),
             spikeCenterRed = new EditablePose(24, -27, RIGHT),
-            spikeRightRed = new EditablePose(START_X + 14, -34.5, toRadians(315)),
+            spikeRightRed = new EditablePose(START_X + 14, -40, toRadians(315)),
             backboardLeft = new EditablePose(BACKBOARD_X, -30.5, LEFT),
-            backboardCenter = new EditablePose(BACKBOARD_X, -34.5, LEFT),
+            backboardCenter = new EditablePose(BACKBOARD_X, -31.5, LEFT),
             backboardRight = new EditablePose(BACKBOARD_X, -41, LEFT),
             parkingLeft = new EditablePose(48.5, -10, toRadians(165)),
             parkingRight = new EditablePose(48.5, -56, toRadians(200)),
@@ -75,8 +75,8 @@ public final class Top2_4 extends LinearOpMode {
             innerTruss = new EditablePose(-8, -34.5, LEFT),
             outerTruss = new EditablePose(23.5, -58, LEFT),
             outerTruss2 = new EditablePose(-23.5, -58, LEFT),
-            pixelStack1 = new EditablePose(-56.6, -12, LEFT),
-            pixelStack3 = new EditablePose(-56.6, -35, LEFT);
+            pixelStack1 = new EditablePose(-59, -14, LEFT),
+            pixelStack3 = new EditablePose(-59, -35, LEFT);
 
     private EditablePose mainSpike, pixelStack, whiteScoring, yellowScoring, transition;
 
@@ -172,7 +172,9 @@ public final class Top2_4 extends LinearOpMode {
             case 0:
                 mainSpike = isRed ? spikeLeftRed : spikeRightBlue;
                 yellowScoring = isRed ? backboardLeft : backboardRight;
-                transition = isRed ? (isUnderTruss ? outerTruss : stageDoor) : (isUnderTruss ? outerTruss : spikeDodgeStageDoor);                pixelStack = isUnderTruss ? pixelStack3 : pixelStack1;
+                transition = isRed ? (isUnderTruss ? outerTruss : stageDoor) : (isUnderTruss ? outerTruss : spikeDodgeStageDoor);
+                pixelStack = isUnderTruss ? pixelStack3 : pixelStack1;
+                whiteScoring = backboardCenter;
                 whiteScoring = isUnderTruss ? backboardRight : backboardCenter;
                 break;
             case 1:
@@ -180,6 +182,7 @@ public final class Top2_4 extends LinearOpMode {
                 yellowScoring = backboardCenter;
                 transition = isRed ? (isUnderTruss ? innerTruss : stageDoor) : (isUnderTruss ? innerTruss : spikeDodgeStageDoor);
                 pixelStack = isUnderTruss ? pixelStack3 : pixelStack1;
+                whiteScoring = isRed ? backboardLeft : backboardRight;
                 whiteScoring = isUnderTruss ? backboardRight : backboardLeft;
                 break;
             case 2:
@@ -187,6 +190,7 @@ public final class Top2_4 extends LinearOpMode {
                 yellowScoring = isRed ? backboardRight : backboardLeft;
                 transition = isRed ? (isUnderTruss ? outerTruss : spikeDodgeStageDoor) : (isUnderTruss ? outerTruss : stageDoor);
                 pixelStack = isUnderTruss ? pixelStack3 : pixelStack1;
+                whiteScoring = backboardCenter;
                 whiteScoring = isUnderTruss ? backboardRight : backboardLeft;
                 break;
         }
@@ -208,6 +212,7 @@ public final class Top2_4 extends LinearOpMode {
     }
 
     private void scorePurplePixel(TrajectorySequenceBuilder builder, int randomization) {
+
         if (isBackboardSide(randomization) || randomization == 1) {
             builder.lineToSplineHeading(mainSpike.byAlliancePose2d());
         } else {
@@ -220,13 +225,10 @@ public final class Top2_4 extends LinearOpMode {
 
     private void scoreYellowPixel(TrajectorySequenceBuilder builder) {
         builder.lineToSplineHeading(yellowScoring.byAlliancePose2d());
-        setSlides(builder, false);
-        score(builder);
+        score(builder, false);
     }
 
     private void getWhitePixels(TrajectorySequenceBuilder builder, int randomization, int cycle) {
-        retractSlides(builder);
-
         builder.setTangent(LEFT)
                 .splineTo(transition.byAllianceVec(), transition.heading);
 
@@ -241,19 +243,17 @@ public final class Top2_4 extends LinearOpMode {
 
         if (isUnderTruss && randomization != 1) builder.splineTo(outerTruss2.byAllianceVec(), RIGHT);
 
-        builder.splineTo(transition.byAllianceVec(), RIGHT);
-        setSlides(builder, true);
-        builder.splineTo(whiteScoring.byAllianceVec(), RIGHT);
+        builder.splineTo(transition.byAllianceVec(), RIGHT)
+                .splineTo(whiteScoring.byAllianceVec(), RIGHT);
 
-        score(builder);
-        retractSlides(builder);
+        score(builder, true);
     }
 
     private void intakePixels(TrajectorySequenceBuilder builder, int cycle) {
         builder.addTemporalMarker(() -> {
-            robot.rollers.setDeployable(cycle == 1 ? ANGLE_1 : ANGLE_3);
-            robot.rollers.intake(-1);
-        })
+                    robot.rollers.setDeployable(cycle == 1 ? ANGLE_1 : ANGLE_3);
+                    robot.rollers.intake(-1);
+                })
                 .waitSeconds(0.8)
                 .addTemporalMarker(() -> robot.rollers.setDeployable(cycle == 1 ? ANGLE_2 : ANGLE_4))
                 .waitSeconds(0.8)
@@ -261,25 +261,22 @@ public final class Top2_4 extends LinearOpMode {
                 .UNSTABLE_addTemporalMarkerOffset(2, () -> robot.rollers.intake(0));
     }
 
-    private void score(TrajectorySequenceBuilder builder) {
-        builder.addTemporalMarker(() -> {
+    private void score(TrajectorySequenceBuilder builder, boolean isWhite) {
+        builder.addTemporalMarker(() -> robot.lift.setToAutonHeight(isWhite ? 300 : 0))
+                .waitSeconds(0.5)
+                .addTemporalMarker(() -> {
                     robot.arm.setArm(true);
                     robot.wrist.setActivated(true);
                 })
                 .UNSTABLE_addTemporalMarkerOffset(0.4, () -> robot.arm.setFlap(false))
-                .waitSeconds(0.4)
+                .waitSeconds(0.8)
+                .addTemporalMarker(() -> robot.lift.setToAutonHeight(isWhite ? 700 : 400))
+                .waitSeconds(0.7)
                 .addTemporalMarker(() -> {
                     robot.arm.setArm(false);
                     robot.wrist.setActivated(false);
-                });
-    }
-
-    private void setSlides(TrajectorySequenceBuilder builder, boolean isWhite) {
-        builder.UNSTABLE_addTemporalMarkerOffset(0.75, () -> robot.lift.setToAutonHeight(isWhite ? 700 : 400));
-    }
-
-    private void retractSlides(TrajectorySequenceBuilder builder) {
-        builder.UNSTABLE_addTemporalMarkerOffset(0.75, () -> robot.lift.retract());
+                })
+                .UNSTABLE_addTemporalMarkerOffset(0.3, () -> robot.lift.retract());
     }
 
     private boolean isBackboardSide(int randomization) {
