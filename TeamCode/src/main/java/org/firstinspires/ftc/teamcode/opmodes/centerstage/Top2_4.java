@@ -173,27 +173,22 @@ public final class Top2_4 extends LinearOpMode {
                 mainSpike = isRed ? spikeLeftRed : spikeRightBlue;
                 yellowScoring = isRed ? backboardLeft : backboardRight;
                 transition = isRed ? (isUnderTruss ? outerTruss : stageDoor) : (isUnderTruss ? outerTruss : spikeDodgeStageDoor);
-                pixelStack = isUnderTruss ? pixelStack3 : pixelStack1;
-                whiteScoring = backboardCenter;
-                whiteScoring = isUnderTruss ? backboardRight : backboardCenter;
+                whiteScoring = isRed ? (isUnderTruss ? backboardRight : backboardCenter) : (isUnderTruss ? backboardCenter : backboardLeft);
                 break;
             case 1:
                 mainSpike = isRed ? spikeCenterRed : spikeCenterBlue;
                 yellowScoring = backboardCenter;
-                transition = isRed ? (isUnderTruss ? innerTruss : stageDoor) : (isUnderTruss ? innerTruss : spikeDodgeStageDoor);
-                pixelStack = isUnderTruss ? pixelStack3 : pixelStack1;
-                whiteScoring = isRed ? backboardLeft : backboardRight;
+                transition = isUnderTruss ? outerTruss : spikeDodgeStageDoor;
                 whiteScoring = isUnderTruss ? backboardRight : backboardLeft;
                 break;
             case 2:
                 mainSpike = isRed ? spikeRightRed : spikeLeftBlue;
                 yellowScoring = isRed ? backboardRight : backboardLeft;
                 transition = isRed ? (isUnderTruss ? outerTruss : spikeDodgeStageDoor) : (isUnderTruss ? outerTruss : stageDoor);
-                pixelStack = isUnderTruss ? pixelStack3 : pixelStack1;
-                whiteScoring = backboardCenter;
-                whiteScoring = isUnderTruss ? backboardRight : backboardLeft;
+                whiteScoring = isRed ? (isUnderTruss ? backboardCenter : backboardLeft) : (isUnderTruss ? backboardRight : backboardCenter);
                 break;
         }
+        pixelStack = isUnderTruss ? pixelStack3 : pixelStack1;
 
         Pose2d startPose = start.byAlliancePose2d();
         robot.drivetrain.setPoseEstimate(startPose);
