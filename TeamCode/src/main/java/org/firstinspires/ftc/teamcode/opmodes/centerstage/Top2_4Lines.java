@@ -211,6 +211,7 @@ public final class Top2_4Lines extends LinearOpMode {
         getWhitePixels(builder, 2);
         scoreWhitePixels(builder);
 
+        retractSlides(builder);
         builder.lineToSplineHeading((isParkedMiddle ? parkingLeft : parkingRight).byAlliancePose2d());
 
         return builder.build();
@@ -233,7 +234,12 @@ public final class Top2_4Lines extends LinearOpMode {
     }
 
     private void getWhitePixels(TrajectorySequenceBuilder builder, int cycle) {
-        builder.lineTo(transition.byAllianceVec());
+
+        retractSlides(builder);
+
+        builder
+                .lineTo(transition.byAllianceVec())
+                .waitSeconds(0.5);
 
         if (isUnderTruss) builder.lineTo(outerTruss2.byAllianceVec());
 
@@ -244,8 +250,11 @@ public final class Top2_4Lines extends LinearOpMode {
     private void scoreWhitePixels(TrajectorySequenceBuilder builder) {
         if (isUnderTruss) builder.lineTo(outerTruss2.byAllianceVec());
 
-        builder.lineTo(transition.byAllianceVec())
-                .lineTo(whiteScoring.byAllianceVec());
+        builder.lineTo(transition.byAllianceVec());
+
+        setSlides(builder, true);
+
+        builder.lineTo(whiteScoring.byAllianceVec());
 
         score(builder, true);
     }
@@ -263,21 +272,37 @@ public final class Top2_4Lines extends LinearOpMode {
     }
 
     private void score(TrajectorySequenceBuilder builder, boolean isWhite) {
-        builder.addTemporalMarker(() -> robot.lift.setToAutonHeight(isWhite ? 300 : 0))
-                .waitSeconds(0.5)
-                .addTemporalMarker(() -> {
-                    robot.arm.setArm(true);
-                    robot.wrist.setActivated(true);
-                })
+        if (!isWhite) {
+            builder.addTemporalMarker(() -> robot.lift.setToAutonHeight(isWhite ? 250 : 0))
+                    .waitSeconds(0.25)
+                    .addTemporalMarker(() -> {
+                        robot.arm.setArm(true);
+                        robot.wrist.setActivated(true);
+                    });
+        }
+
+        builder
                 .UNSTABLE_addTemporalMarkerOffset(0.4, () -> robot.arm.setFlap(false))
                 .waitSeconds(0.8)
-                .addTemporalMarker(() -> robot.lift.setToAutonHeight(isWhite ? 700 : 400))
-                .waitSeconds(0.7)
-                .addTemporalMarker(() -> {
+                .addTemporalMarker(() -> robot.lift.setToAutonHeight(isWhite ? 400 : 175));
+    }
+
+    private void retractSlides(TrajectorySequenceBuilder builder) {
+        builder
+                .UNSTABLE_addTemporalMarkerOffset(0.1, () -> {
                     robot.arm.setArm(false);
                     robot.wrist.setActivated(false);
                 })
-                .UNSTABLE_addTemporalMarkerOffset(0.3, () -> robot.lift.retract());
+                .UNSTABLE_addTemporalMarkerOffset(0.45, () -> robot.lift.retract());
+    }
+
+    private void setSlides(TrajectorySequenceBuilder builder, boolean isWhite) {
+        builder
+                .UNSTABLE_addTemporalMarkerOffset(0.4, () -> robot.lift.setToAutonHeight(isWhite ? 250 : 0))
+                .UNSTABLE_addTemporalMarkerOffset(0.7, () -> {
+                    robot.arm.setArm(true);
+                    robot.wrist.setActivated(true);
+                });
     }
 
     private boolean isBackboardSide(int randomization) {

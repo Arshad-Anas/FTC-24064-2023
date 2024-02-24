@@ -13,7 +13,7 @@ import com.noahbres.meepmeep.roadrunner.trajectorysequence.TrajectorySequenceBui
 
 public class MeepMeepTesting {
 
-    static boolean isRed = false,
+    static boolean isRed = true,
             isParkedMiddle = false,
             isUnderTruss = false;
 

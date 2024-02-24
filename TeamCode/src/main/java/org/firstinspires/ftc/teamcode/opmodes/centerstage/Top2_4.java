@@ -63,20 +63,20 @@ public final class Top2_4 extends LinearOpMode {
             spikeCenterBlue = new EditablePose((START_X + 6), -26, toRadians(315)),
             spikeRightBlue = new EditablePose(30, -36, toRadians(315)),
             spikeLeftRed = new EditablePose(3, -35, toRadians(135)),
-            spikeCenterRed = new EditablePose(24, -27, RIGHT),
+            spikeCenterRed = new EditablePose(24, -26, RIGHT),
             spikeRightRed = new EditablePose(START_X + 14, -40, toRadians(315)),
             backboardLeft = new EditablePose(BACKBOARD_X, -30.5, LEFT),
-            backboardCenter = new EditablePose(BACKBOARD_X, -31.5, LEFT),
+            backboardCenter = new EditablePose(BACKBOARD_X, -31, LEFT),
             backboardRight = new EditablePose(BACKBOARD_X, -41, LEFT),
             parkingLeft = new EditablePose(48.5, -10, toRadians(165)),
             parkingRight = new EditablePose(48.5, -56, toRadians(200)),
             spikeDodgeStageDoor = new EditablePose(23, -10, LEFT),
-            stageDoor = new EditablePose(13, -10, LEFT),
+            stageDoor = new EditablePose(16, -10, LEFT),
             innerTruss = new EditablePose(-8, -34.5, LEFT),
             outerTruss = new EditablePose(23.5, -58, LEFT),
             outerTruss2 = new EditablePose(-23.5, -58, LEFT),
-            pixelStack1 = new EditablePose(-59, -14, LEFT),
-            pixelStack3 = new EditablePose(-59, -35, LEFT);
+            pixelStack1 = new EditablePose(-59.25, -12, LEFT),
+            pixelStack3 = new EditablePose(-59.25, -35, LEFT);
 
     private EditablePose mainSpike, pixelStack, whiteScoring, yellowScoring, transition;
 
@@ -146,19 +146,19 @@ public final class Top2_4 extends LinearOpMode {
                 return;
             }
 
-            if (doAprilTag) {
-                aprilTagPose = aprilTag.getPoseEstimate();
-                if (aprilTagPose != null) {
-                    robot.drivetrain.getLocalizer().setPoseEstimate(aprilTagPose);
-                }
-            }
+//            if (doAprilTag) {
+//                aprilTagPose = aprilTag.getPoseEstimate();
+//                if (aprilTagPose != null) {
+//                    robot.drivetrain.getLocalizer().setPoseEstimate(aprilTagPose);
+//                }
+//            }
 
             robot.readSensors();
 
-            if (doAprilTag) {
-                mTelemetry.addData("April Tag pose", aprilTagPose);
-                mTelemetry.update();
-            }
+//            if (doAprilTag) {
+//                mTelemetry.addData("April Tag pose", aprilTagPose);
+//                mTelemetry.update();
+//            }
 
             robot.drivetrain.update();
             robot.run();
@@ -224,8 +224,12 @@ public final class Top2_4 extends LinearOpMode {
     }
 
     private void getWhitePixels(TrajectorySequenceBuilder builder, int randomization, int cycle) {
-        builder.setTangent(LEFT)
-                .splineTo(transition.byAllianceVec(), transition.heading);
+
+        retractSlides(builder);
+
+        builder.lineToConstantHeading(transition.byAllianceVec());
+
+        builder.setTangent(LEFT);
 
         if (isUnderTruss && randomization != 1) builder.splineTo(outerTruss2.byAllianceVec(), outerTruss2.heading);
 
@@ -238,8 +242,11 @@ public final class Top2_4 extends LinearOpMode {
 
         if (isUnderTruss && randomization != 1) builder.splineTo(outerTruss2.byAllianceVec(), RIGHT);
 
-        builder.splineTo(transition.byAllianceVec(), RIGHT)
-                .splineTo(whiteScoring.byAllianceVec(), RIGHT);
+        builder.splineTo(transition.byAllianceVec(), RIGHT);
+
+        setSlides(builder, true);
+
+        builder.splineTo(whiteScoring.byAllianceVec(), RIGHT);
 
         score(builder, true);
     }
@@ -257,22 +264,41 @@ public final class Top2_4 extends LinearOpMode {
     }
 
     private void score(TrajectorySequenceBuilder builder, boolean isWhite) {
-        builder.addTemporalMarker(() -> robot.lift.setToAutonHeight(isWhite ? 300 : 0))
-                .waitSeconds(0.5)
-                .addTemporalMarker(() -> {
-                    robot.arm.setArm(true);
-                    robot.wrist.setActivated(true);
-                })
+        if (!isWhite) {
+            builder
+                    .addTemporalMarker(() -> robot.lift.setToAutonHeight(isWhite ? 250 : 0))
+                    .waitSeconds(0.25)
+                    .addTemporalMarker(() -> {
+                        robot.arm.setArm(true);
+                        robot.wrist.setActivated(true);
+                    });
+        }
+
+        builder
                 .UNSTABLE_addTemporalMarkerOffset(0.4, () -> robot.arm.setFlap(false))
-                .waitSeconds(0.8)
-                .addTemporalMarker(() -> robot.lift.setToAutonHeight(isWhite ? 700 : 400))
-                .waitSeconds(0.7)
-                .addTemporalMarker(() -> {
+                .waitSeconds(0.5)
+                .addTemporalMarker(() -> robot.lift.setToAutonHeight(isWhite ? 400 : 175));
+    }
+
+    private void retractSlides(TrajectorySequenceBuilder builder) {
+        builder
+                .UNSTABLE_addTemporalMarkerOffset(0.1, () -> {
                     robot.arm.setArm(false);
                     robot.wrist.setActivated(false);
                 })
-                .UNSTABLE_addTemporalMarkerOffset(0.3, () -> robot.lift.retract());
+                .UNSTABLE_addTemporalMarkerOffset(0.45, () -> robot.lift.retract());
     }
+
+    private void setSlides(TrajectorySequenceBuilder builder, boolean isWhite) {
+        builder
+                .addTemporalMarker(() -> robot.lift.setToAutonHeight(isWhite ? 250 : 0))
+                .waitSeconds(0.25)
+                .addTemporalMarker(() -> {
+                    robot.arm.setArm(true);
+                    robot.wrist.setActivated(true);
+                });
+    }
+
 
     private boolean isBackboardSide(int randomization) {
         return isRed && randomization == 2 || !isRed && randomization == 0;
