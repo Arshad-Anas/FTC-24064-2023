@@ -48,7 +48,7 @@ public final class Bot2_5 extends LinearOpMode {
             doAprilTag = false;
 
     public static double
-            X_START_BOTTOM = -37;
+            START_X = -35.5;
 
     public static double
             BACKBOARD_X = 51.6,
@@ -59,23 +59,22 @@ public final class Bot2_5 extends LinearOpMode {
             ANGLE_5 = 2;
 
     public static EditablePose
-            botStartRed = new EditablePose(X_START_BOTTOM, -61.788975, BACKWARD),
-            botLeftSpikeRed = new EditablePose(-49 , -16, LEFT),
-            botLeftSpikeRed2 = new EditablePose(-56,-36, toRadians(210)),
-            botCenterSpikeRed = new EditablePose(-50, -22, LEFT),
-            botCenterSpikeBlue = new EditablePose(-50 , -25, LEFT),
-            botRightSpikeRed = new EditablePose(-33, -35, toRadians(210)),
-            botRightSpikeBlue = new EditablePose(-33,-36, toRadians(170)),
-            botCenterBackdropRed = new EditablePose(BACKBOARD_X, -34.5, LEFT),
-            botLeftBackdropRed = new EditablePose(BACKBOARD_X, -30.5, LEFT),
-            botRightBackdropRed = new EditablePose(BACKBOARD_X, -41, LEFT),
-            botAudienceSpikeTransitionRed = new EditablePose(-34,-18,toRadians(110)),
-            botStageDoor = new EditablePose(25,-10,LEFT),
-            botTrussInner = new EditablePose(20,-36,LEFT),
-            botTrussOuter = new EditablePose(20,-58,LEFT),
-            firstWhitePixelStackRed = new EditablePose(-56.6,-12, LEFT),
+            botStartRed = new EditablePose(START_X, -61.788975, BACKWARD),
+            leftSpikeRed = new EditablePose(START_X , -15, FORWARD),
+            leftSpikeRed2 = new EditablePose(START_X - 14 , leftSpikeRed.y, FORWARD),
+            centerSpikeRed = new EditablePose(-50, -22, LEFT),
+            centerSpikeBlue = new EditablePose(-50 , -27, LEFT),
+            rightSpikeRed = new EditablePose(START_X + 6, -36.5, toRadians(45)),
+            rightSpikeBlue = new EditablePose(START_X + 6, -36.5, toRadians(325)),
+            backboardCenter = new EditablePose(BACKBOARD_X, -34.5, LEFT),
+            backboardLeft = new EditablePose(BACKBOARD_X, -30.5, LEFT),
+            backboardRight = new EditablePose(BACKBOARD_X, -41, LEFT),
+            spikeDodgeStageDoor = new EditablePose(28, -11.5, LEFT),
+            outerTruss = new EditablePose(20,-58,LEFT),
+            outerTruss2 = new EditablePose(-23.5, -58, LEFT),
+            pixelStack1 = new EditablePose(-59,-11.5, LEFT),
             trussTransition = new EditablePose(-53,-58,LEFT),
-            thirdWhitePixelStackRed = new EditablePose(-56.6, -35,LEFT);
+            pixelStack3 = new EditablePose(-59, -35,LEFT);
 
     private EditablePose mainSpike, pixelStack, whiteScoring, yellowScoring, transition;
 
@@ -169,25 +168,25 @@ public final class Bot2_5 extends LinearOpMode {
     private TrajectorySequence getTrajectory(int randomization) {
         switch (randomization) {
             case 0:
-                mainSpike = isRed ?  botLeftSpikeRed : botRightSpikeBlue;
-                yellowScoring = isRed ? botLeftBackdropRed : botRightBackdropRed;
-                transition = isUnderTruss ? botTrussOuter : botStageDoor;
-                pixelStack = isUnderTruss ? thirdWhitePixelStackRed : firstWhitePixelStackRed;
-                whiteScoring = isUnderTruss ? botRightBackdropRed : botLeftBackdropRed;
+                mainSpike = isRed ? leftSpikeRed : rightSpikeBlue;
+                yellowScoring = isRed ? backboardLeft : backboardRight;
+                transition = isUnderTruss ? outerTruss : spikeDodgeStageDoor;
+                pixelStack = isUnderTruss ? pixelStack3 : pixelStack1;
+                whiteScoring = isUnderTruss ? backboardRight : backboardLeft;
                 break;
             case 1:
-                mainSpike = isRed ? botCenterSpikeRed: botCenterSpikeBlue;
-                yellowScoring = botCenterBackdropRed;
-                transition = isUnderTruss ? botTrussInner : botStageDoor;
-                pixelStack = isUnderTruss ? thirdWhitePixelStackRed : firstWhitePixelStackRed;
-                whiteScoring = isUnderTruss ? botCenterBackdropRed : botLeftBackdropRed;
+                mainSpike = isRed ? centerSpikeRed : centerSpikeBlue;
+                yellowScoring = backboardCenter;
+                transition = isUnderTruss ? outerTruss : spikeDodgeStageDoor;
+                pixelStack = isUnderTruss ? pixelStack3 : pixelStack1;
+                whiteScoring = isUnderTruss ? backboardCenter : backboardLeft;
                 break;
             case 2:
-                mainSpike = isRed ? botRightSpikeRed : botLeftSpikeRed;
-                yellowScoring = isRed ? botRightBackdropRed : botLeftBackdropRed;
-                transition = isUnderTruss ? botTrussOuter : botStageDoor;
-                pixelStack = isUnderTruss ? thirdWhitePixelStackRed : firstWhitePixelStackRed;
-                whiteScoring = isUnderTruss ? botRightBackdropRed : botLeftBackdropRed;
+                mainSpike = isRed ? rightSpikeRed : leftSpikeRed;
+                yellowScoring = isRed ? backboardRight : backboardLeft;
+                transition = isUnderTruss ? outerTruss : spikeDodgeStageDoor;
+                pixelStack = isUnderTruss ? pixelStack3 : pixelStack1;
+                whiteScoring = isUnderTruss ? backboardRight : backboardLeft;
                 break;
         }
 
@@ -198,29 +197,23 @@ public final class Bot2_5 extends LinearOpMode {
         scorePurplePixel(builder, randomization);
         getFirstWhitePixel(builder, randomization);
         scoreYellowPixel(builder);
-        getWhitePixels(builder, randomization ,1);
-        scoreWhitePixels(builder, randomization);
-        getWhitePixels(builder, randomization, 2);
-        scoreWhitePixels(builder, randomization);
-
+        getWhitePixels(builder ,1);
+        scoreWhitePixels(builder);
 
         return builder.build();
     }
 
     private void scorePurplePixel(TrajectorySequenceBuilder builder, int randomization) {
-        builder.setTangent(isRed ? BACKWARD : FORWARD);
-        if (isAudienceSide(randomization) && !isUnderTruss) {
-            builder
-                    .lineToSplineHeading(botAudienceSpikeTransitionRed.byAlliancePose2d())
-                    .setTangent(botAudienceSpikeTransitionRed.heading)
-                    .lineTo(mainSpike.byAllianceVec())
-                    .setTangent(LEFT);
-        } else if (isAudienceSide(randomization) && isUnderTruss) {
-            builder.strafeRight(6)
-                    .lineToSplineHeading(botLeftSpikeRed2.byAlliancePose2d());
-        } else if (isCenter(randomization) || isBackboardSide(randomization)) {
+        builder.setTangent(isRed ? FORWARD : BACKWARD);
+        if (isBackboardSide(randomization)) {
+            builder.splineTo(mainSpike.byAllianceVec(), mainSpike.heading);
+        } else if (isAudienceSide(randomization)) {
+            builder.lineToSplineHeading(mainSpike.byAlliancePose2d())
+                    .lineTo(leftSpikeRed2.byAllianceVec());
+        } else {
             builder.lineToSplineHeading(mainSpike.byAlliancePose2d());
         }
+        builder.addTemporalMarker(() -> robot.purplePixel.setActivated(true));
     }
 
     private void getFirstWhitePixel(TrajectorySequenceBuilder builder, int randomization) {
@@ -232,43 +225,28 @@ public final class Bot2_5 extends LinearOpMode {
     }
 
     private void scoreYellowPixel(TrajectorySequenceBuilder builder) {
-        builder.setTangent(RIGHT)
-                .splineTo(transition.byAllianceVec(), RIGHT)
-                .splineToConstantHeading(yellowScoring.byAllianceVec(), RIGHT);
+        builder.lineTo(transition.byAllianceVec())
+                .lineTo(yellowScoring.byAllianceVec());
 
-        setSlides(builder, false);
-        score(builder);
+        score(builder, true);
     }
 
-    private void getWhitePixels(TrajectorySequenceBuilder builder, int randomization, int cycle) {
+    private void getWhitePixels(TrajectorySequenceBuilder builder, int cycle) {
+        builder.lineTo(transition.byAllianceVec());
 
-        retractSlides(builder);
+        if (isUnderTruss) builder.lineTo(outerTruss2.byAllianceVec());
 
-        builder.setTangent(LEFT)
-                .splineToConstantHeading(transition.byAllianceVec(), LEFT);
-
-        if (isUnderTruss && randomization != 1)
-            builder.splineToConstantHeading(trussTransition.byAllianceVec(),LEFT)
-                    .lineToConstantHeading(pixelStack.byAllianceVec());
-        else builder.splineTo(pixelStack.byAllianceVec(), pixelStack.heading);
-
+        builder.lineTo(pixelStack.byAllianceVec());
         intakePixels(builder, cycle);
     }
 
-    private void scoreWhitePixels(TrajectorySequenceBuilder builder, int randomization) {
-        if (isUnderTruss && randomization != 1)
-            builder.lineToConstantHeading(trussTransition.byAllianceVec());
-        builder.setTangent(RIGHT);
+    private void scoreWhitePixels(TrajectorySequenceBuilder builder) {
+        if (isUnderTruss) builder.lineTo(outerTruss2.byAllianceVec());
 
-        builder
-                .splineTo(transition.byAllianceVec(), RIGHT);
+        builder.lineTo(transition.byAllianceVec())
+                .lineTo(whiteScoring.byAllianceVec());
 
-        setSlides(builder, true);
-
-        builder
-                .splineToConstantHeading(whiteScoring.byAllianceVec(), RIGHT);
-
-        score(builder);
+        score(builder, true);
     }
 
     private void intakePixels(TrajectorySequenceBuilder builder, int cycle) {
@@ -286,14 +264,17 @@ public final class Bot2_5 extends LinearOpMode {
                 .UNSTABLE_addTemporalMarkerOffset(2, () -> robot.rollers.intake(0));
     }
 
-    private void score(TrajectorySequenceBuilder builder) {
-        builder
+    private void score(TrajectorySequenceBuilder builder, boolean isWhite) {
+        builder.addTemporalMarker(() -> robot.lift.setToAutonHeight(isWhite ? 300 : 0))
+                .waitSeconds(0.5)
                 .addTemporalMarker(() -> {
                     robot.arm.setArm(true);
                     robot.wrist.setActivated(true);
                 })
                 .UNSTABLE_addTemporalMarkerOffset(0.4, () -> robot.arm.setFlap(false))
-                .waitSeconds(0.4)
+                .waitSeconds(0.8)
+                .addTemporalMarker(() -> robot.lift.setToAutonHeight(isWhite ? 700 : 400))
+                .waitSeconds(0.7)
                 .addTemporalMarker(() -> {
                     robot.arm.setArm(false);
                     robot.wrist.setActivated(false);
@@ -301,23 +282,15 @@ public final class Bot2_5 extends LinearOpMode {
                 .UNSTABLE_addTemporalMarkerOffset(0.3, () -> robot.lift.retract());
     }
 
-    private void setSlides(TrajectorySequenceBuilder builder, boolean isWhite) {
-        builder.UNSTABLE_addTemporalMarkerOffset(0.75, () -> robot.lift.setToAutonHeight(isWhite ? 700 : 400));
-    }
-
-    private void retractSlides(TrajectorySequenceBuilder builder) {
-        builder.UNSTABLE_addTemporalMarkerOffset(0.75, () -> robot.lift.retract());
-    }
-
-    private boolean isCenter(int randomization) {
+    private static boolean isCenter(int randomization) {
         return randomization == 1;
     }
 
-    private boolean isAudienceSide(int randomization) {
+    private static boolean isAudienceSide(int randomization) {
         return isRed && randomization == 0 || !isRed && randomization == 2;
     }
 
-    private boolean isBackboardSide(int randomization) {
+    private static boolean isBackboardSide(int randomization) {
         return isRed && randomization == 2 || !isRed && randomization == 0;
     }
 
