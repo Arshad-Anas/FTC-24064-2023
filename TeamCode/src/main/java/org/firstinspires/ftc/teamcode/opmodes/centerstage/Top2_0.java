@@ -40,8 +40,8 @@ import org.firstinspires.ftc.teamcode.subsystems.centerstage.vision.AprilTagLoca
 import org.firstinspires.ftc.teamcode.subsystems.centerstage.vision.PropSensor;
 
 @Config
-@Autonomous(name = "Top 2+4 No Splines", group = "24064 Main", preselectTeleOp = "MainTeleOp")
-public final class Top2_4Lines extends LinearOpMode {
+@Autonomous(name = "Top 2+0", group = "24064 Main", preselectTeleOp = "MainTeleOp")
+public final class Top2_0 extends LinearOpMode {
     static boolean
             isParkedMiddle = true,
             isUnderTruss = false,
@@ -75,7 +75,7 @@ public final class Top2_4Lines extends LinearOpMode {
             innerTruss = new EditablePose(-8, -34.5, LEFT),
             outerTruss = new EditablePose(23.5, -58, LEFT),
             outerTruss2 = new EditablePose(-23.5, -58, LEFT),
-            pixelStack1 = new EditablePose(-57.5, -14.5, LEFT),
+            pixelStack1 = new EditablePose(-57.5, -12.5, LEFT),
             pixelStack3 = new EditablePose(-57.5, -35, LEFT),
             scorePrepStageDoor = new EditablePose(BACKBOARD_X - 4, -11.5, LEFT),
             scorePrepTruss = new EditablePose(BACKBOARD_X - 4, -58, LEFT),
@@ -206,10 +206,6 @@ public final class Top2_4Lines extends LinearOpMode {
 
         scorePurplePixel(builder, randomization);
         scoreYellowPixel(builder);
-        getWhitePixels(builder, 1);
-        scoreWhitePixels(builder);
-        getWhitePixels(builder, 2);
-        scoreWhitePixels(builder);
 
         retractSlides(builder);
         builder.lineToSplineHeading((isParkedMiddle ? parkingLeft : parkingRight).byAlliancePose2d());

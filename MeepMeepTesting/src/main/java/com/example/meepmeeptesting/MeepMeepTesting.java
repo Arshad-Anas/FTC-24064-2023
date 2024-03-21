@@ -13,7 +13,7 @@ import com.noahbres.meepmeep.roadrunner.trajectorysequence.TrajectorySequenceBui
 
 public class MeepMeepTesting {
 
-    static boolean isRed = true,
+    static boolean isRed = false,
             isParkedMiddle = false,
             isUnderTruss = false;
 
@@ -37,23 +37,23 @@ public class MeepMeepTesting {
     public static EditablePose
             start = new EditablePose(START_X, -61.788975, BACKWARD),
             spikeLeftBlue = new EditablePose((START_X - 6), -34.5, toRadians(135)),
-            spikeCenterBlue = new EditablePose((START_X + 12), -26, toRadians(315)),
+            spikeCenterBlue = new EditablePose((START_X + 12), -22, toRadians(0)),
             spikeRightBlue = new EditablePose(30, -36, toRadians(315)),
             spikeLeftRed = new EditablePose(3, -35, toRadians(135)),
             spikeCenterRed = new EditablePose(24, -27, RIGHT),
             spikeRightRed = new EditablePose(START_X + 14, -40, toRadians(315)),
             backboardLeft = new EditablePose(BACKBOARD_X, -30, LEFT),
-            backboardCenter = new EditablePose(BACKBOARD_X, -35, LEFT),
+            backboardCenter = new EditablePose(BACKBOARD_X, -33, LEFT),
             backboardRight = new EditablePose(BACKBOARD_X, -41, LEFT),
             parkingLeft = new EditablePose(48.5, -10, LEFT),
             parkingRight = new EditablePose(48.5, -56, LEFT),
-            spikeDodgeStageDoor = new EditablePose(28, -11.5, LEFT),
+            spikeDodgeStageDoor = new EditablePose(28, -9, LEFT),
             stageDoor = new EditablePose(13, -11.5, LEFT),
             innerTruss = new EditablePose(-8, -34.5, LEFT),
             outerTruss = new EditablePose(23.5, -58, LEFT),
             outerTruss2 = new EditablePose(-23.5, -58, LEFT),
-            pixelStack1 = new EditablePose(-59, -11.5, LEFT),
-            pixelStack3 = new EditablePose(-59, -35, LEFT),
+            pixelStack1 = new EditablePose(-57.5, -12.5, LEFT),
+            pixelStack3 = new EditablePose(-57.5, -35, LEFT),
             scorePrepStageDoor = new EditablePose(BACKBOARD_X - 4, -11.5, LEFT),
             scorePrepTruss = new EditablePose(BACKBOARD_X - 4, -58, LEFT),
             frontBackboardLeft = new EditablePose(BACKBOARD_X - 4, backboardLeft.y, LEFT),
@@ -62,7 +62,7 @@ public class MeepMeepTesting {
 
     private static EditablePose mainSpike, pixelStack, whiteScoring, yellowScoring, transition, frontWhiteScoring, prep;
 
-    public static int randomization = 0;
+    public static int randomization = 2;
 
 
     public static void main(String[] args) {
@@ -77,9 +77,9 @@ public class MeepMeepTesting {
                         case 0:
                             mainSpike = isRed ? spikeLeftRed : spikeRightBlue;
                             yellowScoring = isRed ? backboardLeft : backboardRight;
-                            transition = isRed ? (isUnderTruss ? outerTruss : stageDoor) : (isUnderTruss ? outerTruss : spikeDodgeStageDoor);
+                            transition = isUnderTruss ? outerTruss : spikeDodgeStageDoor;
                             frontWhiteScoring = isRed ? (isUnderTruss ? frontBackboardRight : frontBackboardCenter) : (isUnderTruss ? frontBackboardCenter : frontBackboardLeft);
-                            whiteScoring = isRed ? (isUnderTruss ? backboardRight : backboardCenter) : (isUnderTruss ? backboardCenter : backboardLeft);
+                            whiteScoring = isUnderTruss ? backboardRight : backboardLeft;
                             break;
                         case 1:
                             mainSpike = isRed ? spikeCenterRed : spikeCenterBlue;
@@ -91,9 +91,9 @@ public class MeepMeepTesting {
                         case 2:
                             mainSpike = isRed ? spikeRightRed : spikeLeftBlue;
                             yellowScoring = isRed ? backboardRight : backboardLeft;
-                            transition = isRed ? (isUnderTruss ? outerTruss : spikeDodgeStageDoor) : (isUnderTruss ? outerTruss : stageDoor);
+                            transition = isUnderTruss ? outerTruss : spikeDodgeStageDoor;
                             frontWhiteScoring = isRed ? (isUnderTruss ? frontBackboardCenter : frontBackboardLeft) : (isUnderTruss ? frontBackboardRight : frontBackboardCenter);
-                            whiteScoring = isRed ? (isUnderTruss ? backboardCenter : backboardLeft) : (isUnderTruss ? backboardRight : backboardCenter);
+                            whiteScoring = isUnderTruss ? backboardRight : backboardLeft;
                             break;
                     }
 
@@ -101,15 +101,13 @@ public class MeepMeepTesting {
                     pixelStack = isUnderTruss ? pixelStack3 : pixelStack1;
 
                     Pose2d startPose = start.byAlliancePose2d();
+                    drive.setPoseEstimate(startPose);
                     TrajectorySequenceBuilder builder = drive.trajectorySequenceBuilder(startPose);
 
                     scorePurplePixel(builder, randomization);
                     scoreYellowPixel(builder);
-                    getWhitePixels(builder, 1);
-                    scoreWhitePixels(builder);
-                    getWhitePixels(builder, 2);
-                    scoreWhitePixels(builder);
 
+                    //retractSlides(builder);
                     builder.lineToSplineHeading((isParkedMiddle ? parkingLeft : parkingRight).byAlliancePose2d());
 
                     return builder.build();
@@ -124,7 +122,6 @@ public class MeepMeepTesting {
 
 
     private static void scorePurplePixel(TrajectorySequenceBuilder builder, int randomization) {
-
         if (isBackboardSide(randomization) || randomization == 1) {
             builder.lineToSplineHeading(mainSpike.byAlliancePose2d());
         } else {
@@ -132,10 +129,12 @@ public class MeepMeepTesting {
                     .splineTo(mainSpike.byAllianceVec(), mainSpike.byAlliance().heading);
         }
 
+        //builder.addTemporalMarker(() -> robot.purplePixel.setActivated(true));
     }
 
     private static void scoreYellowPixel(TrajectorySequenceBuilder builder) {
         builder.lineToSplineHeading(yellowScoring.byAlliancePose2d());
+        //score(builder, false);
     }
 
     private static void getWhitePixels(TrajectorySequenceBuilder builder, int cycle) {
