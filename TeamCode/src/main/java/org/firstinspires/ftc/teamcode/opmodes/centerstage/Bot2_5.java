@@ -14,7 +14,6 @@ import static com.arcrobotics.ftclib.gamepad.GamepadKeys.Button.Y;
 import static org.firstinspires.ftc.teamcode.opmodes.centerstage.MainAuton.BACKWARD;
 import static org.firstinspires.ftc.teamcode.opmodes.centerstage.MainAuton.FORWARD;
 import static org.firstinspires.ftc.teamcode.opmodes.centerstage.MainAuton.LEFT;
-import static org.firstinspires.ftc.teamcode.opmodes.centerstage.MainAuton.RIGHT;
 import static org.firstinspires.ftc.teamcode.opmodes.centerstage.MainAuton.aprilTag;
 import static org.firstinspires.ftc.teamcode.opmodes.centerstage.MainAuton.autonEndPose;
 import static org.firstinspires.ftc.teamcode.opmodes.centerstage.MainAuton.gamepadEx1;
@@ -36,8 +35,8 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySequence;
 import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySequenceBuilder;
 import org.firstinspires.ftc.teamcode.subsystems.centerstage.Robot;
-import org.firstinspires.ftc.teamcode.subsystems.centerstage.vision.AprilTagLocalization;
-import org.firstinspires.ftc.teamcode.subsystems.centerstage.vision.PropSensor;
+import org.firstinspires.ftc.teamcode.subsystems.utilities.vision.AprilTagLocalization;
+import org.firstinspires.ftc.teamcode.subsystems.utilities.vision.PropSensor;
 
 @Config
 @Autonomous(name = "Bottom 2+5", group = "24064 Main", preselectTeleOp = "MainTeleOp")

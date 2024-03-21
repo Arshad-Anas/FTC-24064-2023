@@ -21,8 +21,8 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySequence;
 import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySequenceBuilder;
 import org.firstinspires.ftc.teamcode.subsystems.centerstage.Robot;
-import org.firstinspires.ftc.teamcode.subsystems.centerstage.vision.AprilTagLocalization;
-import org.firstinspires.ftc.teamcode.subsystems.centerstage.vision.PropSensor;
+import org.firstinspires.ftc.teamcode.subsystems.utilities.vision.AprilTagLocalization;
+import org.firstinspires.ftc.teamcode.subsystems.utilities.vision.PropSensor;
 
 @Config
 @Autonomous(group = "24064 Main", preselectTeleOp = "MainTeleOp")
