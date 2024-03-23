@@ -84,12 +84,6 @@ public class DriveConstants {
     public static RevHubOrientationOnRobot.LogoFacingDirection LOGO_FACING_DIR = RIGHT;
     public static RevHubOrientationOnRobot.UsbFacingDirection USB_FACING_DIR = FORWARD;
 
-    /*
-     * Distance from camera lens to the middle of the drivetrain (inches)
-     */
-    public static double CAMERA_FORWARD_OFFSET = -7.5;
-    public static double CAMERA_LATERAL_OFFSET = 0;
-
     public static double encoderTicksToInches(double ticks) {
         return WHEEL_RADIUS * 2 * Math.PI * GEAR_RATIO * ticks / TICKS_PER_REV;
     }

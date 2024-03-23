@@ -287,7 +287,7 @@ public class SampleTankDrive extends TankDrive {
 
     @Override
     public Double getExternalHeadingVelocity() {
-        return imu.getAngularVelo();
+        return imu.getAngularVel();
     }
 
     public static TrajectoryVelocityConstraint getVelocityConstraint(double maxVel, double maxAngularVel, double trackWidth) {

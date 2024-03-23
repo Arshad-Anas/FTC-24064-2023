@@ -2,13 +2,13 @@ package org.firstinspires.ftc.teamcode.subsystems.utilities.vision;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.matrices.VectorF;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
-import org.firstinspires.ftc.teamcode.roadrunner.DriveConstants;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 import org.firstinspires.ftc.vision.apriltag.AprilTagGameDatabase;
@@ -18,6 +18,9 @@ import java.util.List;
 
 @Config
 public class AprilTagLocalization {
+    // Distance from camera lens to the middle of the drivetrain (inches)
+    public static final Vector2d offset = new Vector2d(0, -7.5);
+
     public static final double
             fx = 578.272,
             fy = 578.272,
@@ -49,6 +52,7 @@ public class AprilTagLocalization {
         return aprilTagProcessor.getDetections();
     }
 
+    // Needs to be updated to use any tag location, not Centerstage specific
     public Pose2d getPoseEstimate() {
         Pose2d estimate = null;
         for (AprilTagDetection detection : getRawDetections()) {
@@ -57,8 +61,8 @@ public class AprilTagLocalization {
                 int multiplier = isLargeTag ? 1 : -1;
                 VectorF tagVec = detection.metadata.fieldPosition;
                 estimate = new Pose2d(
-                        tagVec.get(0) + (detection.ftcPose.y - DriveConstants.CAMERA_FORWARD_OFFSET /* For us: around -6 */) * multiplier,
-                        tagVec.get(1) + (detection.ftcPose.x - DriveConstants.CAMERA_LATERAL_OFFSET /* Around 1 (?) */) * -multiplier,
+                        tagVec.get(0) + (detection.ftcPose.y - offset.getY()) * multiplier,
+                        tagVec.get(1) + (detection.ftcPose.x - offset.getX()) * -multiplier,
                         Math.toRadians((isLargeTag ? 0 : 180) + detection.ftcPose.yaw)
                 );
             }

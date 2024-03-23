@@ -7,28 +7,31 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.IMU;
 
 public final class HeadingIMU {
-
     private final IMU imu;
 
-    private double heading, angularVelo;
+    private double heading, angularVel;
+    private final IMUBuffer headingBuffer, angularVelBuffer;
 
-    public HeadingIMU(HardwareMap hw, String name, RevHubOrientationOnRobot imuOrientation) {
-        imu = hw.get(IMU.class, name);
+    public HeadingIMU(HardwareMap hardwareMap, String name, RevHubOrientationOnRobot imuOrientation) {
+        imu = hardwareMap.get(IMU.class, name);
         imu.resetDeviceConfigurationForOpMode();
         imu.resetYaw();
         imu.initialize(new IMU.Parameters(imuOrientation));
+
+        headingBuffer = new IMUBuffer(10);
+        angularVelBuffer = new IMUBuffer(10);
     }
 
     public void update() {
-        heading = imu.getRobotYawPitchRollAngles().getYaw(RADIANS);
-        angularVelo = imu.getRobotAngularVelocity(RADIANS).zRotationRate;
+        heading = headingBuffer.put(imu.getRobotYawPitchRollAngles().getYaw(RADIANS));
+        angularVel = angularVelBuffer.put(imu.getRobotAngularVelocity(RADIANS).zRotationRate);
     }
 
     public double getHeading() {
         return heading;
     }
 
-    public double getAngularVelo() {
-        return angularVelo;
+    public double getAngularVel() {
+        return angularVel;
     }
 }
