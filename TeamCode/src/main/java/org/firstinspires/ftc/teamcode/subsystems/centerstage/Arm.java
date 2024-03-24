@@ -1,6 +1,6 @@
 package org.firstinspires.ftc.teamcode.subsystems.centerstage;
 
-import static org.firstinspires.ftc.teamcode.opmodes.centerstage.MainAuton.mTelemetry;
+import static org.firstinspires.ftc.teamcode.opmode.centerstage.MainAuton.mTelemetry;
 import static org.firstinspires.ftc.teamcode.subsystems.utilities.SimpleServoPivot.getGoBildaServo;
 import static org.firstinspires.ftc.teamcode.subsystems.utilities.SimpleServoPivot.getReversedServo;
 

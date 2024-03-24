@@ -1,14 +1,14 @@
-package org.firstinspires.ftc.teamcode.subsystems.utilities.sensors;
+package org.firstinspires.ftc.teamcode.subsystems.utilities;
 
 import org.firstinspires.ftc.robotcore.internal.collections.EvictingBlockingQueue;
 
 import java.util.concurrent.ArrayBlockingQueue;
 
-public class IMUBuffer {
+public class AveragingBuffer {
     private final int size;
     private final EvictingBlockingQueue<Double> buffer;
 
-    public IMUBuffer(int size) {
+    public AveragingBuffer(int size) {
         this.size = size;
         buffer = new EvictingBlockingQueue<>(new ArrayBlockingQueue<>(size));
     }

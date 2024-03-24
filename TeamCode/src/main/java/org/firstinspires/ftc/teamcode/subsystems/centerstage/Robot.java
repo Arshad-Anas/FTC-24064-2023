@@ -1,12 +1,11 @@
 package org.firstinspires.ftc.teamcode.subsystems.centerstage;
 
-import static org.firstinspires.ftc.teamcode.opmodes.centerstage.MainAuton.mTelemetry;
+import static org.firstinspires.ftc.teamcode.opmode.centerstage.MainAuton.mTelemetry;
 import static org.firstinspires.ftc.teamcode.subsystems.centerstage.Arm.TIME_DEPOSIT_1_PIXEL;
 import static org.firstinspires.ftc.teamcode.subsystems.utilities.SimpleServoPivot.getGoBildaServo;
 import static org.firstinspires.ftc.teamcode.subsystems.utilities.SimpleServoPivot.getReversedServo;
 
 import com.acmerobotics.dashboard.config.Config;
-import com.arcrobotics.ftclib.hardware.SimpleServo;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.subsystems.drivetrains.MecanumDrivetrain;

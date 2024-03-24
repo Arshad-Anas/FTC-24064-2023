@@ -6,11 +6,13 @@ import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.IMU;
 
+import org.firstinspires.ftc.teamcode.subsystems.utilities.AveragingBuffer;
+
 public final class HeadingIMU {
     private final IMU imu;
 
     private double heading, angularVel;
-    private final IMUBuffer headingBuffer, angularVelBuffer;
+    private final AveragingBuffer headingBuffer, angularVelBuffer;
 
     public HeadingIMU(HardwareMap hardwareMap, String name, RevHubOrientationOnRobot imuOrientation) {
         imu = hardwareMap.get(IMU.class, name);
@@ -18,8 +20,8 @@ public final class HeadingIMU {
         imu.resetYaw();
         imu.initialize(new IMU.Parameters(imuOrientation));
 
-        headingBuffer = new IMUBuffer(10);
-        angularVelBuffer = new IMUBuffer(10);
+        headingBuffer = new AveragingBuffer(10);
+        angularVelBuffer = new AveragingBuffer(10);
     }
 
     public void update() {

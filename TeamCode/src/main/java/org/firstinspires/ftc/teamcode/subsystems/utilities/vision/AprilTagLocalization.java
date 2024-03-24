@@ -48,14 +48,14 @@ public class AprilTagLocalization {
                 .build();
     }
 
-    public List<AprilTagDetection> getRawDetections() {
-        return aprilTagProcessor.getDetections();
+    public List<AprilTagDetection> getFreshDetections() {
+        return aprilTagProcessor.getFreshDetections();
     }
 
     // Needs to be updated to use any tag location, not Centerstage specific
     public Pose2d getPoseEstimate() {
         Pose2d estimate = null;
-        for (AprilTagDetection detection : getRawDetections()) {
+        for (AprilTagDetection detection : getFreshDetections()) {
             if (detection.metadata != null) {
                 boolean isLargeTag = detection.metadata.id >= 7;
                 int multiplier = isLargeTag ? 1 : -1;

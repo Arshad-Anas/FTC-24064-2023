@@ -1,6 +1,6 @@
-package org.firstinspires.ftc.teamcode.opmodes.mechanismtests;
+package org.firstinspires.ftc.teamcode.opmode.mechanismtests;
 
-import static org.firstinspires.ftc.teamcode.opmodes.centerstage.MainAuton.mTelemetry;
+import static org.firstinspires.ftc.teamcode.opmode.centerstage.MainAuton.mTelemetry;
 
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;

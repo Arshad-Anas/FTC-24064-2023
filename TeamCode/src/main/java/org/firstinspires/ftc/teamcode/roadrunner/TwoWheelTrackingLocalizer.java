@@ -1,6 +1,6 @@
 package org.firstinspires.ftc.teamcode.roadrunner;
 
-import static org.firstinspires.ftc.teamcode.opmodes.centerstage.MainAuton.FORWARD;
+import static org.firstinspires.ftc.teamcode.opmode.centerstage.MainAuton.FORWARD;
 
 import androidx.annotation.NonNull;
 

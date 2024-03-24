@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.opmodes.centerstage;
+package org.firstinspires.ftc.teamcode.opmode.centerstage;
 
 import static com.arcrobotics.ftclib.gamepad.GamepadKeys.Button.A;
 import static com.arcrobotics.ftclib.gamepad.GamepadKeys.Button.B;
@@ -11,18 +11,18 @@ import static com.arcrobotics.ftclib.gamepad.GamepadKeys.Button.RIGHT_BUMPER;
 import static com.arcrobotics.ftclib.gamepad.GamepadKeys.Button.X;
 import static com.arcrobotics.ftclib.gamepad.GamepadKeys.Button.Y;
 
-import static org.firstinspires.ftc.teamcode.opmodes.centerstage.MainAuton.BACKWARD;
-import static org.firstinspires.ftc.teamcode.opmodes.centerstage.MainAuton.FORWARD;
-import static org.firstinspires.ftc.teamcode.opmodes.centerstage.MainAuton.LEFT;
-import static org.firstinspires.ftc.teamcode.opmodes.centerstage.MainAuton.RIGHT;
-import static org.firstinspires.ftc.teamcode.opmodes.centerstage.MainAuton.aprilTag;
-import static org.firstinspires.ftc.teamcode.opmodes.centerstage.MainAuton.autonEndPose;
-import static org.firstinspires.ftc.teamcode.opmodes.centerstage.MainAuton.gamepadEx1;
-import static org.firstinspires.ftc.teamcode.opmodes.centerstage.MainAuton.isRed;
-import static org.firstinspires.ftc.teamcode.opmodes.centerstage.MainAuton.keyPressed;
-import static org.firstinspires.ftc.teamcode.opmodes.centerstage.MainAuton.mTelemetry;
-import static org.firstinspires.ftc.teamcode.opmodes.centerstage.MainAuton.propSensor;
-import static org.firstinspires.ftc.teamcode.opmodes.centerstage.MainAuton.robot;
+import static org.firstinspires.ftc.teamcode.opmode.centerstage.MainAuton.BACKWARD;
+import static org.firstinspires.ftc.teamcode.opmode.centerstage.MainAuton.FORWARD;
+import static org.firstinspires.ftc.teamcode.opmode.centerstage.MainAuton.LEFT;
+import static org.firstinspires.ftc.teamcode.opmode.centerstage.MainAuton.RIGHT;
+import static org.firstinspires.ftc.teamcode.opmode.centerstage.MainAuton.aprilTag;
+import static org.firstinspires.ftc.teamcode.opmode.centerstage.MainAuton.autonEndPose;
+import static org.firstinspires.ftc.teamcode.opmode.centerstage.MainAuton.gamepadEx1;
+import static org.firstinspires.ftc.teamcode.opmode.centerstage.MainAuton.isRed;
+import static org.firstinspires.ftc.teamcode.opmode.centerstage.MainAuton.keyPressed;
+import static org.firstinspires.ftc.teamcode.opmode.centerstage.MainAuton.mTelemetry;
+import static org.firstinspires.ftc.teamcode.opmode.centerstage.MainAuton.propSensor;
+import static org.firstinspires.ftc.teamcode.opmode.centerstage.MainAuton.robot;
 import static java.lang.Math.toRadians;
 
 import com.acmerobotics.dashboard.config.Config;
@@ -40,8 +40,8 @@ import org.firstinspires.ftc.teamcode.subsystems.utilities.vision.AprilTagLocali
 import org.firstinspires.ftc.teamcode.subsystems.utilities.vision.PropSensor;
 
 @Config
-@Autonomous(name = "Top 2+4 No Splines", group = "24064 Main", preselectTeleOp = "MainTeleOp")
-public final class Top2_4Lines extends LinearOpMode {
+@Autonomous(name = "Top 2+0", group = "24064 Main", preselectTeleOp = "MainTeleOp")
+public final class Top2_0 extends LinearOpMode {
     static boolean
             isParkedMiddle = true,
             isUnderTruss = false,
@@ -75,7 +75,7 @@ public final class Top2_4Lines extends LinearOpMode {
             innerTruss = new EditablePose(-8, -34.5, LEFT),
             outerTruss = new EditablePose(23.5, -58, LEFT),
             outerTruss2 = new EditablePose(-23.5, -58, LEFT),
-            pixelStack1 = new EditablePose(-57.5, -14.5, LEFT),
+            pixelStack1 = new EditablePose(-57.5, -12.5, LEFT),
             pixelStack3 = new EditablePose(-57.5, -35, LEFT),
             scorePrepStageDoor = new EditablePose(BACKBOARD_X - 4, -11.5, LEFT),
             scorePrepTruss = new EditablePose(BACKBOARD_X - 4, -58, LEFT),
@@ -206,10 +206,6 @@ public final class Top2_4Lines extends LinearOpMode {
 
         scorePurplePixel(builder, randomization);
         scoreYellowPixel(builder);
-        getWhitePixels(builder, 1);
-        scoreWhitePixels(builder);
-        getWhitePixels(builder, 2);
-        scoreWhitePixels(builder);
 
         retractSlides(builder);
         builder.lineToSplineHeading((isParkedMiddle ? parkingLeft : parkingRight).byAlliancePose2d());

@@ -1,7 +1,7 @@
 package org.firstinspires.ftc.teamcode.subsystems.centerstage.auton;
 
-import static org.firstinspires.ftc.teamcode.opmodes.centerstage.MainAuton.isRed;
-import static org.firstinspires.ftc.teamcode.opmodes.centerstage.MainAuton.isTop;
+import static org.firstinspires.ftc.teamcode.opmode.centerstage.MainAuton.isRed;
+import static org.firstinspires.ftc.teamcode.opmode.centerstage.MainAuton.isTop;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
